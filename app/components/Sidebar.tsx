@@ -1,0 +1,119 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+
+const navItems = [
+  { label: "What is Sleepover?", href: "/faq/sleepover", color: "#9AC6F6" },
+  { label: "Invitation", href: "/faq/invitation", color: "#93B4F2" },
+  { label: "Parents Guide", href: "/faq/parents", color: "#8FA8F0" },
+  { label: "Travel Guide", href: "/faq/travel", color: "#869EEC" },
+  { label: "Packing List", href: "/faq/packing", color: "#7791E6" },
+];
+
+export default function Sidebar() {
+  const [isOpen, setIsOpen] = useState(true);
+
+  return (
+    <>
+      {/* Toggle Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed bottom-8 z-[60] p-3 rounded-full transition-all duration-300 hover:scale-110"
+        style={{
+          left: isOpen ? "410px" : "16px",
+          background: "linear-gradient(180deg, #D9DAF8 0%, #FFF0FD 100%)",
+          boxShadow: "0px 4px 8px rgba(108, 110, 160, 0.5)",
+        }}
+      >
+        <span
+          className="text-[24px] font-bold"
+          style={{
+            fontFamily: "'MADE Tommy Soft', sans-serif",
+            color: "#7472A0",
+          }}
+        >
+          {isOpen ? "←" : "☰"}
+        </span>
+      </button>
+
+      {/* Sidebar */}
+      <aside
+        className="fixed left-0 top-0 min-h-screen z-50 transition-transform duration-300"
+        style={{
+          width: "400px",
+          transform: isOpen ? "translateX(0)" : "translateX(-100%)",
+        }}
+      >
+        {/* Sidebar background image */}
+        <div
+          className="absolute inset-0 h-full"
+          style={{
+            backgroundImage: "url('/background/Sidebar.png')",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "100% 100%",
+            backgroundPosition: "top left",
+          }}
+        />
+
+        {/* Content overlay */}
+        <div className="relative z-10 p-8">
+          {/* Logo */}
+          <div className="mt-8 ml-4">
+            <Image
+              src="/background/sleepover_logo.PNG"
+              alt="Sleepover Logo"
+              width={301}
+              height={193}
+              className="w-[250px] h-auto"
+            />
+          </div>
+
+          {/* Navigation Links */}
+          <nav className="flex flex-col gap-8 mt-16 ml-6">
+            {navItems.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="relative block font-bold leading-[1.1] hover:opacity-90 transition-transform hover:translate-x-[1px] text-[30px] sm:text-[36px] md:text-[40px]"
+              >
+                {/* White stroke layer behind */}
+                <span
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    fontFamily: "'MADE Tommy Soft', sans-serif",
+                    color: "transparent",
+                    WebkitTextStroke: "4px #FFFFFF",
+                    textShadow: "none",
+                    textRendering: "optimizeLegibility",
+                    WebkitFontSmoothing: "antialiased",
+                  }}
+                >
+                  {item.label}
+                </span>
+                {/* Colored text on top */}
+                <span
+                  className="relative"
+                  style={{
+                    fontFamily: "'MADE Tommy Soft', sans-serif",
+                    background:
+                      "linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    color: "transparent",
+                    filter: "drop-shadow(0px 3px 0px rgba(108, 127, 196, 0.35))",
+                    textRendering: "optimizeLegibility",
+                    WebkitFontSmoothing: "antialiased",
+                  }}
+                >
+                  {item.label}
+                </span>
+              </Link>
+            ))}
+          </nav>
+        </div>
+      </aside>
+    </>
+  );
+}
