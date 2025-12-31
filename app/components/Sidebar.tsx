@@ -42,7 +42,7 @@ export default function Sidebar() {
       <aside
         className="fixed left-0 top-0 min-h-screen z-50 transition-transform duration-300"
         style={{
-          width: "400px",
+          width: "460px",
           transform: isOpen ? "translateX(0)" : "translateX(-100%)",
         }}
       >
@@ -60,18 +60,18 @@ export default function Sidebar() {
         {/* Content overlay */}
         <div className="relative z-10 p-8">
           {/* Logo */}
-          <div className="mt-8 ml-4">
+          <Link href="/" className="mt-8 ml-4 block">
             <Image
               src="/background/sleepover_logo.PNG"
               alt="Sleepover Logo"
               width={301}
               height={193}
-              className="w-[250px] h-auto"
+              className="w-[250px] h-auto hover:scale-105 hover:-rotate-2 transition-transform duration-300"
             />
-          </div>
+          </Link>
 
           {/* Navigation Links */}
-          <nav className="flex flex-col gap-8 mt-16 ml-6">
+          <nav className="flex flex-col gap-10 mt-16 ml-8">
             {navItems.map((item) => (
               <Link
                 key={item.label}
@@ -82,12 +82,10 @@ export default function Sidebar() {
                 <span
                   className="absolute inset-0 pointer-events-none"
                   style={{
-                    fontFamily: "'MADE Tommy Soft', sans-serif",
-                    color: "transparent",
-                    WebkitTextStroke: "4px #FFFFFF",
-                    textShadow: "none",
-                    textRendering: "optimizeLegibility",
-                    WebkitFontSmoothing: "antialiased",
+                    fontFamily: "'MADE Tommy Soft Outline', sans-serif",
+                    color: "#FFFFFF",
+                    WebkitTextStroke: "7px",
+                    filter: "drop-shadow(0px 4px 0px #C6C7E4) drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.2))",
                   }}
                 >
                   {item.label}
@@ -101,10 +99,7 @@ export default function Sidebar() {
                       "linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
-                    color: "transparent",
-                    filter: "drop-shadow(0px 3px 0px rgba(108, 127, 196, 0.35))",
-                    textRendering: "optimizeLegibility",
-                    WebkitFontSmoothing: "antialiased",
+                    backgroundClip: "text",
                   }}
                 >
                   {item.label}

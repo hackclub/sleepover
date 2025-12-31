@@ -1,10 +1,12 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function SignupPage() {
+function SignupContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
+  const registered = searchParams.get("registered") === "true";
 
   return (
     <main
@@ -20,7 +22,7 @@ export default function SignupPage() {
           color: "#6C6EA0",
         }}
       >
-        Welcome!
+        {registered ? "You're registered!" : "Welcome!"}
       </h1>
       <p
         className="text-[18px] sm:text-[24px] text-center mb-4"
@@ -29,19 +31,46 @@ export default function SignupPage() {
           color: "#8183B8",
         }}
       >
-        You signed up with: <strong>{email}</strong>
+        {registered
+          ? "Thanks for signing up for Sleepover!"
+          : email
+          ? `You signed up with: ${email}`
+          : "Sign in to continue"}
       </p>
-      <a
-        href="/api/auth/login"
-        className="mt-8 px-8 py-4 rounded-[20px] text-white text-[20px] sm:text-[24px] font-bold hover:opacity-90 transition-opacity"
-        style={{
-          fontFamily: "'MADE Tommy Soft', sans-serif",
-          background: "linear-gradient(0.68deg, #C7D6FF 0.59%, #548CEB 95.89%)",
-          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.25)",
-        }}
-      >
-        Continue with Hack Club
-      </a>
+      {!registered && (
+        <a
+          href="/api/auth/login"
+          className="mt-8 px-8 py-4 rounded-[20px] text-white text-[20px] sm:text-[24px] font-bold hover:opacity-90 transition-opacity"
+          style={{
+            fontFamily: "'MADE Tommy Soft', sans-serif",
+            background: "linear-gradient(0.68deg, #C7D6FF 0.59%, #548CEB 95.89%)",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.25)",
+          }}
+        >
+          Continue with Hack Club
+        </a>
+      )}
+      {registered && (
+        <a
+          href="/"
+          className="mt-8 px-8 py-4 rounded-[20px] text-white text-[20px] sm:text-[24px] font-bold hover:opacity-90 transition-opacity"
+          style={{
+            fontFamily: "'MADE Tommy Soft', sans-serif",
+            background: "linear-gradient(0.68deg, #C7D6FF 0.59%, #548CEB 95.89%)",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.25)",
+          }}
+        >
+          Back to Home
+        </a>
+      )}
     </main>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignupContent />
+    </Suspense>
   );
 }

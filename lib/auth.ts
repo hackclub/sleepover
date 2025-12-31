@@ -1,105 +1,82 @@
-import { cookies } from "next/headers";
+export const HACKCLUB_AUTH_CONFIG = {
+  clientId: process.env.HACKCLUB_CLIENT_ID!,
+  clientSecret: process.env.HACKCLUB_CLIENT_SECRET!,
+  redirectUri: process.env.HACKCLUB_REDIRECT_URI || "http://localhost:3000/api/auth/callback",
+  authorizationUrl: "https://auth.hackclub.com/oauth/authorize",
+  tokenUrl: "https://auth.hackclub.com/oauth/token",
+  userInfoUrl: "https://auth.hackclub.com/api/v1/me",
+  scopes: "openid email name slack_id verification_status",
+};
 
-export const HACKCLUB_AUTH_URL = "https://auth.hackclub.com";
-export const OAUTH_SCOPES = "openid profile email name slack_id verification_status";
-
-export interface HackClubUser {
-  id: string;
-  email?: string;
-  name?: string;
-  first_name?: string;
-  last_name?: string;
-  slack_id?: string;
-  verification_status?: "needs_submission" | "pending" | "verified" | "ineligible";
-}
-
-export function getAuthorizationUrl(): string {
-  const clientId = process.env.HACKCLUB_CLIENT_ID;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const redirectUri = `${baseUrl}/api/auth/callback`;
-
+export function getAuthorizationUrl() {
   const params = new URLSearchParams({
-    client_id: clientId!,
-    redirect_uri: redirectUri,
+    client_id: HACKCLUB_AUTH_CONFIG.clientId,
+    redirect_uri: HACKCLUB_AUTH_CONFIG.redirectUri,
     response_type: "code",
-    scope: OAUTH_SCOPES,
+    scope: HACKCLUB_AUTH_CONFIG.scopes,
   });
 
-  return `${HACKCLUB_AUTH_URL}/oauth/authorize?${params.toString()}`;
+  return `${HACKCLUB_AUTH_CONFIG.authorizationUrl}?${params.toString()}`;
 }
 
-export async function exchangeCodeForToken(code: string): Promise<{
-  access_token: string;
-  refresh_token: string;
-  expires_in: number;
-}> {
-  const clientId = process.env.HACKCLUB_CLIENT_ID;
-  const clientSecret = process.env.HACKCLUB_CLIENT_SECRET;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const redirectUri = `${baseUrl}/api/auth/callback`;
-
-  const response = await fetch(`${HACKCLUB_AUTH_URL}/oauth/token`, {
+export async function exchangeCodeForToken(code: string) {
+  const body = new URLSearchParams({
+    grant_type: "authorization_code",
+    client_id: HACKCLUB_AUTH_CONFIG.clientId,
+    client_secret: HACKCLUB_AUTH_CONFIG.clientSecret,
+    redirect_uri: HACKCLUB_AUTH_CONFIG.redirectUri,
+    code,
+  });
+  
+  console.log("Token exchange request:", { 
+    grant_type: "authorization_code",
+    client_id: HACKCLUB_AUTH_CONFIG.clientId,
+    redirect_uri: HACKCLUB_AUTH_CONFIG.redirectUri,
+  });
+  
+  const response = await fetch(HACKCLUB_AUTH_CONFIG.tokenUrl, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: JSON.stringify({
-      grant_type: "authorization_code",
-      client_id: clientId,
-      client_secret: clientSecret,
-      redirect_uri: redirectUri,
-      code,
-    }),
+    body: body.toString(),
   });
 
   if (!response.ok) {
-    throw new Error("Failed to exchange code for token");
+    const errorText = await response.text();
+    console.error("Token exchange failed:", response.status, errorText);
+    throw new Error(`Failed to exchange code for token: ${errorText}`);
   }
 
   return response.json();
 }
 
-export async function getUser(accessToken: string): Promise<HackClubUser> {
-  const response = await fetch(`${HACKCLUB_AUTH_URL}/api/v1/me`, {
+export async function getUserInfo(accessToken: string) {
+  const response = await fetch(HACKCLUB_AUTH_CONFIG.userInfoUrl, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
   });
 
   if (!response.ok) {
-    throw new Error("Failed to get user");
+    throw new Error("Failed to get user info");
   }
 
   return response.json();
 }
 
-export async function setAuthCookie(accessToken: string, expiresIn: number) {
+export async function getCurrentUser() {
+  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
-  cookieStore.set("hackclub_token", accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: expiresIn,
-    path: "/",
-  });
-}
+  const sessionCookie = cookieStore.get("session");
 
-export async function getAuthCookie(): Promise<string | undefined> {
-  const cookieStore = await cookies();
-  return cookieStore.get("hackclub_token")?.value;
-}
-
-export async function clearAuthCookie() {
-  const cookieStore = await cookies();
-  cookieStore.delete("hackclub_token");
-}
-
-export async function getCurrentUser(): Promise<HackClubUser | null> {
-  const token = await getAuthCookie();
-  if (!token) return null;
+  if (!sessionCookie) {
+    return null;
+  }
 
   try {
-    return await getUser(token);
+    const session = JSON.parse(sessionCookie.value);
+    return session;
   } catch {
     return null;
   }
