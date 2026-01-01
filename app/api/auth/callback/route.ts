@@ -3,10 +3,23 @@ import { exchangeCodeForToken, getUserInfo } from "@/lib/auth";
 import { findUserByEmail, createUser, updateUser } from "@/lib/airtable";
 import { getSlackUserInfo } from "@/lib/slack";
 import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
+  const clientIp = getClientIp(request);
+  const rateLimitResult = rateLimit(`callback:${clientIp}`, {
+    windowMs: 60000,
+    maxRequests: 10,
+  });
+
+  if (!rateLimitResult.success) {
+    return NextResponse.redirect(new URL("/?error=rate_limited", request.url));
+  }
+
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get("code");
+  const returnedState = searchParams.get("state");
   const error = searchParams.get("error");
 
   if (error) {
@@ -17,21 +30,25 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/?error=no_code", request.url));
   }
 
+  // Validate OAuth state to prevent CSRF
+  const cookieStore = await cookies();
+  const storedState = cookieStore.get("oauth_state")?.value;
+  cookieStore.delete("oauth_state");
+
+  if (!returnedState || !storedState || returnedState !== storedState) {
+    return NextResponse.redirect(new URL("/?error=invalid_state", request.url));
+  }
+
   try {
     const tokenData = await exchangeCodeForToken(code);
     const response = await getUserInfo(tokenData.access_token);
     const userInfo = response.identity;
-    
-    console.log("Full response from Hack Club:", JSON.stringify(response, null, 2));
-    console.log("User info from Hack Club:", JSON.stringify(userInfo, null, 2));
 
     const email = userInfo.primary_email;
     const name = `${userInfo.first_name || ""} ${userInfo.last_name || ""}`.trim();
-    
+
     // Fetch Slack profile info if slack_id exists
-    console.log("Slack ID from Hack Club:", userInfo.slack_id);
     const slackInfo = userInfo.slack_id ? await getSlackUserInfo(userInfo.slack_id) : null;
-    console.log("Slack info:", slackInfo);
 
     const existingUser = await findUserByEmail(email);
 
@@ -55,23 +72,16 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const cookieStore = await cookies();
-    cookieStore.set("session", JSON.stringify({
-      email,
-      name,
-      accessToken: tokenData.access_token,
-    }), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-      path: "/",
-    });
+    // Use iron-session for secure, signed session
+    const session = await getSession();
+    session.email = email;
+    session.name = name;
+    session.isLoggedIn = true;
+    await session.save();
 
     return NextResponse.redirect(new URL("/portal", request.url));
   } catch (error) {
-    console.error("Auth callback error:", error);
-    const errorMessage = error instanceof Error ? error.message : "unknown";
-    return NextResponse.redirect(new URL(`/?error=${encodeURIComponent(errorMessage)}`, request.url));
+    console.error("Auth callback error:", error instanceof Error ? error.message : "unknown");
+    return NextResponse.redirect(new URL("/?error=auth_failed", request.url));
   }
 }
