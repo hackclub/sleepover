@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PortalSidebar from "../../components/PortalSidebar";
 import BunnyTile from "../../components/BunnyTile";
 import FeatherBalance from "../../components/FeatherBalance";
@@ -21,6 +21,14 @@ const shopItems: ShopItemData[] = [
 export default function ShopPage() {
   const userBalance = 0;
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   return (
     <div
@@ -31,30 +39,30 @@ export default function ShopPage() {
       <PortalSidebar onStateChange={setSidebarOpen} />
 
       <main
-        className="min-h-screen py-8 px-4 md:px-8 transition-all duration-300"
+        className="min-h-screen py-6 md:py-8 px-4 md:px-8 transition-all duration-300 pt-16 md:pt-8"
         style={{
-          marginLeft: sidebarOpen ? "clamp(320px, 25vw, 520px)" : "96px",
+          marginLeft: isMobile ? "0px" : sidebarOpen ? "clamp(320px, 25vw, 520px)" : "96px",
         }}
       >
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex-1" />
+          <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-4">
+            <div className="hidden md:block flex-1" />
             <h1
-              className="text-6xl md:text-8xl font-bold text-center bg-gradient-to-b from-[#7c95e6] to-[#91b0ed] bg-clip-text text-transparent drop-shadow-[0px_4px_4px_rgba(0,0,0,0.51)]"
+              className="text-5xl md:text-6xl lg:text-8xl font-bold text-center bg-gradient-to-b from-[#7c95e6] to-[#91b0ed] bg-clip-text text-transparent drop-shadow-[0px_4px_4px_rgba(0,0,0,0.51)]"
               style={{
                 fontFamily: "'MADE Tommy Soft', sans-serif",
-                WebkitTextStroke: "3px white",
+                WebkitTextStroke: isMobile ? "2px white" : "3px white",
               }}
             >
               Shop
             </h1>
-            <div className="flex-1 flex justify-end">
+            <div className="md:flex-1 flex justify-center md:justify-end">
               <FeatherBalance balance={userBalance} />
             </div>
           </div>
 
           <p
-            className="text-[#6c6ea0] text-xl md:text-2xl font-bold text-center mb-8 drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
+            className="text-[#6c6ea0] text-lg md:text-xl lg:text-2xl font-bold text-center mb-6 md:mb-8 drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
             style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
           >
             redeem your feathers for prizes here!
@@ -63,9 +71,12 @@ export default function ShopPage() {
           <div
             className={`
               grid gap-4 md:gap-6 transition-all duration-300
-              ${sidebarOpen 
-                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" 
-                : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
+              grid-cols-2
+              ${isMobile 
+                ? "grid-cols-2" 
+                : sidebarOpen 
+                  ? "sm:grid-cols-2 lg:grid-cols-3" 
+                  : "sm:grid-cols-3 lg:grid-cols-4"
               }
             `}
           >

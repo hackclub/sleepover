@@ -14,7 +14,7 @@ export default function Home() {
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
-      router.push(`/signup?email=${encodeURIComponent(email)}`);
+      router.push("/api/auth/login");
     }
   };
   return (
