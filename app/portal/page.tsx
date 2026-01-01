@@ -69,7 +69,7 @@ export default function FAQPage() {
               className="flex flex-col gap-6"
               style={{ width: "clamp(240px, 28%, 300px)" }}
             >
-              {/* Small box #1 */}
+              {/* Small box #1  dont touch top*/}
               <div
                 className="rounded-[30px] overflow-hidden"
                 style={{
@@ -82,7 +82,7 @@ export default function FAQPage() {
                   style={{
                     height: "66px",
                     background: "linear-gradient(180deg, #FFF2D4 0%, #FFE8B2 100%)",
-                    boxShadow: "0px 4px 0px #C6C7E4",
+                    boxShadow: "0px 2px 0px #9799b63a",
                   }}
                 />
                 <div style={{ height: "calc(100% - 66px)" }} />
@@ -101,7 +101,7 @@ export default function FAQPage() {
                   style={{
                     height: "58px",
                     background: "linear-gradient(180deg, #FFF2D4 0%, #FFE8B2 100%)",
-                    boxShadow: "0px 4px 0px #C6C7E4",
+                    boxShadow: "0px 2px 0px #9799b63a",
                   }}
                 />
                 <div style={{ height: "calc(100% - 58px)" }} />
@@ -123,88 +123,52 @@ export default function FAQPage() {
                   style={{
                     height: "96px",
                     background: "linear-gradient(180deg, #FFE5E8 0%, #EBC0CC 100%)",
-                    boxShadow: "0px 4px 0px #C6C7E4",
+                    boxShadow: "0px 2px 0px #c1c3e891",
                   }}
                 >
-                  {/* Left: Label "Your Projects" (layered outline + clipped text) */}
-                  <h2 className="relative font-bold leading-[normal] m-0" aria-label="Your Projects" style={{ fontSize: "24px", display: "inline-block" }}>
-                    {/* White stroke layer behind */}
-                    <span
-                      className="absolute inset-0 pointer-events-none"
-                      style={{
-                        fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-                        color: "#FFFFFF",
-                        WebkitTextStroke: "2px",
-                        zIndex: 0,
-                       
-                      }}
-                    >
-                      Your Projects
-                    </span>
-                    {/* Clipped text on top, keeping color scheme */}
-                    <span
-                      className="relative"
-                      style={{
-                        fontFamily: "'MADE Tommy Soft', sans-serif",
-                        background: "linear-gradient(180deg, #6C6EA0 0%, #6C6EA0 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text",
-                        fontWeight: 700,
-                        zIndex: 1,
-                      }}
-                    >
-                      Your Projects
-                    </span>
+                  {/* Left: Label "Your Projects" */}
+                  <h2
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      fontSize: "24px",
+                      fontWeight: 700,
+                      color: "#6C6EA0",
+                      textShadow: "0px 2px 2px rgba(108, 110, 160, 0.6)",
+                      margin: 0,
+                    }}
+                  >
+                    Your Projects
                   </h2>
 
                   {/* Right: "new project +" group (node 115:1855) */}
-                  <div className="flex items-center gap-3 select-none">
-                    <h3
-                      className="relative font-bold leading-[normal] m-0"
-                      aria-label="new project"
-                      style={{ fontSize: "24px", display: "inline-block" }}
-                    >
-                      {/* White stroke layer behind */}
-                      <span
-                        className="absolute inset-0 pointer-events-none"
-                        style={{
-                          fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-                          color: "#FFFFFF",
-                          WebkitTextStroke: "4px",
-                          filter: "drop-shadow(0px 2px 0px #C6C7E4)",
-                          zIndex: 0,
-                        }}
-                      >
-                        new project
-                      </span>
-                      {/* Gradient text on top */}
-                      <span
-                        className="relative"
-                        style={{
-                          fontFamily: "'MADE Tommy Soft', sans-serif",
-                          background:
-                            "linear-gradient(180deg, #93B4F2 0%, #8FA8F0 100%)",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                          backgroundClip: "text",
-                          fontWeight: 700,
-                          zIndex: 1,
-                        }}
-                      >
-                        new project
-                      </span>
-                    </h3>
+                  <div
+                    className="flex items-center gap-2 select-none cursor-pointer"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      fontWeight: 700,
+                      textShadow: "0px 2px 0px #7472a0",
+                    }}
+                  >
                     <span
-                      className="leading-[32px]"
                       style={{
-                        fontFamily: "'MADE Tommy Soft', sans-serif",
-                        fontSize: "72px",
+                        fontSize: "24px",
                         background: "linear-gradient(180deg, #93B4F2 0%, #8FA8F0 100%)",
                         WebkitBackgroundClip: "text",
                         WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
                       }}
-                      aria-hidden
+                    >
+                      new project
+                    </span>
+                    <span
+                      style={{
+                        fontSize: "48px",
+                        lineHeight: "32px",
+                        background: "linear-gradient(180deg, #93B4F2 0%, #8FA8F0 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                      }}
                     >
                       +
                     </span>
