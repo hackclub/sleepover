@@ -5,10 +5,11 @@ import PortalSidebar from "../../components/PortalSidebar";
 import BunnyTile from "../../components/BunnyTile";
 import FeatherBalance from "../../components/FeatherBalance";
 import ShopItem, { ShopItemData } from "../../components/ShopItem";
+import { getCurrency } from "@/lib/airtable";
 
 const shopItems: ShopItemData[] = [
-  { id: "1", name: "super cool prize", price: 67, variant: "pink", image: "/prizes/airpods_pro.png" },
-  { id: "2", name: "super cool prize", price: 67, variant: "purple", image: "/prizes/meta_quest.png" },
+  { id: "recyfdI3BuZe4UPR6", name: "digital camera", price: 100, variant: "pink", image: "/prizes/airpods_pro.png" },
+  { id: "recFgmdWTQRdkJKYa", name: "airpods", price: 67, variant: "purple", image: "/prizes/meta_quest.png" },
   { id: "3", name: "super cool prize", price: 67, variant: "pink", image: "/prizes/digital_camera.png" },
   { id: "4", name: "super cool prize", price: 67, variant: "pink" },
   { id: "5", name: "super cool prize", price: 67, variant: "purple" },
@@ -19,9 +20,18 @@ const shopItems: ShopItemData[] = [
 ];
 
 export default function ShopPage() {
-  const userBalance = 0;
+  const [userBalance, setUserBalance] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/user/currency")
+      .then((res) => res.json())
+      .then((data) => {
+        setUserBalance(data.balance);
+      })
+      .catch(console.error);
+  }, []);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -81,7 +91,7 @@ export default function ShopPage() {
             `}
           >
             {shopItems.map((item) => (
-              <ShopItem key={item.id} item={item} />
+              <ShopItem key={item.id} item={item} canbuy = {userBalance>item.price ? true : false} />
             ))}
           </div>
         </div>

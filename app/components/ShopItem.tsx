@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export interface ShopItemData {
   id: string;
@@ -6,13 +7,15 @@ export interface ShopItemData {
   price: number;
   image?: string;
   variant: "pink" | "purple";
+
 }
 
 interface ShopItemProps {
   item: ShopItemData;
+  canbuy: Boolean;
 }
 
-export default function ShopItem({ item }: ShopItemProps) {
+export default function ShopItem({ item, canbuy }: ShopItemProps) {
   const isPink = item.variant === "pink";
 
   const cardGradient = isPink
@@ -22,6 +25,14 @@ export default function ShopItem({ item }: ShopItemProps) {
   const innerGradient = isPink
     ? "from-[#dfa2ad] to-[#ebc0cc]"
     : "from-[#a8aaeb] to-[#ebe4fa]";
+
+  var button = <span>hello</span>
+
+  if (canbuy==true) {
+    button = <span><Link href={`/portal/forms/order/${item.id}`}>Order</Link></span>
+  } else {
+    button = <span>Not Enough Currency</span>
+  }
 
   return (
     <div
@@ -79,6 +90,7 @@ export default function ShopItem({ item }: ShopItemProps) {
         >
           {item.price}
         </span>
+        {button}
       </div>
     </div>
   );

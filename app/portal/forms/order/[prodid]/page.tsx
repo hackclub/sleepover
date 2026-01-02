@@ -5,21 +5,17 @@ import { orderProduct } from "@/app/forms/actions/orderProduct";
 import { useParams } from 'next/navigation';
 
 export default function OrderForm() {
-  const id = useParams().prodid
+  const name = String(useParams().prodid)
 
   return (
     <form
-      action={async (formData) => { const res = await orderProduct(formData) }}
+      action={async (formData) => { const res = await orderProduct(formData, name) }}
       className="space-y-3"
     >
-      <h3>this is ordering product {id}</h3>
-      <div>
-        <label className="block">Something</label>
-        <input name="name" required className="border p-2 w-full" />
-      </div>
+      <h3>this is ordering product {name}</h3>
 
       <button type="submit" className="border px-3 py-2">
-        Ship!
+        Order!
       </button>
     </form>
   )
