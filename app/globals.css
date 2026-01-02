@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "MADE Tommy Soft";
+  src: url("/fonts/MADE Tommy Soft Bold PERSONAL USE.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "MADE Tommy Soft";
+  src: url("/fonts/MADE Tommy Soft Regular PERSONAL USE.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+
 :root {
   --background: #D9DAF8;
   --foreground: #171717;

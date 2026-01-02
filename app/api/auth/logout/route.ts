@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
 
-export async function GET(request: Request) {
-  const cookieStore = await cookies();
-  cookieStore.delete("session");
+export async function POST() {
+  const session = await getSession();
+  session.destroy();
 
-  return NextResponse.redirect(new URL("/", request.url));
+  return NextResponse.json({ success: true });
+}
+
+export async function GET() {
+  return NextResponse.json(
+    { error: "Use POST method for logout" },
+    { status: 405 }
+  );
 }

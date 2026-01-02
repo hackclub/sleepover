@@ -71,10 +71,15 @@ export interface UserRecord {
   created_at: string;
 }
 
+function escapeFormulaString(value: string): string {
+  return value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+}
+
 export async function findUserByEmail(email: string) {
+  const safeEmail = escapeFormulaString(email);
   const records = await getUsersTable()
     .select({
-      filterByFormula: `{email} = '${email}'`,
+      filterByFormula: `{email} = '${safeEmail}'`,
       maxRecords: 1,
     })
     .firstPage();
@@ -83,7 +88,7 @@ export async function findUserByEmail(email: string) {
 }
 
 export async function createUser(user: Omit<UserRecord, "created_at">) {
-  const record = await getUsersTable().create({
+  const fields: Record<string, string> = {
     id: user.id,
     email: user.email,
     name: user.name || "",
@@ -91,9 +96,10 @@ export async function createUser(user: Omit<UserRecord, "created_at">) {
     slack_display_name: user.slack_display_name || "",
     slack_avatar_url: user.slack_avatar_url || "",
     verification_status: user.verification_status || "",
-    created_at: new Date(),
-  });
+    created_at: new Date().toISOString(),
+  };
 
+  const record = await getUsersTable().create(fields);
   return record;
 }
 
