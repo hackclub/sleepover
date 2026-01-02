@@ -16,6 +16,50 @@ function getUsersTable() {
   return getBase()(process.env.AIRTABLE_TABLE_NAME || "Users");
 }
 
+export function getProjectsTable() {
+  return getBase()("projects");
+}
+
+export async function getSingularProject(userid: string, name: string) {
+  console.log("userid =", userid)
+  console.log("name =", name)
+  const record = await getProjectsTable()
+    .select({
+      filterByFormula: `AND({id} = '${userid}', {name} = '${name}')`,
+      view: "Grid view",
+    })
+    .firstPage();
+
+  return record[0];
+}
+
+export function updateProjectHours(projectid: string, hours: number) {
+  getProjectsTable().update([
+    {
+      "id": "rectGC2kZkYk1t3L7",
+      "fields": {
+        "hours": hours
+      }
+    }])
+}
+
+export async function getUsersProjects(userid: string) {
+  const records = await getProjectsTable()
+  .select({
+    filterByFormula: `{id} = '${userid}'`,
+    view: "Grid view"
+}).all()
+
+  const projects = records.map((r) => ({
+    id: r.id,
+    name: r.get("Name") as string,
+    desc: r.get("Description") as string,
+  }));
+
+  console.log("projects =", projects)
+  return projects || [];
+}
+
 export interface UserRecord {
   id: string;
   email: string;
