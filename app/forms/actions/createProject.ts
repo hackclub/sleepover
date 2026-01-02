@@ -24,8 +24,8 @@ export async function createProject(formData: FormData) {
   const table = await getProjectsTable()
   const record = await table.create({
     id: id,
-    Name: name,
-    Description: desc,
+    name: name,
+    desc: desc,
   })
 
   console.log("record =", record)

@@ -52,11 +52,10 @@ export async function getUsersProjects(userid: string) {
 
   const projects = records.map((r) => ({
     id: r.id,
-    name: r.get("Name") as string,
-    desc: r.get("Description") as string,
+    name: r.get("name") as string,
+    desc: r.get("description") as string,
   }));
 
-  console.log("projects =", projects)
   return projects || [];
 }
 

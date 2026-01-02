@@ -1,6 +1,6 @@
 "use client"
 
-import { createProject } from "../forms/actions/createProject"
+import { createProject } from "@/app/forms/actions/createProject"
 
 export default function ProjectForm() {
   return (
