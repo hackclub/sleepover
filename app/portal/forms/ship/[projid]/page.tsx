@@ -5,11 +5,11 @@ import { shipProject } from "@/app/forms/actions/shipProject"
 import { useParams } from 'next/navigation';
 
 export default function ShipForm() {
-  const id = useParams().projid
+  const id = String(useParams().projid)
 
   return (
     <form
-      action={async (formData) => { const res = await shipProject(formData) }}
+      action={async (formData) => { const res = await shipProject(formData, id) }}
       className="space-y-3"
     >
       <h3>this is shipping project {id}</h3>

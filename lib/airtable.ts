@@ -39,7 +39,7 @@ export async function getSingularProject(userid: string, name: string) {
   console.log("name =", name)
   const record = await getProjectsTable()
     .select({
-      filterByFormula: `AND({id} = '${userid}', {name} = '${name}')`,
+      filterByFormula: `AND({userid} = '${userid}', {name} = '${name}')`,
       view: "Grid view",
     })
     .firstPage();
@@ -50,7 +50,7 @@ export async function getSingularProject(userid: string, name: string) {
 export function updateProjectHours(projectid: string, hours: number) {
   getProjectsTable().update([
     {
-      "id": "rectGC2kZkYk1t3L7",
+      "id": projectid,
       "fields": {
         "hours": hours
       }
@@ -60,7 +60,7 @@ export function updateProjectHours(projectid: string, hours: number) {
 export async function getUsersProjects(userid: string) {
   const records = await getProjectsTable()
   .select({
-    filterByFormula: `{id} = '${userid}'`,
+    filterByFormula: `{userid} = '${userid}'`,
     view: "Grid view"
 }).all()
 
@@ -201,4 +201,14 @@ export async function addFulfillment(userid: string, product: string) {
   ]);
 
   return records[0];
+}
+
+export function shipProjectTable(projectid: string) {
+  getProjectsTable().update([
+    {
+      "id": projectid,
+      "fields": {
+        "status": "Shipped"
+      }
+    }])
 }
