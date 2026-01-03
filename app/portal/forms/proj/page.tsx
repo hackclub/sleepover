@@ -1,11 +1,9 @@
-"use client"
-
 import { createProject } from "@/app/forms/actions/createProject"
 
 export default function ProjectForm() {
   return (
     <form
-      action={async (formData) => { const res = await createProject(formData) }}
+      action={createProject}
       className="space-y-3"
     >
       <div>
