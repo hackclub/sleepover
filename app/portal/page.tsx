@@ -62,15 +62,18 @@ export default function PortalPage() {
       className="font-sans min-h-screen relative"
       style={{ backgroundColor: "#C0DEFE" }}
     >
-      <BunnyTile />
-      <PortalSidebar onStateChange={setIsSidebarOpen} />
+      {/* Disable interactions when onboarding is showing */}
+      <div className={showOnboarding ? "pointer-events-none" : ""}>
+        <BunnyTile />
+        <PortalSidebar onStateChange={setIsSidebarOpen} />
+      </div>
 
       {showOnboarding && (
         <OnboardingNovel onComplete={handleOnboardingComplete} userName={userName} />
       )}
 
       <main
-        className="relative z-10 transition-[margin-left] duration-300 p-4 md:p-8 lg:p-12 pt-16 md:pt-8 flex flex-col items-center"
+        className={`relative z-10 transition-[margin-left] duration-300 p-4 md:p-8 lg:p-12 pt-16 md:pt-8 flex flex-col items-center ${showOnboarding ? "pointer-events-none" : ""}`}
         style={{ 
           marginLeft: contentOffset, 
           marginRight: isMobile ? "0px" : "32px" 

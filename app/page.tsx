@@ -264,35 +264,34 @@ export default function Home() {
           ready?
         </span>
       </div>
+   <div className="relative w-full mt-4 flex justify-center px-4">
+  {/* Outline */}
+  <h2
+    className="absolute inset-0 flex items-center justify-center text-center font-medium text-[18px] sm:text-[32px] md:text-[48px] lg:text-[64px] leading-[1.2]"
+    style={{
+      fontFamily: "'MADE Tommy Soft', sans-serif",
+      WebkitTextStroke: "6px #FFFFFF",
+      color: "transparent",
+      textShadow: "0px 4px 4px rgba(0,0,0,0.25)",
+    }}
+  >
+    LET&apos;S HAVE AN AWESOME SLEEPOVER!!
+  </h2>
 
-      {/* LET'S HAVE AN AWESOME SLEEPOVER!! text */}
-      <div className="relative w-full mt-4 flex justify-center px-4">
-        {/* White outline layer */}
-        <h2
-          className="absolute text-center font-medium text-[18px] sm:text-[32px] md:text-[48px] lg:text-[64px] leading-[1.2]"
-          style={{
-            fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-            color: "#FFFFFF",
-            WebkitTextStroke: "6px #FFFFFF",
-            textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
-          }}
-        >
-          LET&apos;S HAVE AN AWESOME SLEEPOVER!!
-        </h2>
-        {/* Gradient fill layer */}
-        <h2
-          className="relative text-center font-medium text-[18px] sm:text-[32px] md:text-[48px] lg:text-[64px] leading-[1.2]"
-          style={{
-            fontFamily: "'MADE Tommy Soft', sans-serif",
-            background: "linear-gradient(180deg, #6A78B9 40.62%, #797FB9 47.22%, #8E89B9 56.39%, #9A8EB9 64.27%, #A091B9 70.87%, #AB96B9 75.27%, #B39AB9 78.75%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          }}
-        >
-          LET&apos;S HAVE AN AWESOME SLEEPOVER!!
-        </h2>
-      </div>
+  {/* Fill */}
+  <h2
+    className="relative text-center font-medium text-[18px] sm:text-[32px] md:text-[48px] lg:text-[64px] leading-[1.2]"
+    style={{
+      fontFamily: "'MADE Tommy Soft', sans-serif",
+      background:
+        "linear-gradient(180deg, #6A78B9 40%, #B39AB9 80%)",
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor: "transparent",
+    }}
+  >
+    LET&apos;S HAVE AN AWESOME SLEEPOVER!!
+  </h2>
+</div>
 
       {/* Sign Up & FAQ Buttons */}
       <div className="w-full mt-8 sm:mt-12 flex items-center justify-center gap-4 sm:gap-8 flex-wrap px-4">
