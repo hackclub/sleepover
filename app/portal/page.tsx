@@ -6,14 +6,15 @@ import BunnyTile from "../components/BunnyTile";
 import CountdownProgressBar from "../components/CountdownProgressBar";
 import OnboardingNovel from "../components/OnboardingNovel";
 import ProjectList from "../components/ProjectList";
-import Link from "next/link";
+import NewProjectModal from "../components/NewProjectModal";
 
 export default function PortalPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [userName, setUserName] = useState<string>("");
   const [isMobile, setIsMobile] = useState(false);
-  const [userProjects, setProjects] = useState<any[]>([]);
+  const [userProjects, setProjects] = useState<any[] | null>(null);
+  const [showNewProjectModal, setShowNewProjectModal] = useState(false);
 
   useEffect(() => {
     fetch("/api/projects")
@@ -71,6 +72,11 @@ export default function PortalPage() {
       {showOnboarding && (
         <OnboardingNovel onComplete={handleOnboardingComplete} userName={userName} />
       )}
+
+      <NewProjectModal
+        isOpen={showNewProjectModal}
+        onClose={() => setShowNewProjectModal(false)}
+      />
 
       <main
         className={`relative z-10 transition-[margin-left] duration-300 p-4 md:p-8 lg:p-12 pt-16 md:pt-8 flex flex-col items-center ${showOnboarding ? "pointer-events-none" : ""}`}
@@ -186,58 +192,129 @@ export default function PortalPage() {
                 >
                   {/* Left: Label "Your Projects" */}
                   <h2
+                    className="relative font-bold"
                     style={{
-                      fontFamily: "'MADE Tommy Soft', sans-serif",
                       fontSize: isMobile ? "18px" : "24px",
-                      fontWeight: 700,
-                      color: "#6C6EA0",
-                      textShadow: "0px 2px 2px rgba(108, 110, 160, 0.6)",
                       margin: 0,
                     }}
                   >
-                    Your Projects
+                    {/* White stroke layer behind */}
+                    <span
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        fontFamily: "'MADE Tommy Soft Outline', sans-serif",
+                        color: "#FFFFFF",
+                        WebkitTextStroke: "4px",
+                        filter:
+                          "drop-shadow(0px 2px 0px #C6C7E4) drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.2))",
+                      }}
+                    >
+                      Your Projects
+                    </span>
+                    {/* Gradient text on top */}
+                    <span
+                      className="relative"
+                      style={{
+                        fontFamily: "'MADE Tommy Soft', sans-serif",
+                        background: "linear-gradient(180deg, #9A9EF7 0%, #6C6EA0 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                      }}
+                    >
+                      Your Projects
+                    </span>
                   </h2>
 
                   {/* Right: "new project +" group */}
-                  <Link
-          href="/portal/forms/proj"
-        ><div
+                  <button
+                    onClick={() => setShowNewProjectModal(true)}
                     className="flex items-center gap-1 md:gap-2 select-none cursor-pointer"
                     style={{
-                      fontFamily: "'MADE Tommy Soft', sans-serif",
                       fontWeight: 700,
-                      textShadow: "0px 2px 0px #7472a0",
                     }}
                   >
+                    {/* "new project" text */}
                     <span
-                      style={{
-                        fontSize: isMobile ? "16px" : "24px",
-                        background: "linear-gradient(180deg, #93B4F2 0%, #8FA8F0 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text",
-                      }}
+                      className="relative"
+                      style={{ fontSize: isMobile ? "16px" : "24px" }}
                     >
-                      new project
+                      {/* White stroke layer behind */}
+                      <span
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                          fontFamily: "'MADE Tommy Soft Outline', sans-serif",
+                          color: "#FFFFFF",
+                          WebkitTextStroke: "4px",
+                          filter:
+                            "drop-shadow(0px 2px 0px #C6C7E4) drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.2))",
+                        }}
+                      >
+                        new project
+                      </span>
+                      {/* Gradient text on top */}
+                      <span
+                        className="relative"
+                        style={{
+                          fontFamily: "'MADE Tommy Soft', sans-serif",
+                          background: "linear-gradient(180deg, #93B4F2 0%, #8FA8F0 100%)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          backgroundClip: "text",
+                        }}
+                      >
+                        new project
+                      </span>
                     </span>
+                    {/* "+" text */}
                     <span
+                      className="relative"
                       style={{
                         fontSize: isMobile ? "32px" : "48px",
                         lineHeight: "32px",
-                        background: "linear-gradient(180deg, #93B4F2 0%, #8FA8F0 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text",
                       }}
                     >
-                      +
+                      {/* White stroke layer behind */}
+                      <span
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                          fontFamily: "'MADE Tommy Soft Outline', sans-serif",
+                          color: "#FFFFFF",
+                          WebkitTextStroke: "6px",
+                          filter:
+                            "drop-shadow(0px 2px 0px #C6C7E4) drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.2))",
+                        }}
+                      >
+                        +
+                      </span>
+                      {/* Gradient text on top */}
+                      <span
+                        className="relative"
+                        style={{
+                          fontFamily: "'MADE Tommy Soft', sans-serif",
+                          background: "linear-gradient(180deg, #93B4F2 0%, #8FA8F0 100%)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          backgroundClip: "text",
+                        }}
+                      >
+                        +
+                      </span>
                     </span>
-                  </div></Link>
+                  </button>
                 </div>
                 <div style={{ height: isMobile ? "calc(100% - 70px)" : "calc(100% - 96px)" }} />
-                <ul>
-                <ProjectList projects={userProjects}/>
-                </ul>
+                {userProjects === null ? (
+                  <div className="flex items-center justify-center py-8">
+                    <span style={{ fontFamily: "'MADE Tommy Soft', sans-serif", color: "#6C6EA0" }}>
+                      Loading...
+                    </span>
+                  </div>
+                ) : (
+                  <ul>
+                    <ProjectList projects={userProjects}/>
+                  </ul>
+                )}
               </div>
             </div>
           </div>

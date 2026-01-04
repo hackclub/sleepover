@@ -5,33 +5,45 @@ import PortalSidebar from "../../components/PortalSidebar";
 import BunnyTile from "../../components/BunnyTile";
 import FeatherBalance from "../../components/FeatherBalance";
 import ShopItem, { ShopItemData } from "../../components/ShopItem";
-import { getCurrency } from "@/lib/airtable";
-
-const shopItems: ShopItemData[] = [
-  { id: "recyfdI3BuZe4UPR6", name: "digital camera", price: 100, variant: "pink", image: "/prizes/airpods_pro.png" },
-  { id: "recFgmdWTQRdkJKYa", name: "airpods", price: 67, variant: "purple", image: "/prizes/meta_quest.png" },
-  { id: "3", name: "super cool prize", price: 67, variant: "pink", image: "/prizes/digital_camera.png" },
-  { id: "4", name: "super cool prize", price: 67, variant: "pink" },
-  { id: "5", name: "super cool prize", price: 67, variant: "purple" },
-  { id: "6", name: "super cool prize", price: 67, variant: "pink" },
-  { id: "7", name: "super cool prize", price: 67, variant: "purple" },
-  { id: "8", name: "super cool prize", price: 67, variant: "pink" },
-  { id: "9", name: "super cool prize", price: 67, variant: "purple" },
-];
 
 export default function ShopPage() {
-  const [userBalance, setUserBalance] = useState(0)
+  const [userBalance, setUserBalance] = useState(0);
+  const [shopItems, setShopItems] = useState<ShopItemData[]>([]);
+  const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [colCount, setColCount] = useState(2);
 
   useEffect(() => {
     fetch("/api/user/currency")
       .then((res) => res.json())
+      .then((data) => setUserBalance(data.balance))
+      .catch(console.error);
+
+    fetch("/api/shop")
+      .then((res) => res.json())
       .then((data) => {
-        setUserBalance(data.balance);
+        setShopItems(data.items);
+        setLoading(false);
       })
       .catch(console.error);
   }, []);
+
+  useEffect(() => {
+    const updateColCount = () => {
+      const width = window.innerWidth;
+      if (isMobile) {
+        setColCount(2);
+      } else if (sidebarOpen) {
+        setColCount(width >= 1024 ? 3 : 2);
+      } else {
+        setColCount(width >= 1024 ? 4 : 3);
+      }
+    };
+    updateColCount();
+    window.addEventListener("resize", updateColCount);
+    return () => window.removeEventListener("resize", updateColCount);
+  }, [isMobile, sidebarOpen]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -90,9 +102,28 @@ export default function ShopPage() {
               }
             `}
           >
-            {shopItems.map((item) => (
-              <ShopItem key={item.id} item={item} canbuy = {userBalance>item.price ? true : false} />
-            ))}
+            {loading ? (
+              <p
+                className="col-span-full text-center text-[#6c6ea0] text-xl font-bold"
+                style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+              >
+                Loading shop...
+              </p>
+            ) : (
+              shopItems.map((item, index) => {
+                const row = Math.floor(index / colCount);
+                const col = index % colCount;
+                const variant = (row + col) % 2 === 0 ? "pink" : "purple";
+                return (
+                  <ShopItem
+                    key={item.id}
+                    item={item}
+                    canBuy={userBalance >= item.price}
+                    variant={variant}
+                  />
+                );
+              })
+            )}
           </div>
         </div>
       </main>
