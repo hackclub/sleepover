@@ -99,7 +99,7 @@ export default function ShopItem({ item, canBuy, variant }: ShopItemProps) {
 
       {item.availability && (
         <p
-          className="text-[#9AC6F6] text-lg font-bold text-center mt-1"
+          className="text-[#6C6EA0] text-lg font-bold text-center mt-1"
           style={{ 
             fontFamily: "'MADE Tommy Soft', sans-serif",
           }}
