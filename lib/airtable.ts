@@ -132,7 +132,7 @@ export async function getCurrency(userid: string) {
     })
     .firstPage();
 
-    return records[0].get("currency")
+    return records[0]?.get("currency") ?? 0
 }
 
 export async function addProduct(userid: string, product: string) {
