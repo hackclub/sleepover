@@ -34,6 +34,10 @@ export function getShopTable() {
   return getBase()("user_shop_info");
 }
 
+function getReviewTable() {
+  return getBase()("REVIEW");
+}
+
 export async function getSingularProject(userid: string, name: string) {
   console.log("userid =", userid)
   console.log("name =", name)
@@ -222,7 +226,8 @@ export async function addFulfillment(userid: string, product: string) {
   return records[0];
 }
 
-export function shipProjectTable(projectid: string) {
+export async function shipProjectTable(projectid: string) {
+  
   getProjectsTable().update([
     {
       "id": projectid,
@@ -230,6 +235,39 @@ export function shipProjectTable(projectid: string) {
         "status": "Shipped"
       }
     }])
+
+    const record = await getProjectsTable()
+    .select({
+      filterByFormula: `{id} = '${projectid}'`,
+      maxRecords: 1,
+    })
+    .firstPage();
+    
+    const project = record[0]
+
+    console.log(projectid)
+    const userid = await project.get("userid")
+    var userrecord = ""
+
+    if (userid) {
+      userrecord = (await getUsersTable()
+      .select({
+        filterByFormula: `{id} = '${userid}'`,
+        maxRecords: 1,
+      })
+      .firstPage())[0].getId();
+    }
+
+    console.log(userrecord)
+
+    const fields: Record<any, any> = {
+      project: [projectid],
+      user: [userrecord],
+      status: "Unreviewed",
+    };
+  
+    const review = await getReviewTable().create(fields);
+    return review
 }
 
 export async function getProgressHours(userid: string) {
