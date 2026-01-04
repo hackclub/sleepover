@@ -54,12 +54,23 @@ export default function OrderProductPage() {
 
   if (loading) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{
-          background: "linear-gradient(to bottom, #e6a4ab, #ffe2ea)",
-        }}
-      >
+      <div className="min-h-screen relative overflow-hidden flex items-center justify-center">
+        {/* Pink gradient background */}
+        <div
+          className="fixed inset-0 -z-20"
+          style={{
+            background: "linear-gradient(to bottom, #e6a4ab, #ffe2ea)",
+          }}
+        />
+        {/* Bunny tile pattern overlay */}
+        <div
+          className="fixed inset-0 -z-10 opacity-20"
+          style={{
+            backgroundImage: "url('/background/bunny-tile.png')",
+            backgroundRepeat: "repeat",
+            backgroundSize: "210px",
+          }}
+        />
         <p
           className="text-[#7472a0] text-2xl font-bold"
           style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}

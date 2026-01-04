@@ -303,18 +303,17 @@ export default function PortalPage() {
                     </span>
                   </button>
                 </div>
-                <div style={{ height: isMobile ? "calc(100% - 70px)" : "calc(100% - 96px)" }} />
-                {userProjects === null ? (
-                  <div className="flex items-center justify-center py-8">
-                    <span style={{ fontFamily: "'MADE Tommy Soft', sans-serif", color: "#6C6EA0" }}>
-                      Loading...
-                    </span>
-                  </div>
-                ) : (
-                  <ul>
+                <div className="overflow-y-auto" style={{ maxHeight: isMobile ? "calc(100% - 70px)" : "calc(100% - 96px)" }}>
+                  {userProjects === null ? (
+                    <div className="flex items-center justify-center py-8">
+                      <span style={{ fontFamily: "'MADE Tommy Soft', sans-serif", color: "#6C6EA0" }}>
+                        Loading...
+                      </span>
+                    </div>
+                  ) : (
                     <ProjectList projects={userProjects}/>
-                  </ul>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>
