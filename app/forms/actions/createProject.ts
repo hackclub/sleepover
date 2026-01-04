@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 export async function createProject(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim()
   const desc = String(formData.get("desc") ?? "").trim()
+  const project = String(formData.get("project") ?? "").trim()
 
   const { cookies } = await import("next/headers");
     const cookieStore = await cookies();
@@ -26,6 +27,7 @@ export async function createProject(formData: FormData) {
     userid: id,
     name: name,
     desc: desc,
+    hackatime_name: project
   })
 
   console.log("record =", record)

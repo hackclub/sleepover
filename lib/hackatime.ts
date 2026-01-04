@@ -11,3 +11,30 @@ export async function getUserStats(slack_id: string) {
 
   return response.json();
 }
+
+export async function getHackProjects(slack_id: string) {
+  const data = await getUserStats(slack_id);
+  const projects = data.data.projects;
+
+  var name_list: String[] = []
+
+  for (const project of projects) {
+    name_list.push(project.name)
+  }
+
+  return name_list
+}
+
+export async function getProjectHours(slack_id: string, name: string) {
+  const data = await getUserStats(slack_id);
+  const projects = data.data.projects;
+
+  for (const project of projects) {
+    if (project.name==name) {
+      const hours = project.hours
+      const minutes = project.minutes
+      return hours + (minutes/60)
+    }
+  }
+  return 0
+}

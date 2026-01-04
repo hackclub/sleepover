@@ -1,7 +1,8 @@
 import { getSingularProject, getUsersProjects, updateProjectHours } from "@/lib/airtable";
 import { getUserInfo } from "@/lib/auth";
-import { getUserStats } from "@/lib/hackatime";
+import { getHackProjects, getProjectHours, getUserStats } from "@/lib/hackatime";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 
 export async function GET() {
@@ -14,22 +15,23 @@ export async function GET() {
     const accessToken = JSON.parse(value).accessToken;
   
     const userinfo = await getUserInfo(accessToken);
-    const slackId = userinfo.identity.slack_id;
-  
-    const data = await getUserStats(slackId);
-    const projects = data.data.projects;
+    const id = userinfo.identity.id;
+    const slack_id = userinfo.identity.slack_id;
 
-    console.log(await getUsersProjects(userinfo.identity.id))
-  
+    const projects = await getUsersProjects(id)
+    console.log("projects =", projects)
+
     for (const project of projects) {
+      console.log(project)
       const found = await getSingularProject(
         userinfo.identity.id,
         project.name
       );
-      console.log(project)
-    if (found) {
-        console.log(`updated ${project.name} to have ${project.hours} from ${found.get("hours")}`)
-        updateProjectHours(found.id, project.hours)
+
+      updateProjectHours(found.id, await getProjectHours(slack_id, project.hackatime_name))
     }
-    }
+
+    return NextResponse.json(
+        "good"
+      );
   }

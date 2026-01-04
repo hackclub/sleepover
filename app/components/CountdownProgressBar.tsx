@@ -1,10 +1,32 @@
+import { useEffect, useState } from "react";
+
 type CountdownProgressBarProps = {
   isSidebarOpen?: boolean;
 };
 
 export default function CountdownProgressBar({ isSidebarOpen = true }: CountdownProgressBarProps) {
-  const timeLeft = "15 hours left until Sleepover!";
-  const progress = 50;
+  const [hours, setHours] = useState(0);
+
+  useEffect(() => {
+      fetch("/api/user/hours")
+        .then((res) => res.json())
+        .then((data) => {
+          setHours(data.hours);
+        })
+        .catch(console.error);
+    }, []);
+
+  var timeLeft = ""
+  var progress = 50
+
+  if (hours>=30) {
+    timeLeft = "Congrats! You have earned enough hours for Sleepover!"
+    progress = 100
+  } else {
+    const hoursLeft = (30 - hours)
+    progress = 100*(hours/30)
+    timeLeft = `Congrats! You have ${hoursLeft} to qualify for Sleepover!`
+  }
 
   return (
     <div

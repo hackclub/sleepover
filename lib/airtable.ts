@@ -68,6 +68,7 @@ export async function getUsersProjects(userid: string) {
     id: r.id,
     name: r.get("name") as string,
     desc: r.get("description") as string,
+    hackatime_name: r.get("hackatime_name") as string,
   }));
 
   return projects || [];
@@ -211,4 +212,17 @@ export function shipProjectTable(projectid: string) {
         "status": "Shipped"
       }
     }])
+}
+
+export async function getProgressHours(userid: string) {
+  const user = await getShopTable().select({
+    filterByFormula: `{id} = '${userid}'`,
+    maxRecords: 1,
+  })
+  .firstPage();
+
+  console.log(userid)
+  console.log(user)
+
+  return user[0].get("hours_shipped")
 }
