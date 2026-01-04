@@ -107,7 +107,7 @@ export default function ProjectList({ projects }: { projects: any[] }) {
                   gradient="linear-gradient(180deg, #93B4F2 0%, #6988E0 100%)"
                   strokeWidth="4px"
                 >
-                  {p.hours ? `${p.hours} hours` : "##.# hours"}
+                  {p.hours ? `${p.hours.toFixed(2)} hours` : "##.# hours"}
                 </GradientText>
               </span>
 
@@ -118,7 +118,7 @@ export default function ProjectList({ projects }: { projects: any[] }) {
                   gradient="linear-gradient(180deg, #B5AAE7 0%, #D488AD 100%)"
                   strokeWidth="4px"
                 >
-                  {p.hackatimeProject || "hackatime project"}
+                  {p.hackatime_name || "hackatime project"}
                 </GradientText>
               </span>
             </div>

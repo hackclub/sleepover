@@ -2,6 +2,7 @@
 
 import { getProjectsTable } from "@/lib/airtable" // or Airtable init here
 import { getUserInfo } from "@/lib/auth";
+import { getProjectHours } from "@/lib/hackatime";
 import { redirect } from "next/navigation";
 
 export async function createProject(formData: FormData) {
@@ -13,21 +14,26 @@ export async function createProject(formData: FormData) {
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get("session");
     var id = "ident!30fJ8d"
+    var slackid = ""
   
     if (sessionCookie) {
       const value = sessionCookie?.value
       const userinfo = await getUserInfo(JSON.parse(value).accessToken)
       id = userinfo.identity.id
+      slackid = userinfo.identity.slack_id
     }
 
   if (!name) return { error: "Name is required" }
+
+  const hours = await getProjectHours(slackid, project)
 
   const table = await getProjectsTable()
   const record = await table.create({
     userid: id,
     name: name,
     desc: desc,
-    hackatime_name: project
+    hackatime_name: project,
+    hours: hours,
   })
 
   console.log("record =", record)
