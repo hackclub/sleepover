@@ -125,6 +125,23 @@ export async function updateUser(
   return record;
 }
 
+export async function getShopItems() {
+  const records = await getProductsTable()
+    .select({
+      view: "Grid view",
+    })
+    .all();
+
+  return records.map((r) => ({
+    id: r.id,
+    name: r.get("item_friendly_name") as string,
+    description: r.get("description") as string,
+    price: r.get("price") as number,
+    image: r.get("image") as string | undefined,
+    availability: r.get("availability") as string | undefined,
+  }));
+}
+
 export async function getCurrency(userid: string) {
   const records = await getShopTable()
     .select({

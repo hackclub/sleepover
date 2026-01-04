@@ -4,19 +4,20 @@ import Link from "next/link";
 export interface ShopItemData {
   id: string;
   name: string;
+  description?: string;
   price: number;
+  availability?: string;
   image?: string;
-  variant: "pink" | "purple";
-
 }
 
 interface ShopItemProps {
   item: ShopItemData;
-  canbuy: Boolean;
+  canBuy: boolean;
+  variant: "pink" | "purple";
 }
 
-export default function ShopItem({ item, canbuy }: ShopItemProps) {
-  const isPink = item.variant === "pink";
+export default function ShopItem({ item, canBuy, variant }: ShopItemProps) {
+  const isPink = variant === "pink";
 
   const cardGradient = isPink
     ? "from-[#ebc0cc] to-[#dfa2ad]"
@@ -26,15 +27,7 @@ export default function ShopItem({ item, canbuy }: ShopItemProps) {
     ? "from-[#dfa2ad] to-[#ebc0cc]"
     : "from-[#a8aaeb] to-[#ebe4fa]";
 
-  var button = <span>hello</span>
-
-  if (canbuy==true) {
-    button = <span><Link href={`/portal/forms/order/${item.id}`}>Order</Link></span>
-  } else {
-    button = <span>Not Enough Currency</span>
-  }
-
-  return (
+  const cardContent = (
     <div
       className={`
         relative flex flex-col
@@ -42,8 +35,13 @@ export default function ShopItem({ item, canbuy }: ShopItemProps) {
         border-[6px] border-white
         rounded-[32px]
         shadow-[4px_8px_8px_0px_rgba(108,110,160,0.6)]
-        w-full aspect-square
-        p-3
+        w-full
+        p-3 pb-4
+        transition-all duration-200
+        ${canBuy 
+          ? "hover:scale-105 hover:shadow-[6px_12px_12px_0px_rgba(108,110,160,0.7)] cursor-pointer" 
+          : "opacity-50 grayscale cursor-not-allowed"
+        }
       `}
     >
       <p
@@ -55,7 +53,7 @@ export default function ShopItem({ item, canbuy }: ShopItemProps) {
 
       <div
         className={`
-          flex-1
+          aspect-square
           bg-gradient-to-b ${innerGradient}
           rounded-[24px]
           opacity-80
@@ -66,17 +64,15 @@ export default function ShopItem({ item, canbuy }: ShopItemProps) {
         `}
       >
         {item.image && (
-          <Image
+          <img
             src={item.image}
             alt={item.name}
-            width={160}
-            height={160}
             className="object-contain max-h-[80%] max-w-[80%]"
           />
         )}
       </div>
 
-      <div className="flex items-center justify-center gap-1 mt-2">
+      <div className="flex items-center justify-center gap-1 mt-3">
         <Image
           src="/icons/feather.png"
           alt="Feather"
@@ -90,8 +86,46 @@ export default function ShopItem({ item, canbuy }: ShopItemProps) {
         >
           {item.price}
         </span>
-        {button}
       </div>
+
+      {item.description && (
+        <p
+          className="text-[#6c6ea0] text-sm md:text-base font-bold text-center mt-2"
+          style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+        >
+          {item.description}
+        </p>
+      )}
+
+      {item.availability && (
+        <p
+          className="text-[#6C6EA0] text-lg font-bold text-center mt-1"
+          style={{ 
+            fontFamily: "'MADE Tommy Soft', sans-serif",
+          }}
+        >
+          {item.availability}
+        </p>
+      )}
+
+      {!canBuy && (
+        <div className="absolute inset-0 flex items-center justify-center rounded-[32px]">
+          <div className="bg-[#6c6ea0]/80 text-white px-3 py-1 rounded-full text-sm font-bold"
+            style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}>
+            🔒 Not enough feathers
+          </div>
+        </div>
+      )}
     </div>
   );
+
+  if (canBuy) {
+    return (
+      <Link href={`/portal/forms/order/${item.id}`}>
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
 }
