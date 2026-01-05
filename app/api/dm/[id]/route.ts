@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getUserFromId } from "@/lib/airtable";
 import { projectReviewMessage } from "@/lib/bot";
 
@@ -8,16 +8,17 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-export async function OPTIONS() {
+export function OPTIONS() {
   return new NextResponse(null, { status: 204, headers: corsHeaders });
 }
 
 export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
+
     const body = await request.json();
     const dmMsg = body?.dmMsg;
 
