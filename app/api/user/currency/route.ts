@@ -17,6 +17,6 @@ export async function GET() {
 
 
   return NextResponse.json({
-    balance: balance,
+    balance: balance ?? 0
   });
 }

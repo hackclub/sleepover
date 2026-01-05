@@ -20,7 +20,7 @@ export async function GET() {
     console.log("API PROJECTS =", projects)
     
     return NextResponse.json({
-      projects: projects,
+      projects: projects ?? []
     });
   }
   

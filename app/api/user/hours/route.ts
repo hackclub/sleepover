@@ -17,5 +17,5 @@ export async function GET() {
 
   const hours = await getUserHoursCached(userId);
 
-  return Response.json({ hours });
+  return Response.json({ hours: hours ?? 0 });
 }

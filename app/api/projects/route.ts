@@ -17,5 +17,5 @@ export async function GET() {
 
   const projects = await getProjectsCached(userId);
 
-  return Response.json({ projects });
+  return Response.json({ projects: projects ?? [] });
 }
