@@ -9,7 +9,9 @@ export async function GET() {
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get("session");
   
-    if (!sessionCookie) return;
+    if (!sessionCookie) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
   
     const value = sessionCookie.value;
     const accessToken = JSON.parse(value).accessToken;
@@ -28,7 +30,7 @@ export async function GET() {
         project.name
       );
 
-      updateProjectHours(found.id, await getProjectHours(slack_id, project.hackatime_name))
+      await updateProjectHours(found.id, await getProjectHours(slack_id, project.hackatime_name))
     }
 
     return NextResponse.json(
