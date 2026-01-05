@@ -18,6 +18,15 @@ function getUsersTable() {
   return getBase()(process.env.AIRTABLE_TABLE_NAME || "Users");
 }
 
+export async function getUserFromId(userid: string) {
+  const user = await getUsersTable().select({
+    filterByFormula: `{id} = '${userid}'`,
+    maxRecords: 1,
+  })
+  .firstPage();
+  return user[0]
+}
+
 function getFulfillmentTable() {
   return getBase()("FULFILLMENT");
 }
@@ -276,7 +285,7 @@ export async function shipProjectTable(projectid: string, info: any) {
       "Birthday": new Date(String(user.get("Birthday (from Hack Clubbers)"))),
       "Playable URL": info.playable_url,
       "Code URL": info.code_url,
-
+      "userid": user.get("id")
     };
   
     const review = await getReviewTable().create(fields);
