@@ -7,10 +7,57 @@ const sessionOptions = {
   cookieName: "sleepover_session",
 };
 
+// --- BASIC AUTH (username/password) ---
+function requireBasicAuth(request: NextRequest) {
+  const user = process.env.BASIC_AUTH_USER ?? "";
+  const pass = process.env.BASIC_AUTH_PASS ?? "";
+
+  // Safer: fail closed if not configured
+  if (!user || !pass) {
+    return new NextResponse("Basic auth is not configured.", { status: 500 });
+  }
+
+  const auth = request.headers.get("authorization");
+
+  if (!auth?.startsWith("Basic ")) {
+    return new NextResponse("Authentication required.", {
+      status: 401,
+      headers: { "WWW-Authenticate": 'Basic realm="Protected"' },
+    });
+  }
+
+  let decoded = "";
+  try {
+    decoded = atob(auth.slice("Basic ".length));
+  } catch {
+    return new NextResponse("Invalid authentication header.", {
+      status: 401,
+      headers: { "WWW-Authenticate": 'Basic realm="Protected"' },
+    });
+  }
+
+  const [u, p] = decoded.split(":");
+  const ok = u === user && p === pass;
+
+  if (!ok) {
+    return new NextResponse("Invalid credentials.", {
+      status: 401,
+      headers: { "WWW-Authenticate": 'Basic realm="Protected"' },
+    });
+  }
+
+  // ok -> continue
+  return null;
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Protect /portal routes
+  // 1) Require username/password for EVERY page (except excluded by matcher)
+  const basic = requireBasicAuth(request);
+  if (basic) return basic;
+
+  // 2) Keep your existing /portal protection
   if (pathname.startsWith("/portal")) {
     const response = NextResponse.next();
 
@@ -25,11 +72,16 @@ export async function middleware(request: NextRequest) {
       url.searchParams.set("error", "auth_required");
       return NextResponse.redirect(url);
     }
+
+    return response; // important: return the response tied to the session
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/portal/:path*"],
+  matcher: [
+    // Run middleware on everything EXCEPT Next internals/static files
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)",
+  ],
 };
