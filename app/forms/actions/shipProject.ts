@@ -6,7 +6,13 @@ import { redirect } from "next/navigation";
 
 export async function shipProject(formData: FormData, project: string) {
 
-  shipProjectTable(project)
+  const info = {
+    playable_url: String(formData.get("playable")),
+    code_url: String(formData.get("code")),
+    screenshot: formData.get("screenshot") as File,
+  }
+
+  shipProjectTable(project, info)
 
   redirect("/portal")
 }

@@ -1,5 +1,15 @@
 import type { NextConfig } from "next";
 
+/** @type {import('next').NextConfig} */
+ 
+module.exports = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
+    },
+  },
+}
+
 const securityHeaders = [
   {
     key: "Strict-Transport-Security",

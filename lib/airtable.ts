@@ -226,7 +226,7 @@ export async function addFulfillment(userid: string, product: string) {
   return records[0];
 }
 
-export async function shipProjectTable(projectid: string) {
+export async function shipProjectTable(projectid: string, info: any) {
   
   getProjectsTable().update([
     {
@@ -264,9 +264,22 @@ export async function shipProjectTable(projectid: string) {
       project: [projectid],
       user: [userrecord],
       status: "Unreviewed",
+      playable_url: info.playable_url,
+      code_url: info.code_url,
+
     };
   
     const review = await getReviewTable().create(fields);
+
+    if (info.screenshot instanceof File) {
+      await uploadAttachment({
+        baseId: process.env.AIRTABLE_BASE_ID!,
+        recordId: review.getId(),       // IMPORTANT
+        fieldNameOrId: "screenshot",        // exact field name
+        file: info.screenshot,
+      })
+    }
+    
     return review
 }
 
@@ -281,4 +294,41 @@ export async function getProgressHours(userid: string) {
   console.log(user)
 
   return user[0].get("hours_shipped")
+}
+
+async function uploadAttachment({
+  baseId,
+  recordId,
+  fieldNameOrId, // "screenshot" or "fldXXXXXXXX"
+  file,
+}: {
+  baseId: string
+  recordId: string
+  fieldNameOrId: string
+  file: File
+}) {
+  // Convert File -> base64
+  const arrayBuffer = await file.arrayBuffer()
+  const base64 = Buffer.from(arrayBuffer).toString("base64")
+
+  const url = `https://content.airtable.com/v0/${baseId}/${recordId}/${fieldNameOrId}/uploadAttachment`
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.AIRTABLE_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      contentType: file.type || "application/octet-stream",
+      filename: file.name || "upload",
+      file: base64,
+    }),
+  })
+
+  const text = await res.text()
+  if (!res.ok) {
+    throw new Error(`Airtable upload failed (${res.status}): ${text}`)
+  }
+  return JSON.parse(text)
 }
