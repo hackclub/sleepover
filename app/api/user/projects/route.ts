@@ -7,7 +7,9 @@ export async function GET() {
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get("session");
   
-    if (!sessionCookie) return null;
+    if (!sessionCookie) return NextResponse.json({
+      projects: []
+    });;
   
     const value = sessionCookie.value;
     const accessToken = JSON.parse(value).accessToken;
