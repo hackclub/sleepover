@@ -271,8 +271,8 @@ export async function shipProjectTable(projectid: string, info: any) {
     if (user) {
       //fields
     const fields: Record<any, any> = {
-      "First Name": user.get("First Name"),
-      "Last Name": user.get("Last Name"),
+      "First Name": String(user.get("First Name")),
+      "Last Name": String(user.get("Last Name")),
       "Email": user.get("email"),
       "Description": project.get("desc"),
       "GitHub Username": info.github,

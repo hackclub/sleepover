@@ -53,11 +53,14 @@ function requireBasicAuth(request: NextRequest) {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 1) Require username/password for EVERY page (except excluded by matcher)
-  const basic = requireBasicAuth(request);
-  if (basic) return basic;
+  // ✅ Bypass basic auth for /api/dm and anything under /api/dm/*
+  const isDmApi = pathname === "/api/dm" || pathname.startsWith("/api/dm/");
+  if (!isDmApi) {
+    const basic = requireBasicAuth(request);
+    if (basic) return basic;
+  }
 
-  // 2) Keep your existing /portal protection
+  // 🔐 Keep existing /portal protection
   if (pathname.startsWith("/portal")) {
     const response = NextResponse.next();
 
