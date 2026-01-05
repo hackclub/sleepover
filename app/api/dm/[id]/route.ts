@@ -1,19 +1,25 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getUserFromId } from "@/lib/airtable";
 import { projectReviewMessage } from "@/lib/bot";
 
 const corsHeaders = {
-  // If you want to lock it down, replace "*" with "https://airtable.com"
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: corsHeaders });
+}
+
 export async function POST(
-  request: Request, { params }: { params: Promise<{ id: string }> } ) {
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    const { id } = await params;
-    const { dmMsg } = await request.json();
+    const { id } = params;
+    const body = await request.json();
+    const dmMsg = body?.dmMsg;
 
     if (!dmMsg) {
       return NextResponse.json(
@@ -23,7 +29,14 @@ export async function POST(
     }
 
     const user = await getUserFromId(id);
-    const email = user.get("email");
+    const email = user?.get?.("email");
+
+    if (!email) {
+      return NextResponse.json(
+        { error: "User email not found" },
+        { status: 404, headers: corsHeaders }
+      );
+    }
 
     await projectReviewMessage(email, dmMsg);
 
