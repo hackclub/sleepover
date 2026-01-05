@@ -1,5 +1,6 @@
 import Airtable from "airtable";
 import { getUserInfo } from "./auth";
+import { projectReviewMessage } from "./bot";
 
 function getBase() {
   if (!process.env.AIRTABLE_API_KEY) {
@@ -247,7 +248,8 @@ export async function shipProjectTable(projectid: string, info: any) {
 
     console.log(projectid)
     const userid = await project.get("userid")
-    var userrecord = ""
+    var userrecord;
+    var finalid = ""
 
     if (userid) {
       userrecord = (await getUsersTable()
@@ -255,14 +257,16 @@ export async function shipProjectTable(projectid: string, info: any) {
         filterByFormula: `{id} = '${userid}'`,
         maxRecords: 1,
       })
-      .firstPage())[0].getId();
+      .firstPage())[0]
+
+      finalid = userrecord.getId()
     }
 
     console.log(userrecord)
 
     const fields: Record<any, any> = {
       project: [projectid],
-      user: [userrecord],
+      user: [finalid],
       status: "Unreviewed",
       playable_url: info.playable_url,
       code_url: info.code_url,
@@ -279,6 +283,9 @@ export async function shipProjectTable(projectid: string, info: any) {
         file: info.screenshot,
       })
     }
+
+    //send dm
+    projectReviewMessage(userrecord?.get("email"), "Congrats on shipping your project for Sleepover! Your project will be reviewed soon, and any status updates will be sent here.")
     
     return review
 }
