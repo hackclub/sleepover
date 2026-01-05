@@ -52,6 +52,18 @@ export default function ShipForm() {
                     "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
                 }}
               />
+      <label>GitHub Username</label>
+      <input
+                name="github"
+                required
+                className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
+                style={{
+                  fontFamily: "'MADE Tommy Soft', sans-serif",
+                  background: "white",
+                  boxShadow:
+                    "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
+                }}
+              />
 
       <h3>checklist tbd</h3>
 

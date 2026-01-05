@@ -35,8 +35,9 @@ export function getShopTable() {
   return getBase()("user_shop_info");
 }
 
+//YSWS database
 function getReviewTable() {
-  return getBase()("REVIEW");
+  return getBase()("YSWS Project Submission");
 }
 
 export async function getSingularProject(userid: string, name: string) {
@@ -246,30 +247,35 @@ export async function shipProjectTable(projectid: string, info: any) {
     
     const project = record[0]
 
-    console.log(projectid)
     const userid = await project.get("userid")
-    var userrecord;
-    var finalid = ""
+    var user;
 
     if (userid) {
-      userrecord = (await getUsersTable()
+      user = (await getUsersTable()
       .select({
         filterByFormula: `{id} = '${userid}'`,
         maxRecords: 1,
       })
       .firstPage())[0]
-
-      finalid = userrecord.getId()
     }
 
-    console.log(userrecord)
-
+    if (user) {
+      //fields
     const fields: Record<any, any> = {
-      project: [projectid],
-      user: [finalid],
-      status: "Unreviewed",
-      playable_url: info.playable_url,
-      code_url: info.code_url,
+      "First Name": user.get("First Name"),
+      "Last Name": user.get("Last Name"),
+      "Email": user.get("email"),
+      "Description": project.get("desc"),
+      "GitHub Username": info.github,
+      "Address (Line 1)": String(user.get("Address (Line 1)")),
+      "Address (Line 2)": String(user.get("Address (Line 2)")),
+      "City": String(user.get("City (from Hack Clubbers)")),
+      "State / Province": String(user.get("State (from Hack Clubbers)")),
+      "Country": String(user.get("Country (from Hack Clubbers)")),
+      "ZIP / Postal Code": String(user.get("ZIP (from Hack Clubbers)")),
+      "Birthday": new Date(String(user.get("Birthday (from Hack Clubbers)"))),
+      "Playable URL": info.playable_url,
+      "Code URL": info.code_url,
 
     };
   
@@ -279,15 +285,16 @@ export async function shipProjectTable(projectid: string, info: any) {
       await uploadAttachment({
         baseId: process.env.AIRTABLE_BASE_ID!,
         recordId: review.getId(),       // IMPORTANT
-        fieldNameOrId: "screenshot",        // exact field name
+        fieldNameOrId: "Screenshot",        // exact field name
         file: info.screenshot,
       })
     }
 
     //send dm
-    projectReviewMessage(userrecord?.get("email"), "Congrats on shipping your project for Sleepover! Your project will be reviewed soon, and any status updates will be sent here.")
+    projectReviewMessage(user.get("email"), "Congrats on shipping your project for Sleepover! Your project will be reviewed soon, and any status updates will be sent here.")
     
     return review
+    }
 }
 
 export async function getProgressHours(userid: string) {
@@ -339,3 +346,19 @@ async function uploadAttachment({
   }
   return JSON.parse(text)
 }
+
+//CACHING STUFF
+
+import { unstable_cache } from "next/cache";
+
+export const getProjectsCached = unstable_cache(
+  async (userId: string) => getUsersProjects(userId),
+  ["projects-by-user"],
+  { revalidate: 60, tags: ["projects"] }
+);
+
+export const getUserHoursCached = unstable_cache(
+  async (userId: string) => getProgressHours(userId),
+  ["user-hours-by-user"],
+  { revalidate: 60, tags: ["user-hours"] }
+);

@@ -4,6 +4,7 @@ import { getProjectsTable } from "@/lib/airtable" // or Airtable init here
 import { getUserInfo } from "@/lib/auth";
 import { getProjectHours } from "@/lib/hackatime";
 import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 
 export async function createProject(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim()
@@ -35,6 +36,8 @@ export async function createProject(formData: FormData) {
     hackatime_name: project,
     hours: hours,
   })
+
+  revalidateTag("projects", "max");
 
   console.log("record =", record)
   redirect("/portal")

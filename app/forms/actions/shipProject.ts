@@ -10,6 +10,7 @@ export async function shipProject(formData: FormData, project: string) {
     playable_url: String(formData.get("playable")),
     code_url: String(formData.get("code")),
     screenshot: formData.get("screenshot") as File,
+    github: formData.get("github") as File,
   }
 
   shipProjectTable(project, info)

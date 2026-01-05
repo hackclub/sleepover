@@ -1,22 +1,21 @@
-import { NextResponse } from "next/server";
+import { getProjectsCached } from "@/lib/airtable";
 import { getUserInfo } from "@/lib/auth";
-import { getUsersProjects } from "@/lib/airtable";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 export async function GET() {
-
-  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get("session");
-  let projects: { id: string; name: string; desc: string }[] = [];
 
-  if (sessionCookie) {
-    const value = sessionCookie?.value;
-    const userinfo = await getUserInfo(JSON.parse(value).accessToken);
-    const id = userinfo.identity.id;
-    projects = await getUsersProjects(id);
+  if (!sessionCookie) {
+    return Response.json({ projects: [] });
   }
 
-  return NextResponse.json({
-    projects: projects,
-  });
+  const { accessToken } = JSON.parse(sessionCookie.value);
+  const userinfo = await getUserInfo(accessToken);
+  const userId = userinfo.identity.id;
+
+  const projects = await getProjectsCached(userId);
+
+  return Response.json({ projects });
 }
