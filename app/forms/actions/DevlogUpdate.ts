@@ -8,7 +8,7 @@ export async function updateDevlog(devlogId: string, text: string) {
 
   console.log("Updated devlog:", devlogId)
 
-  revalidateTag("projects")
+  revalidateTag("projects", "max")
 
   return { success: true }
 }

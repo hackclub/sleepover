@@ -10,7 +10,7 @@ export async function updateProjectNameAction(projectId: string, name: string) {
 
   const record = await updateProjectName(projectId, name.trim())
 
-  revalidateTag("projects")
+  revalidateTag("projects", "max")
 
   return {
     success: true,
