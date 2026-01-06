@@ -6,6 +6,12 @@ import { cookies } from "next/headers";
 import { getSession } from "@/lib/session";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
+function getBaseUrl(request: NextRequest): string {
+  const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
+  const protocol = request.headers.get("x-forwarded-proto") || "https";
+  return `${protocol}://${host}`;
+}
+
 export async function GET(request: NextRequest) {
   const clientIp = getClientIp(request);
   const rateLimitResult = rateLimit(`callback:${clientIp}`, {
@@ -13,8 +19,10 @@ export async function GET(request: NextRequest) {
     maxRequests: 10,
   });
 
+  const baseUrl = getBaseUrl(request);
+
   if (!rateLimitResult.success) {
-    return NextResponse.redirect(new URL("/?error=rate_limited", request.url));
+    return NextResponse.redirect(new URL("/?error=rate_limited", baseUrl));
   }
 
   const searchParams = request.nextUrl.searchParams;
@@ -23,11 +31,11 @@ export async function GET(request: NextRequest) {
   const error = searchParams.get("error");
 
   if (error) {
-    return NextResponse.redirect(new URL("/?error=auth_failed", request.url));
+    return NextResponse.redirect(new URL("/?error=auth_failed", baseUrl));
   }
 
   if (!code) {
-    return NextResponse.redirect(new URL("/?error=no_code", request.url));
+    return NextResponse.redirect(new URL("/?error=no_code", baseUrl));
   }
 
   // Validate OAuth state to prevent CSRF
@@ -36,7 +44,7 @@ export async function GET(request: NextRequest) {
   cookieStore.delete("oauth_state");
 
   if (!returnedState || !storedState || returnedState !== storedState) {
-    return NextResponse.redirect(new URL("/?error=invalid_state", request.url));
+    return NextResponse.redirect(new URL("/?error=invalid_state", baseUrl));
   }
 
   try {
@@ -79,9 +87,9 @@ export async function GET(request: NextRequest) {
     session.isLoggedIn = true;
     await session.save();
 
-    return NextResponse.redirect(new URL("/portal", request.url));
+    return NextResponse.redirect(new URL("/portal", baseUrl));
   } catch (error) {
     console.error("Auth callback error:", error instanceof Error ? error.message : "unknown");
-    return NextResponse.redirect(new URL("/?error=auth_failed", request.url));
+    return NextResponse.redirect(new URL("/?error=auth_failed", baseUrl));
   }
 }
