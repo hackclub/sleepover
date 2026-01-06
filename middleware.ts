@@ -50,7 +50,7 @@ function requireBasicAuth(request: NextRequest) {
 function isPublicAssetPath(pathname: string) {
   // Allowlist: public folders + standard public files
   return (
-    pathname.startsWith("/backgrounds/") ||
+    pathname.startsWith("/background/") ||
     pathname.startsWith("/fonts/") ||
     pathname.startsWith("/icons/") ||
     pathname.startsWith("/prizes/") ||
