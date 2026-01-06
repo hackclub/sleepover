@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import GradientText from "./GradientText";
 
 type CountdownProgressBarProps = {
   isSidebarOpen?: boolean;
@@ -25,12 +26,12 @@ export default function CountdownProgressBar({ isSidebarOpen = true }: Countdown
   } else {
     const hoursLeft = (30 - hours)
     progress = 100*(hours/30)
-    timeLeft = `Congrats! You have ${hoursLeft} to qualify for Sleepover!`
+    timeLeft = `You have ${hoursLeft} hours left to qualify for Sleepover!`
   }
 
   return (
     <div
-      className="relative w-full h-auto min-h-[100px] md:h-[150px] mx-auto transition-all duration-300 px-4 md:px-8 lg:px-12 py-4 md:py-5"
+      className="relative w-full h-auto mx-auto transition-all duration-300 px-4 md:px-8 lg:px-12 py-4 md:py-5"
       style={{
         maxWidth: isSidebarOpen ? "1050px" : "1200px",
         background: "linear-gradient(0deg, #D9DAF8 0%, #FFF0FD 100%)",
@@ -38,38 +39,21 @@ export default function CountdownProgressBar({ isSidebarOpen = true }: Countdown
         borderRadius: "24px",
       }}
     >
-      <div className="flex flex-col items-center justify-between h-full gap-3 md:gap-4">
-        <h2 className="relative font-bold text-[20px] sm:text-[28px] md:text-[36px] leading-[28px] sm:leading-[36px] md:leading-[44px] text-center">
-          <span
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-              color: "#FFFFFF",
-              WebkitTextStroke: "6px",
-              filter:
-                "drop-shadow(0px 4px 0px #C6C7E4) drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.2))",
-            }}
+      <div className="flex flex-col items-center justify-center gap-3 md:gap-4">
+        <h2 className="text-[20px] sm:text-[28px] md:text-[36px] leading-[28px] sm:leading-[36px] md:leading-[44px] text-center">
+          <GradientText
+            gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+            strokeWidth="6px"
           >
             {timeLeft}
-          </span>
-          <span
-            className="relative"
-            style={{
-              fontFamily: "'MADE Tommy Soft', sans-serif",
-              background: "linear-gradient(180deg, #7791E6 0%, #7472A0 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
-            {timeLeft}
-          </span>
+          </GradientText>
         </h2>
 
         <div
           className="w-full"
           style={{
             height: "32px",
+            minHeight: "32px",
             background: "linear-gradient(270deg, #FFE3E6 0%, #FFF2D4 100%)",
             border: "3px solid #FFFFFF",
             boxShadow:
@@ -78,9 +62,11 @@ export default function CountdownProgressBar({ isSidebarOpen = true }: Countdown
           }}
         >
           <div
-            className="h-full transition-all duration-300"
+            className="transition-all duration-300"
             style={{
               width: `${progress}%`,
+              height: "100%",
+              minHeight: "26px",
               background: "linear-gradient(180deg, #FFE5E8 0%, #EDB5BC 100%)",
               boxShadow:
                 "0px 4px 0px #E6A4AB, 2px 6px 4px rgba(116, 114, 160, 0.86)",

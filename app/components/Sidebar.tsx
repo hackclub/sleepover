@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import GradientText from "./GradientText";
 
 const navItems = [
   { label: "What is Sleepover?", href: "/faq/sleepover", color: "#9AC6F6" },
@@ -149,35 +150,15 @@ export default function Sidebar({ onStateChange }: SidebarProps) {
                 key={item.label}
                 href={item.href}
                 onClick={handleNavClick}
-                className="relative block font-bold leading-[1.1] hover:opacity-90 transition-transform hover:translate-x-[1px]"
+                className="block leading-[1.1] hover:opacity-90 transition-transform hover:translate-x-[1px]"
                 style={{ fontSize: isMobile ? "22px" : "clamp(30px, 2.5vw, 40px)" }}
               >
-                {/* White stroke layer behind */}
-                <span
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-                    color: "#FFFFFF",
-                    WebkitTextStroke: isMobile ? "4px" : "7px",
-                    filter: "drop-shadow(0px 4px 0px #C6C7E4) drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.2))",
-                  }}
+                <GradientText
+                  gradient="linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)"
+                  strokeWidth={isMobile ? "4px" : "7px"}
                 >
                   {item.label}
-                </span>
-                {/* Colored text on top */}
-                <span
-                  className="relative"
-                  style={{
-                    fontFamily: "'MADE Tommy Soft', sans-serif",
-                    background:
-                      "linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  {item.label}
-                </span>
+                </GradientText>
               </Link>
             ))}
           </nav>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import GradientText from "./GradientText";
 
 const navItems = [
   {
@@ -183,33 +184,13 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
                   className="w-[32px] h-[32px] md:w-[44px] md:h-[44px]"
                 />
                 {/* Text container */}
-                <span className="relative" style={{ display: isOpen ? "inline-block" : "none" }}>
-                  {/* White stroke layer behind */}
-                  <span
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                      fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-                      color: "#FFFFFF",
-                      WebkitTextStroke: isMobile ? "5px" : "7px",
-                      filter: "drop-shadow(0px 4px 0px #C6C7E4) drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.2))",
-                    }}
+                <span style={{ display: isOpen ? "inline-block" : "none" }}>
+                  <GradientText
+                    gradient="linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)"
+                    strokeWidth={isMobile ? "5px" : "7px"}
                   >
                     {item.label}
-                  </span>
-                  {/* Colored text on top */}
-                  <span
-                    className="relative"
-                    style={{
-                      fontFamily: "'MADE Tommy Soft', sans-serif",
-                      background:
-                        "linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                    }}
-                  >
-                    {item.label}
-                  </span>
+                  </GradientText>
                 </span>
               </Link>
             ))}

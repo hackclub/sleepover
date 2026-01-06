@@ -7,6 +7,7 @@ import CountdownProgressBar from "../components/CountdownProgressBar";
 import OnboardingNovel from "../components/OnboardingNovel";
 import ProjectList from "../components/ProjectList";
 import NewProjectModal from "../components/NewProjectModal";
+import GradientText from "../components/GradientText";
 
 export default function PortalPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -90,33 +91,13 @@ export default function PortalPage() {
           className="flex justify-center mb-6 md:mb-8 w-full transition-all duration-300"
           style={{ maxWidth: isSidebarOpen ? "960px" : "1120px" }}
         >
-          <h1 className="relative font-bold text-[48px] md:text-[72px] leading-[60px] md:leading-[90px] text-center">
-            {/* White stroke layer behind */}
-            <span
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-                color: "#FFFFFF",
-                WebkitTextStroke: "10px",
-                filter:
-                  "drop-shadow(0px 4px 0px #C6C7E4) drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.2))",
-              }}
+          <h1 className="text-[48px] md:text-[72px] leading-[60px] md:leading-[90px] text-center">
+            <GradientText
+              gradient="linear-gradient(180deg, #B7C1F2 0%, #89A8EF 100%)"
+              strokeWidth="10px"
             >
               Create
-            </span>
-            {/* Gradient text on top */}
-            <span
-              className="relative"
-              style={{
-                fontFamily: "'MADE Tommy Soft', sans-serif",
-                background: "linear-gradient(180deg, #B7C1F2 0%, #89A8EF 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              Create
-            </span>
+            </GradientText>
           </h1>
         </div>
 
@@ -192,114 +173,46 @@ export default function PortalPage() {
                 >
                   {/* Left: Label "Your Projects" */}
                   <h2
-                    className="relative font-bold"
                     style={{
                       fontSize: isMobile ? "18px" : "24px",
                       margin: 0,
                     }}
                   >
-                    {/* White stroke layer behind */}
-                    <span
-                      className="absolute inset-0 pointer-events-none"
-                      style={{
-                        fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-                        color: "#FFFFFF",
-                        WebkitTextStroke: "4px",
-                        filter:
-                          "drop-shadow(0px 2px 0px #C6C7E4) drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.2))",
-                      }}
+                    <GradientText
+                      gradient="linear-gradient(180deg, #9A9EF7 0%, #6C6EA0 100%)"
+                      strokeWidth="4px"
                     >
                       Your Projects
-                    </span>
-                    {/* Gradient text on top */}
-                    <span
-                      className="relative"
-                      style={{
-                        fontFamily: "'MADE Tommy Soft', sans-serif",
-                        background: "linear-gradient(180deg, #9A9EF7 0%, #6C6EA0 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text",
-                      }}
-                    >
-                      Your Projects
-                    </span>
+                    </GradientText>
                   </h2>
 
                   {/* Right: "new project +" group */}
                   <button
                     onClick={() => setShowNewProjectModal(true)}
                     className="flex items-center gap-1 md:gap-2 select-none cursor-pointer"
-                    style={{
-                      fontWeight: 700,
-                    }}
                   >
                     {/* "new project" text */}
-                    <span
-                      className="relative"
-                      style={{ fontSize: isMobile ? "16px" : "24px" }}
-                    >
-                      {/* White stroke layer behind */}
-                      <span
-                        className="absolute inset-0 pointer-events-none"
-                        style={{
-                          fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-                          color: "#FFFFFF",
-                          WebkitTextStroke: "4px",
-                          filter:
-                            "drop-shadow(0px 2px 0px #C6C7E4) drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.2))",
-                        }}
+                    <span style={{ fontSize: isMobile ? "16px" : "24px" }}>
+                      <GradientText
+                        gradient="linear-gradient(180deg, #93B4F2 0%, #8FA8F0 100%)"
+                        strokeWidth="4px"
                       >
                         new project
-                      </span>
-                      {/* Gradient text on top */}
-                      <span
-                        className="relative"
-                        style={{
-                          fontFamily: "'MADE Tommy Soft', sans-serif",
-                          background: "linear-gradient(180deg, #93B4F2 0%, #8FA8F0 100%)",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                          backgroundClip: "text",
-                        }}
-                      >
-                        new project
-                      </span>
+                      </GradientText>
                     </span>
                     {/* "+" text */}
                     <span
-                      className="relative"
                       style={{
                         fontSize: isMobile ? "32px" : "48px",
                         lineHeight: "32px",
                       }}
                     >
-                      {/* White stroke layer behind */}
-                      <span
-                        className="absolute inset-0 pointer-events-none"
-                        style={{
-                          fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-                          color: "#FFFFFF",
-                          WebkitTextStroke: "6px",
-                          filter:
-                            "drop-shadow(0px 2px 0px #C6C7E4) drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.2))",
-                        }}
+                      <GradientText
+                        gradient="linear-gradient(180deg, #93B4F2 0%, #8FA8F0 100%)"
+                        strokeWidth="6px"
                       >
                         +
-                      </span>
-                      {/* Gradient text on top */}
-                      <span
-                        className="relative"
-                        style={{
-                          fontFamily: "'MADE Tommy Soft', sans-serif",
-                          background: "linear-gradient(180deg, #93B4F2 0%, #8FA8F0 100%)",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                          backgroundClip: "text",
-                        }}
-                      >
-                        +
-                      </span>
+                      </GradientText>
                     </span>
                   </button>
                 </div>
