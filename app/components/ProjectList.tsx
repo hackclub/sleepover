@@ -91,14 +91,14 @@ export default function ProjectList({ projects }: { projects: any[] }) {
         >
           <div className="flex-1 min-w-0">
             {/* Project Name */}
-            <h3 className="text-2xl md:text-4xl">
+            <Link href={`/portal/projects/${p.id}`}><h3 className="text-2xl md:text-4xl">
               <GradientText
                 gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
                 strokeWidth="6px"
               >
                 {p.name}
               </GradientText>
-            </h3>
+            </h3></Link>
 
             {/* Hours + Star + Hackatime Project */}
             <div className="flex items-center gap-2 mt-1">

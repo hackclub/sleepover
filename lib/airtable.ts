@@ -44,6 +44,10 @@ export function getShopTable() {
   return getBase()("user_shop_info");
 }
 
+export function getDevlogsTable() {
+  return getBase()("devlogs");
+}
+
 //YSWS database
 function getReviewTable() {
   return getBase()("YSWS Project Submission");
@@ -235,6 +239,63 @@ export async function addFulfillment(userid: string, product: string) {
   ]);
 
   return records[0];
+}
+
+export async function createDevlogEntry(projectId: string, date: string, text: string) {
+  const fields = {
+    project: [projectId],
+    date: date,
+    text: text,
+  };
+
+  const record = await getDevlogsTable().create(fields);
+  return record;
+}
+
+export async function updateDevlogEntry(devlogId: string, text: string) {
+  const record = await getDevlogsTable().update(devlogId, {
+    text: text,
+  });
+  return record;
+}
+
+export async function getProjectDevlogs(projectId: string) {
+  const all = await getDevlogsTable().select().all();
+
+  console.log("Looking for projectId:", projectId);
+
+  for (const obj of all) {
+    const projField = obj.get("project");
+    console.log("project field:", projField);
+    console.log("project field type:", typeof projField);
+    console.log("is array?", Array.isArray(projField));
+    if (Array.isArray(projField)) {
+      console.log("array contents:", projField[0]);
+      console.log("matches?", projField[0] === projectId);
+    }
+  }
+
+  // Try without any filtering first to see if formula is the issue
+  const records = await getDevlogsTable()
+    .select({
+      sort: [{ field: "date", direction: "desc" }],
+    })
+    .all();
+
+  // Filter manually in JavaScript
+  const filtered = records.filter(r => {
+    const projField = r.get("project");
+    if (Array.isArray(projField)) {
+      return projField.includes(projectId);
+    }
+    return projField === projectId;
+  });
+
+  return filtered.map((r) => ({
+    id: r.id,
+    date: r.get("date") as string,
+    text: r.get("text") as string,
+  }));
 }
 
 export async function shipProjectTable(projectid: string, info: any) {
