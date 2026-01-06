@@ -12,7 +12,7 @@ function requireBasicAuth(request: NextRequest) {
   const user = process.env.BASIC_AUTH_USER ?? "";
   const pass = process.env.BASIC_AUTH_PASS ?? "";
 
-  // Safer: fail closed if not configured
+  // Fail closed if not configured
   if (!user || !pass) {
     return new NextResponse("Basic auth is not configured.", { status: 500 });
   }
@@ -37,30 +37,45 @@ function requireBasicAuth(request: NextRequest) {
   }
 
   const [u, p] = decoded.split(":");
-  const ok = u === user && p === pass;
-
-  if (!ok) {
+  if (u !== user || p !== pass) {
     return new NextResponse("Invalid credentials.", {
       status: 401,
       headers: { "WWW-Authenticate": 'Basic realm="Protected"' },
     });
   }
 
-  // ok -> continue
-  return null;
+  return null; // ✅ authenticated
+}
+
+function isPublicAssetPath(pathname: string) {
+  // Allowlist: public folders + standard public files
+  return (
+    pathname.startsWith("/backgrounds/") ||
+    pathname.startsWith("/fonts/") ||
+    pathname.startsWith("/icons/") ||
+    pathname.startsWith("/prizes/") ||
+    pathname === "/favicon.ico" ||
+    pathname === "/robots.txt" ||
+    pathname === "/sitemap.xml"
+  );
 }
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ✅ Bypass basic auth for /api/dm and anything under /api/dm/*
-  const isDmApi = pathname === "/api/dm" || pathname.startsWith("/api/dm/");
-  if (!isDmApi) {
+  // ✅ Bypass basic auth for ALL API routes
+  const isApi = pathname === "/api" || pathname.startsWith("/api/");
+
+  // ✅ Bypass basic auth for public assets (so next/image optimizer can fetch them)
+  const isPublicAsset = isPublicAssetPath(pathname);
+
+  // 🔐 Apply basic auth everywhere except API + public assets
+  if (!isApi && !isPublicAsset) {
     const basic = requireBasicAuth(request);
     if (basic) return basic;
   }
 
-  // 🔐 Keep existing /portal protection
+  // 🔐 Session-based auth for /portal (still enforced even though /portal is behind basic auth too)
   if (pathname.startsWith("/portal")) {
     const response = NextResponse.next();
 
@@ -71,7 +86,8 @@ export async function middleware(request: NextRequest) {
     );
 
     if (!session.isLoggedIn) {
-      const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
+      const host =
+        request.headers.get("x-forwarded-host") || request.headers.get("host");
       const protocol = request.headers.get("x-forwarded-proto") || "https";
       const baseUrl = `${protocol}://${host}`;
       const url = new URL("/", baseUrl);
@@ -79,7 +95,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    return response; // important: return the response tied to the session
+    return response;
   }
 
   return NextResponse.next();
@@ -87,7 +103,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Run middleware on everything EXCEPT Next internals/static files
-    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)",
+    // Run middleware on everything EXCEPT Next internals
+    "/((?!_next/static|_next/image).*)",
   ],
 };
