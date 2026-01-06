@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import AutoplayCarousel from "./components/Carousel";
+import GradientText from "./components/GradientText";
 import { slides } from "@/app/data/slides";
 
 export default function Home() {
@@ -61,30 +62,15 @@ export default function Home() {
       </div>
 
       <div className="relative w-full flex">
-        <span
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pb-2 font-bold text-[12px] sm:text-[16px] md:text-[22px] min-[1792px]:text-[40px] leading-[16px] sm:leading-[22px] md:leading-[30px] min-[1792px]:leading-[50px] z-10 px-2 whitespace-nowrap"
-          style={{
-            fontFamily: "'MADE Tommy Soft', sans-serif",
-            background:
-              "linear-gradient(357.47deg, #282A5A -128.92%, #2E3367 -26.66%, #38417B 130.45%, #424F90 389.82%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-            textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
-          }}
-        >
-          hack club&apos;s athena initiative presents:
-        </span>
-
-        <span
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pb-2 font-bold text-[12px] sm:text-[16px] md:text-[22px] min-[1792px]:text-[40px] leading-[16px] sm:leading-[22px] md:leading-[30px] min-[1792px]:leading-[50px] text-white z-10 px-2 whitespace-nowrap"
-          style={{
-            fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-            WebkitTextStroke: "0.5px #FFFFFF",
-          }}
-        >
-          hack club&apos;s athena initiative presents:
-        </span>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pb-2 z-10 px-2 whitespace-nowrap">
+          <GradientText
+            gradient="linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)"
+            strokeWidth="5px"
+            className="text-[12px] sm:text-[16px] md:text-[22px] min-[1792px]:text-[40px] leading-[16px] sm:leading-[22px] md:leading-[30px] min-[1792px]:leading-[50px]"
+          >
+            hack club&apos;s athena initiative presents:
+          </GradientText>
+        </div>
 
         <Image
           src="/background/sleepover_banner 1.png"
@@ -238,31 +224,13 @@ export default function Home() {
 
       {/* ready? text */}
       <div className="relative w-full mt-8 sm:mt-12 md:mt-16 flex justify-center">
-        {/* White outline layer */}
-        <span
-          className="absolute text-center font-bold text-[32px] sm:text-[48px] md:text-[64px] leading-[1.2]"
-          style={{
-            fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-            color: "#FFFFFF",
-            WebkitTextStroke: "4px #FFFFFF",
-            textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
-          }}
+        <GradientText
+          gradient="linear-gradient(180deg, #435090 21.93%, #3D4884 38.93%, #5264AC 58.54%, #5D72BB 68.22%)"
+          strokeWidth="4px"
+          className="text-center text-[32px] sm:text-[48px] md:text-[64px] leading-[1.2]"
         >
           ready?
-        </span>
-        {/* Gradient fill layer */}
-        <span
-          className="relative text-center font-bold text-[32px] sm:text-[48px] md:text-[64px] leading-[1.2]"
-          style={{
-            fontFamily: "'MADE Tommy Soft', sans-serif",
-            background: "linear-gradient(180deg, #435090 21.93%, #3D4884 38.93%, #5264AC 58.54%, #5D72BB 68.22%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          }}
-        >
-          ready?
-        </span>
+        </GradientText>
       </div>
    <div className="relative w-full mt-4 flex justify-center px-4">
   {/* Outline */}

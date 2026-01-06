@@ -3,6 +3,7 @@ export type CarouselSlide = {
   alt: string;
   label: string;
   cloudBg: string;
+  imageSize?: { width: number; height: number };
 };
 
 export const slides: CarouselSlide[] = [
@@ -17,6 +18,7 @@ export const slides: CarouselSlide[] = [
     alt: "Digital camera",
     label: "digital camera",
     cloudBg: "/background/pink.png",
+    imageSize: { width: 240, height: 190 },
   },
   {
     src: "/prizes/airpods_pro.png",

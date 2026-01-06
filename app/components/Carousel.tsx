@@ -10,9 +10,13 @@ type Slide = {
   alt: string;
   label: string;
   cloudBg: string;
+  imageSize?: { width: number; height: number };
 };
 
 function CloudCard({ slide }: { slide: Slide }) {
+  const imageWidth = slide.imageSize?.width ?? 180;
+  const imageHeight = slide.imageSize?.height ?? 140;
+
   return (
     <div className="relative w-[260px] sm:w-[300px] lg:w-[320px]">
       {/* Cloud background image */}
@@ -26,13 +30,13 @@ function CloudCard({ slide }: { slide: Slide }) {
 
       {/* Content overlay */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="relative w-[180px] h-[140px]">
+        <div className="relative" style={{ width: `${imageWidth}px`, height: `${imageHeight}px` }}>
           <Image
             src={slide.src}
             alt={slide.alt}
             fill
             className="object-contain drop-shadow"
-            sizes="(min-width: 1024px) 180px, 180px"
+            sizes={`(min-width: 1024px) ${imageWidth}px, ${imageWidth}px`}
           />
         </div>
 
