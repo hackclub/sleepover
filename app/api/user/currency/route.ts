@@ -1,22 +1,16 @@
 import { NextResponse } from "next/server";
 import { getCurrency } from "@/lib/airtable";
-import { getUserInfo } from "@/lib/auth";
-import { cookies } from "next/headers";
+import { requireAuth } from "@/lib/session";
 
 export async function GET() {
- const cookieStore = await cookies();
-     const sessionCookie = cookieStore.get("session");
-   
-     if (!sessionCookie) return NextResponse.json({ balance: 0 }, { status: 401 });
-   
-     const value = sessionCookie.value;
-     const accessToken = JSON.parse(value).accessToken;
-   
-     const userinfo = await getUserInfo(accessToken);
-     const balance = await getCurrency(userinfo.identity.id)
+  try {
+    const session = await requireAuth();
+    const balance = await getCurrency(session.userId);
 
-
-  return NextResponse.json({
-    balance: balance ?? 0
-  });
+    return NextResponse.json({
+      balance: balance ?? 0
+    });
+  } catch (error) {
+    return NextResponse.json({ balance: 0 }, { status: 401 });
+  }
 }

@@ -1,28 +1,24 @@
-import { getUserInfo } from "@/lib/auth";
 import { getHackProjects } from "@/lib/hackatime";
-import { cookies } from "next/headers";
+import { getUserFromId } from "@/lib/airtable";
 import { NextResponse } from "next/server";
+import { requireAuth } from "@/lib/session";
 
 export async function GET() {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get("session");
-  
-    if (!sessionCookie) return NextResponse.json({
-      projects: []
-    });;
-  
-    const value = sessionCookie.value;
-    const accessToken = JSON.parse(value).accessToken;
-  
-    const userinfo = await getUserInfo(accessToken);
-    const slackId = userinfo.identity.slack_id;
-  
+  try {
+    const session = await requireAuth();
+
+    // Get slack_id from Airtable user record
+    const userRecord = await getUserFromId(session.userId);
+    const slackId = userRecord?.get("slack_id") as string || "";
+
     const projects = await getHackProjects(slackId);
 
     console.log("API PROJECTS =", projects)
-    
+
     return NextResponse.json({
       projects: projects ?? []
     });
+  } catch (error) {
+    return NextResponse.json({ projects: [] });
   }
-  
+}

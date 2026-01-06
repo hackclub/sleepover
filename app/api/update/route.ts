@@ -1,39 +1,29 @@
-import { getSingularProject, getUsersProjects, updateProjectHours } from "@/lib/airtable";
-import { getUserInfo } from "@/lib/auth";
-import { getHackProjects, getProjectHours, getUserStats } from "@/lib/hackatime";
-import { cookies } from "next/headers";
+import { getSingularProject, getUsersProjects, updateProjectHours, getUserFromId } from "@/lib/airtable";
+import { getProjectHours } from "@/lib/hackatime";
 import { NextResponse } from "next/server";
-
+import { requireAuth } from "@/lib/session";
 
 export async function GET() {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get("session");
-  
-    if (!sessionCookie) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
-  
-    const value = sessionCookie.value;
-    const accessToken = JSON.parse(value).accessToken;
-  
-    const userinfo = await getUserInfo(accessToken);
-    const id = userinfo.identity.id;
-    const slack_id = userinfo.identity.slack_id;
+  try {
+    const session = await requireAuth();
+    const id = session.userId;
+
+    // Get slack_id from Airtable user record
+    const userRecord = await getUserFromId(id);
+    const slack_id = userRecord?.get("slack_id") as string || "";
 
     const projects = await getUsersProjects(id)
     console.log("projects =", projects)
 
     for (const project of projects) {
       console.log(project)
-      const found = await getSingularProject(
-        userinfo.identity.id,
-        project.name
-      );
+      const found = await getSingularProject(id, project.name);
 
       await updateProjectHours(found.id, await getProjectHours(slack_id, project.hackatime_name))
     }
 
-    return NextResponse.json(
-        "good"
-      );
+    return NextResponse.json("good");
+  } catch (error) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+}

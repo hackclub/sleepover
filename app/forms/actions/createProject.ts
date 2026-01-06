@@ -1,28 +1,22 @@
 "use server"
 
-import { getProjectsTable } from "@/lib/airtable" // or Airtable init here
-import { getUserInfo } from "@/lib/auth";
+import { getProjectsTable, getUserFromId } from "@/lib/airtable" // or Airtable init here
 import { getProjectHours } from "@/lib/hackatime";
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
+import { requireAuth } from "@/lib/session";
 
 export async function createProject(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim()
   const desc = String(formData.get("desc") ?? "").trim()
   const project = String(formData.get("project") ?? "").trim()
 
-  const { cookies } = await import("next/headers");
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get("session");
-    var id = "ident!30fJ8d"
-    var slackid = ""
-  
-    if (sessionCookie) {
-      const value = sessionCookie?.value
-      const userinfo = await getUserInfo(JSON.parse(value).accessToken)
-      id = userinfo.identity.id
-      slackid = userinfo.identity.slack_id
-    }
+  const session = await requireAuth();
+  const id = session.userId;
+
+  // Get slack_id from Airtable user record
+  const userRecord = await getUserFromId(id);
+  const slackid = userRecord?.get("slack_id") as string || "";
 
   if (!name) return { error: "Name is required" }
 

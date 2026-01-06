@@ -2,6 +2,7 @@ import { getIronSession, SessionOptions, IronSession } from "iron-session";
 import { cookies } from "next/headers";
 
 export interface SessionData {
+  userId: string;
   email: string;
   name: string;
   isLoggedIn: boolean;
@@ -30,6 +31,20 @@ export async function getCurrentUser(): Promise<SessionData | null> {
     return null;
   }
   return {
+    userId: session.userId,
+    email: session.email,
+    name: session.name,
+    isLoggedIn: session.isLoggedIn,
+  };
+}
+
+export async function requireAuth(): Promise<SessionData> {
+  const session = await getSession();
+  if (!session.isLoggedIn || !session.userId) {
+    throw new Error("Unauthorized");
+  }
+  return {
+    userId: session.userId,
     email: session.email,
     name: session.name,
     isLoggedIn: session.isLoggedIn,

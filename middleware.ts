@@ -66,11 +66,14 @@ export async function middleware(request: NextRequest) {
   // ✅ Bypass basic auth for ALL API routes
   const isApi = pathname === "/api" || pathname.startsWith("/api/");
 
+  // ✅ Bypass basic auth for Next.js internal routes (image optimizer, etc.)
+  const isNextInternal = pathname.startsWith("/_next/");
+
   // ✅ Bypass basic auth for public assets (so next/image optimizer can fetch them)
   const isPublicAsset = isPublicAssetPath(pathname);
 
-  // 🔐 Apply basic auth everywhere except API + public assets
-  if (!isApi && !isPublicAsset) {
+  // 🔐 Apply basic auth everywhere except API + Next.js internals + public assets
+  if (!isApi && !isNextInternal && !isPublicAsset) {
     const basic = requireBasicAuth(request);
     if (basic) return basic;
   }

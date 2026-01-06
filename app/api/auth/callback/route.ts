@@ -82,6 +82,7 @@ export async function GET(request: NextRequest) {
 
     // Use iron-session for secure, signed session
     const session = await getSession();
+    session.userId = userInfo.id;
     session.email = email;
     session.name = name;
     session.isLoggedIn = true;
