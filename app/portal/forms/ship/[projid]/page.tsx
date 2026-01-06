@@ -13,7 +13,6 @@ export default function ShipForm() {
       className="space-y-3"
       encType="multipart/form-data"
     >
-      <h3>this is shipping project {id}</h3>
 
       <label>Playable Url</label>
       <input
@@ -64,8 +63,6 @@ export default function ShipForm() {
                     "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
                 }}
               />
-
-      <h3>checklist tbd</h3>
 
       <button type="submit" className="border px-3 py-2">
         Ship!
