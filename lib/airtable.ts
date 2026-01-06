@@ -66,6 +66,18 @@ export async function getSingularProject(userid: string, name: string) {
   return record[0];
 }
 
+export async function getProjectById(projectId: string) {
+  const record = await getProjectsTable().find(projectId);
+  return {
+    id: record.id,
+    name: record.get("name") as string,
+    desc: record.get("description") as string,
+    hours: record.get("hours") as number,
+    hackatime_name: record.get("hackatime_name") as string,
+    userid: record.get("userid") as string,
+  };
+}
+
 export function updateProjectHours(projectid: string, hours: number) {
   getProjectsTable().update([
     {
@@ -74,6 +86,17 @@ export function updateProjectHours(projectid: string, hours: number) {
         "hours": hours
       }
     }])
+}
+
+export async function updateProjectName(projectid: string, name: string) {
+  const record = await getProjectsTable().update([
+    {
+      "id": projectid,
+      "fields": {
+        "name": name
+      }
+    }])
+  return record[0];
 }
 
 export async function getUsersProjects(userid: string) {

@@ -7,11 +7,21 @@ import "quill/dist/quill.snow.css"
 import { createDevlog } from "@/app/forms/actions/DevlogCreate"
 import { getDevlogs } from "@/app/forms/actions/getDevlogs"
 import { updateDevlog } from "@/app/forms/actions/DevlogUpdate"
+import { updateProjectNameAction } from "@/app/forms/actions/UpdateProjectName"
 
 interface Devlog {
   id: string
   date: string
   text: string
+}
+
+interface Project {
+  id: string
+  name: string
+  desc: string
+  hours: number
+  hackatime_name: string
+  userid: string
 }
 
 export default function ProjectDetail() {
@@ -22,6 +32,10 @@ export default function ProjectDetail() {
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
   const editQuillRefs = useRef<Map<string, Quill>>(new Map())
+  const [project, setProject] = useState<Project | null>(null)
+  const [projectName, setProjectName] = useState<string>("")
+  const [isEditingName, setIsEditingName] = useState(false)
+  const [tempName, setTempName] = useState<string>("")
 
   useEffect(() => {
     if (editorRef.current && !quillRef.current) {
@@ -42,13 +56,26 @@ export default function ProjectDetail() {
   }, [])
 
   useEffect(() => {
-    async function fetchDevlogs() {
+    async function fetchData() {
       setLoading(true)
       const logs = await getDevlogs(id)
       setDevlogs(logs)
+
+      // Fetch project info
+      try {
+        const res = await fetch(`/api/projects/${id}`)
+        if (res.ok) {
+          const data = await res.json()
+          setProject(data.project)
+          setProjectName(data.project.name)
+        }
+      } catch (error) {
+        console.error("Failed to fetch project:", error)
+      }
+
       setLoading(false)
     }
-    fetchDevlogs()
+    fetchData()
   }, [id])
 
   const handleFormSubmit = async (formData: FormData) => {
@@ -103,9 +130,73 @@ export default function ProjectDetail() {
     editQuillRefs.current.set(devlogId, quill)
   }
 
+  const handleEditName = () => {
+    setTempName(projectName)
+    setIsEditingName(true)
+  }
+
+  const handleCancelNameEdit = () => {
+    setTempName("")
+    setIsEditingName(false)
+  }
+
+  const handleNameFormSubmit = async (formData: FormData) => {
+    const newName = formData.get("projectName") as string
+    if (!newName?.trim()) return
+
+    try {
+      const result = await updateProjectNameAction(id, newName)
+      if (result.success) {
+        setProjectName(result.project.name)
+        setIsEditingName(false)
+        setTempName("")
+      }
+    } catch (error) {
+      console.error("Error updating project name:", error)
+    }
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Project Entry</h1>
+      <div className="mb-6">
+        {isEditingName ? (
+          <form action={async (formData) => { await handleNameFormSubmit(formData) }} className="flex items-center gap-3">
+            <input
+              type="text"
+              name="projectName"
+              value={tempName}
+              onChange={(e) => setTempName(e.target.value)}
+              className="text-2xl font-bold px-3 py-1 border border-gray-300 rounded flex-1"
+              placeholder="Project name"
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              onClick={handleCancelNameEdit}
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+            >
+              Cancel
+            </button>
+          </form>
+        ) : (
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold">
+              {projectName || "Project Entry"}
+            </h1>
+            <button
+              onClick={handleEditName}
+              className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+            >
+              Edit Name
+            </button>
+          </div>
+        )}
+      </div>
 
       <form action={async (formData) => { await handleFormSubmit(formData) }} className="space-y-6">
         <div>

@@ -8,6 +8,7 @@ import OnboardingNovel from "../components/OnboardingNovel";
 import ProjectList from "../components/ProjectList";
 import NewProjectModal from "../components/NewProjectModal";
 import GradientText from "../components/GradientText";
+import SmallBox from "../components/SmallBox";
 
 export default function PortalPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -115,42 +116,22 @@ export default function PortalPage() {
               style={{ width: isMobile ? "100%" : "clamp(240px, 28%, 300px)" }}
             >
               {/* Small box #1 */}
-              <div
-                className="rounded-[24px] md:rounded-[30px] overflow-hidden"
-                style={{
-                  height: isMobile ? "200px" : "301px",
-                  background: "linear-gradient(180deg, #FFE2E9 0%, #FFF0FD 100%)",
-                  boxShadow: "0px 4px 4px rgba(116,114,160,0.62)",
-                }}
+              <SmallBox
+                header="HackDash"
+                body="Hacking with friends? Get food!"
+                isMobile={isMobile}
               >
-                <div
-                  style={{
-                    height: isMobile ? "50px" : "66px",
-                    background: "linear-gradient(180deg, #FFF2D4 0%, #FFE8B2 100%)",
-                    boxShadow: "0px 2px 0px #9799b63a",
-                  }}
-                />
-                <div style={{ height: isMobile ? "calc(100% - 50px)" : "calc(100% - 66px)" }} />
-              </div>
+                <button>I like free food!</button>
+              </SmallBox>
 
-              {/* Small box #2 */}
-              <div
-                className="rounded-[24px] md:rounded-[30px] overflow-hidden"
-                style={{
-                  height: isMobile ? "180px" : "262px",
-                  background: "linear-gradient(180deg, #FFE2E9 0%, #FFF0FD 100%)",
-                  boxShadow: "0px 4px 4px rgba(116,114,160,0.62)",
-                }}
+            {/* Small box #2 */}
+              <SmallBox
+                header="Jan Challenge"
+                body="create a website using any api, spend 10 hours coding, get 3 bonus feathers!!"
+                isMobile={isMobile}
               >
-                <div
-                  style={{
-                    height: isMobile ? "44px" : "58px",
-                    background: "linear-gradient(180deg, #FFF2D4 0%, #FFE8B2 100%)",
-                    boxShadow: "0px 2px 0px #9799b63a",
-                  }}
-                />
-                <div style={{ height: isMobile ? "calc(100% - 44px)" : "calc(100% - 58px)" }} />
-              </div>
+                <button>Learn more!</button>
+              </SmallBox>
             </div>
 
             {/* Right large box */}
