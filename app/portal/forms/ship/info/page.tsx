@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ShipInfoPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectId = searchParams.get("projectId");
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -19,6 +20,32 @@ export default function ShipInfoPage() {
     state: "",
     zip: "",
   });
+
+  useEffect(() => {
+    fetch("/api/user/address")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.error) {
+          setFormData({
+            firstName: data.firstName || "",
+            lastName: data.lastName || "",
+            email: data.email || "",
+            birthdate: data.birthday || "",
+            address1: data.address1 || "",
+            address2: data.address2 || "",
+            country: data.country || "",
+            city: data.city || "",
+            state: data.state || "",
+            zip: data.zip || "",
+          });
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch address:", err);
+        setLoading(false);
+      });
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -118,6 +145,18 @@ export default function ShipInfoPage() {
             </span>
           </h2>
 
+          {loading ? (
+            <p
+              className="text-center text-[20px] py-8"
+              style={{
+                fontFamily: "'MADE Tommy Soft', sans-serif",
+                color: "#7472A0",
+              }}
+            >
+              Loading your info...
+            </p>
+          ) : (
+          <>
           {/* Form Fields */}
           <div className="space-y-4">
             {/* First Name */}
@@ -371,6 +410,8 @@ export default function ShipInfoPage() {
               </div>
             </div>
           </div>
+          </>
+          )}
         </div>
 
         {/* Time to Ship!! */}

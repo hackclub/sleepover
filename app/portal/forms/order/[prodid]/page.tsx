@@ -17,10 +17,32 @@ export default function OrderProductPage() {
   const [userBalance, setUserBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState("");
-  const [addressDropdownOpen, setAddressDropdownOpen] = useState(false);
+  const [userAddress, setUserAddress] = useState<{
+    address1: string;
+    address2: string;
+    city: string;
+    state: string;
+    country: string;
+    zip: string;
+  } | null>(null);
 
-  const addresses = ["Home Address", "Work Address", "Other Address"];
+  const fetchAddress = () => {
+    fetch("/api/user/address")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.error && data.address1) {
+          setUserAddress({
+            address1: data.address1,
+            address2: data.address2,
+            city: data.city,
+            state: data.state,
+            country: data.country,
+            zip: data.zip,
+          });
+        }
+      })
+      .catch(console.error);
+  };
 
   useEffect(() => {
     fetch("/api/user/currency")
@@ -35,7 +57,33 @@ export default function OrderProductPage() {
         setLoading(false);
       })
       .catch(console.error);
+
+    fetchAddress();
+
+    // Refetch address when window regains focus (after editing on Hack Club auth)
+    const handleFocus = () => {
+      fetchAddress();
+    };
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
   }, [prodId]);
+
+  const formatAddress = () => {
+    if (!userAddress) return null;
+    const parts = [
+      userAddress.address1,
+      userAddress.address2,
+      userAddress.city,
+      userAddress.state,
+      userAddress.zip,
+      userAddress.country,
+    ].filter(Boolean);
+    return parts.join(", ");
+  };
+
+  const handleEditAddress = () => {
+    window.open("https://auth.hackclub.com/addresses", "_blank");
+  };
 
   const handleOrder = async () => {
     if (!product || submitting) return;
@@ -169,58 +217,34 @@ export default function OrderProductPage() {
                 Complete your order:
               </h3>
 
-              {/* Shipping Address Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setAddressDropdownOpen(!addressDropdownOpen)}
-                  className="w-full bg-gradient-to-b from-[#c0defe] to-[#9ac6f6] border-4 border-white rounded-2xl px-4 py-3 shadow-[0px_4px_0px_0px_#c6c7e4,0px_6px_8px_0px_rgba(116,114,160,0.69)] flex items-center justify-between"
+              {/* Shipping Address Display */}
+              <div className="w-full bg-gradient-to-b from-[#c0defe] to-[#9ac6f6] border-4 border-white rounded-2xl px-4 py-3 shadow-[0px_4px_0px_0px_#c6c7e4,0px_6px_8px_0px_rgba(116,114,160,0.69)]">
+                <p
+                  className="text-[#7472a0] text-sm font-medium mb-1"
+                  style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
                 >
-                  <span
-                    className="bg-gradient-to-b from-[#7684c9] to-[#7472a0] bg-clip-text text-transparent text-lg md:text-xl font-bold"
-                    style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
-                  >
-                    {selectedAddress || "Shipping Address"}
-                  </span>
-                  <span className="text-[#7472a0] text-xl">
-                    {addressDropdownOpen ? "▲" : "▼"}
-                  </span>
-                </button>
-
-                {addressDropdownOpen && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white border-4 border-[#c0defe] rounded-2xl shadow-lg z-10 overflow-hidden">
-                    {addresses.map((addr) => (
-                      <button
-                        key={addr}
-                        onClick={() => {
-                          setSelectedAddress(addr);
-                          setAddressDropdownOpen(false);
-                        }}
-                        className="w-full px-4 py-3 text-left hover:bg-[#c0defe]/20 transition-colors"
-                      >
-                        <span
-                          className="text-[#7472a0] text-lg font-bold"
-                          style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
-                        >
-                          {addr}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                )}
+                  Shipping Address:
+                </p>
+                <p
+                  className="bg-gradient-to-b from-[#7684c9] to-[#7472a0] bg-clip-text text-transparent text-lg md:text-xl font-bold"
+                  style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+                >
+                  {formatAddress() || "No address on file"}
+                </p>
               </div>
 
-              {/* Edit Addresses Button */}
-              <Link
-                href="/portal/forms/ship"
+              {/* Edit Address Button */}
+              <button
+                onClick={handleEditAddress}
                 className="self-end bg-gradient-to-t from-[#d9daf8] to-[#b5aae7] border-4 border-white rounded-2xl px-6 py-2 shadow-[0px_4px_0px_0px_#c6c7e4,0px_6px_8px_0px_rgba(116,114,160,0.69)] hover:scale-105 transition-transform"
               >
                 <span
                   className="bg-gradient-to-b from-[#7684c9] to-[#7472a0] bg-clip-text text-transparent text-lg font-bold"
                   style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
                 >
-                  Edit Addresses
+                  Edit Address ↗
                 </span>
-              </Link>
+              </button>
 
               {/* Order Summary Section */}
               <div className="bg-gradient-to-b from-[#c0defe] to-[#9ac6f6] border-4 border-white rounded-2xl px-4 py-3 shadow-[0px_4px_0px_0px_#c6c7e4,0px_6px_8px_0px_rgba(116,114,160,0.69)]">

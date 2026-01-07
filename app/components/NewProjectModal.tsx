@@ -52,12 +52,17 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     try {
       const formData = new FormData(e.currentTarget);
       await createProject(formData);
-    } catch (error) {
+      // Force full page reload to show new project
+      window.location.href = "/portal";
+    } catch (error: any) {
+      // Next.js redirect throws NEXT_REDIRECT - still reload to show new project
+      if (error?.digest?.includes("NEXT_REDIRECT")) {
+        window.location.href = "/portal";
+        return;
+      }
       console.error(error);
-      // If you want to keep it open on error, move onClose() out of finally.
-    } finally {
       setIsSubmitting(false);
-      onClose(); // ✅ always close after submit attempt
+      onClose();
     }
   };
 
