@@ -71,7 +71,7 @@ export async function getProjectById(projectId: string) {
   return {
     id: record.id,
     name: record.get("name") as string,
-    desc: record.get("description") as string,
+    desc: record.get("desc") as string,
     hours: record.get("hours") as number,
     hackatime_name: record.get("hackatime_name") as string,
     userid: record.get("userid") as string,
@@ -94,6 +94,28 @@ export async function updateProjectName(projectid: string, name: string) {
       "id": projectid,
       "fields": {
         "name": name
+      }
+    }])
+  return record[0];
+}
+
+export async function updateProjectDesc(projectid: string, desc: string) {
+  const record = await getProjectsTable().update([
+    {
+      "id": projectid,
+      "fields": {
+        "desc": desc
+      }
+    }])
+  return record[0];
+}
+
+export async function updateProjectHackatime(projectid: string, hackatime_name: string) {
+  const record = await getProjectsTable().update([
+    {
+      "id": projectid,
+      "fields": {
+        "hackatime_name": hackatime_name
       }
     }])
   return record[0];
@@ -355,18 +377,18 @@ export async function shipProjectTable(projectid: string, info: any) {
     if (user) {
       //fields
     const fields: Record<any, any> = {
-      "First Name": String(user.get("First Name")),
-      "Last Name": String(user.get("Last Name")),
-      "Email": user.get("email"),
+      "First Name": info.firstName || String(user.get("First Name")),
+      "Last Name": info.lastName || String(user.get("Last Name")),
+      "Email": info.email || user.get("email"),
       "Description": project.get("desc"),
       "GitHub Username": info.github,
-      "Address (Line 1)": String(user.get("Address (Line 1)")),
-      "Address (Line 2)": String(user.get("Address (Line 2)")),
-      "City": String(user.get("City (from Hack Clubbers)")),
-      "State / Province": String(user.get("State (from Hack Clubbers)")),
-      "Country": String(user.get("Country (from Hack Clubbers)")),
-      "ZIP / Postal Code": String(user.get("ZIP (from Hack Clubbers)")),
-      "Birthday": new Date(String(user.get("Birthday (from Hack Clubbers)"))),
+      "Address (Line 1)": info.address1 || String(user.get("Address (Line 1)")),
+      "Address (Line 2)": info.address2 || String(user.get("Address (Line 2)")),
+      "City": info.city || String(user.get("City (from Hack Clubbers)")),
+      "State / Province": info.state || String(user.get("State (from Hack Clubbers)")),
+      "Country": info.country || String(user.get("Country (from Hack Clubbers)")),
+      "ZIP / Postal Code": info.zip || String(user.get("ZIP (from Hack Clubbers)")),
+      "Birthday": info.birthdate ? new Date(info.birthdate) : new Date(String(user.get("Birthday (from Hack Clubbers)"))),
       "Playable URL": info.playable_url,
       "Code URL": info.code_url,
       "userid": user.get("id")

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import GradientText from "@/app/components/GradientText";
 
 const checklistItems = [
   "available on a link where anyone can try your project?",
@@ -16,10 +17,16 @@ export default function ShipChecklistPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectId = searchParams.get("projectId");
-  
+
   const [checked, setChecked] = useState<boolean[]>(
     new Array(checklistItems.length).fill(false)
   );
+
+  useEffect(() => {
+    if (!projectId) {
+      router.push("/portal");
+    }
+  }, [projectId, router]);
 
   const allChecked = checked.every(Boolean);
 
@@ -33,7 +40,7 @@ export default function ShipChecklistPage() {
 
   const handleYeah = () => {
     if (allChecked) {
-      router.push(`/portal/forms/ship/details${projectId ? `?projectId=${projectId}` : ""}`);
+      router.push(`/portal/forms/ship/details?projectId=${projectId}`);
     }
   };
 
@@ -50,7 +57,7 @@ export default function ShipChecklistPage() {
     >
       {/* Background pattern */}
       <div
-        className="absolute inset-0 opacity-20 pointer-events-none"
+        className="absolute inset-0 opacity-20 pointer-events-none z-0"
         style={{
           backgroundImage: "url('/background/bunny-tile.png')",
           backgroundRepeat: "repeat",
@@ -60,30 +67,14 @@ export default function ShipChecklistPage() {
 
       {/* Ship Title */}
       <div className="flex justify-center pt-8 relative z-10">
-        <h1 className="relative font-bold text-[64px] md:text-[96px] text-center">
-          {/* White stroke layer behind */}
-          <span
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-              color: "#FFFFFF",
-              WebkitTextStroke: "10px",
-              filter:
-                "drop-shadow(0px 4px 0px #C6C7E4) drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.2))",
-            }}
+        <h1 className="text-[64px] md:text-[96px] text-center">
+          <GradientText
+            gradient="#89A8EF"
+            strokeWidth="10px"
+            className="text-[64px] md:text-[96px]"
           >
             Ship
-          </span>
-          {/* Text on top */}
-          <span
-            className="relative"
-            style={{
-              fontFamily: "'MADE Tommy Soft', sans-serif",
-              color: "#89A8EF",
-            }}
-          >
-            Ship
-          </span>
+          </GradientText>
         </h1>
       </div>
 
@@ -98,29 +89,14 @@ export default function ShipChecklistPage() {
           }}
         >
           {/* Checklist Title */}
-          <h2 className="relative text-center text-[32px] md:text-[40px] font-bold mb-6">
-            {/* White stroke layer behind */}
-            <span
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-                color: "#FFFFFF",
-                WebkitTextStroke: "6px",
-                filter: "drop-shadow(0px 4px 0px #7472A0)",
-              }}
+          <h2 className="text-center text-[32px] md:text-[40px] font-bold mb-6">
+            <GradientText
+              gradient="#D48890"
+              strokeWidth="6px"
+              className="text-[32px] md:text-[40px]"
             >
               <u>Checklist</u>
-            </span>
-            {/* Text on top */}
-            <span
-              className="relative"
-              style={{
-                fontFamily: "'MADE Tommy Soft', sans-serif",
-                color: "#D48890",
-              }}
-            >
-              <u>Checklist</u>
-            </span>
+            </GradientText>
           </h2>
 
           {/* Inner box */}

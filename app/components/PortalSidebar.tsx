@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import GradientText from "./GradientText";
 
 const navItems = [
@@ -32,14 +33,24 @@ const navItems = [
   },
 ];
 
+interface UserData {
+  email: string;
+  name: string;
+  slack_display_name?: string;
+  slack_avatar_url?: string;
+  slack_id?: string;
+}
+
 type PortalSidebarProps = {
   onStateChange?: (isOpen: boolean) => void;
   initialOpen?: boolean;
 };
 
 export default function PortalSidebar({ onStateChange, initialOpen = true }: PortalSidebarProps) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(initialOpen);
   const [isMobile, setIsMobile] = useState(false);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -49,10 +60,34 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
         setIsOpen(false);
       }
     };
-    
+
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    // Check if user data is already in sessionStorage
+    const cachedUserData = sessionStorage.getItem("portalUserData");
+    if (cachedUserData) {
+      try {
+        setUserData(JSON.parse(cachedUserData));
+      } catch (err) {
+        console.error("Failed to parse cached user data:", err);
+      }
+    }
+
+    // Fetch user data from API
+    fetch("/api/user")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.error) {
+          setUserData(data);
+          // Cache the user data in sessionStorage
+          sessionStorage.setItem("portalUserData", JSON.stringify(data));
+        }
+      })
+      .catch((err) => console.error("Failed to fetch user data:", err));
   }, []);
 
   useEffect(() => {
@@ -67,6 +102,21 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
     if (isMobile) {
       setIsOpen(false);
     }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      // Clear cached user data from sessionStorage
+      sessionStorage.removeItem("portalUserData");
+      router.push("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  const handleSlackClick = () => {
+    window.open("https://hackclub.slack.com", "_blank");
   };
 
   return (
@@ -153,7 +203,7 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
         />
 
         {/* Content overlay */}
-        <div className={`relative z-10 p-6 md:p-8 ${isMobile ? "pt-16" : ""}`}>
+        <div className={`relative z-10 p-6 md:p-8 flex flex-col min-h-screen ${isMobile ? "pt-16" : ""}`}>
           {/* Logo */}
           <Link href="/" className="mt-8 ml-2 md:ml-4 block">
             <Image
@@ -166,6 +216,7 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
           </Link>
 
           {/* Navigation Links */}
+          <div className="flex flex-col flex-1">
           <nav className={`flex flex-col gap-8 md:gap-10 mt-12 md:mt-16 ${isOpen ? "ml-2 md:ml-4" : "items-center"}`}>
             {navItems.map((item) => (
               <Link
@@ -195,6 +246,104 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
               </Link>
             ))}
           </nav>
+
+          {/* User Profile Section */}
+          {userData && (
+            <div className={`mt-auto mb-8 ${isOpen ? "ml-2 md:ml-4" : "flex justify-center"}`}>
+              {isOpen ? (
+                <div className="flex items-center gap-3">
+                  {/* User Avatar */}
+                  <div className="flex-shrink-0">
+                    {userData.slack_avatar_url ? (
+                      <Image
+                        src={userData.slack_avatar_url}
+                        alt="User avatar"
+                        width={60}
+                        height={60}
+                        className="rounded-full w-[50px] h-[50px] md:w-[60px] md:h-[60px]"
+                      />
+                    ) : (
+                      <div
+                        className="rounded-full w-[50px] h-[50px] md:w-[60px] md:h-[60px] flex items-center justify-center text-white font-bold text-xl"
+                        style={{
+                          background: "linear-gradient(135deg, #8FB1F0 0%, #7EA0EA 100%)",
+                        }}
+                      >
+                        {(userData.slack_display_name || userData.name || "U")[0].toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* User Info and Buttons */}
+                  <div className="flex-1 min-w-0">
+                    {/* Username */}
+                    <p
+                      className="text-[16px] md:text-[18px] font-bold truncate"
+                      style={{
+                        fontFamily: "'MADE Tommy Soft', sans-serif",
+                        color: "#5A5C8A",
+                      }}
+                    >
+                      {userData.slack_display_name || userData.name}
+                    </p>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-2 mt-1">
+                      <button
+                        onClick={handleSlackClick}
+                        className="px-3 py-1 rounded-lg text-[12px] md:text-[14px] font-bold transition-all hover:scale-105"
+                        style={{
+                          fontFamily: "'MADE Tommy Soft', sans-serif",
+                          background: "linear-gradient(180deg, #869BE7 0%, #B2BDF1 100%)",
+                          color: "#4E5DA9",
+                          border: "2px solid white",
+                          boxShadow: "0px 2px 4px rgba(116,114,160,0.4)",
+                        }}
+                      >
+                        Slack
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className="px-3 py-1 rounded-lg text-[12px] md:text-[14px] font-bold transition-all hover:scale-105"
+                        style={{
+                          fontFamily: "'MADE Tommy Soft', sans-serif",
+                          background: "linear-gradient(180deg, #E89BA8 0%, #F0B5C0 100%)",
+                          color: "#8A4E5C",
+                          border: "2px solid white",
+                          boxShadow: "0px 2px 4px rgba(116,114,160,0.4)",
+                        }}
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* Collapsed view - just avatar */
+                <div className="flex-shrink-0 cursor-pointer hover:scale-110 transition-transform" onClick={handleToggle}>
+                  {userData.slack_avatar_url ? (
+                    <Image
+                      src={userData.slack_avatar_url}
+                      alt="User avatar"
+                      width={44}
+                      height={44}
+                      className="rounded-full w-[44px] h-[44px]"
+                    />
+                  ) : (
+                    <div
+                      className="rounded-full w-[44px] h-[44px] flex items-center justify-center text-white font-bold text-lg"
+                      style={{
+                        background: "linear-gradient(135deg, #8FB1F0 0%, #7EA0EA 100%)",
+                      }}
+                    >
+                      {(userData.slack_display_name || userData.name || "U")[0].toUpperCase()}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+          </div>
         </div>
       </aside>
     </>

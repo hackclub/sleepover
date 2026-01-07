@@ -1,15 +1,5 @@
 import type { NextConfig } from "next";
 
-/** @type {import('next').NextConfig} */
- 
-module.exports = {
-  experimental: {
-    serverActions: {
-      bodySizeLimit: '10mb',
-    },
-  },
-}
-
 const securityHeaders = [
   {
     key: "Strict-Transport-Security",
@@ -38,6 +28,20 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
+    },
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'avatars.slack-edge.com',
+        pathname: '/**',
+      },
+    ],
+  },
   async headers() {
     return [
       {

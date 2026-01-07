@@ -8,6 +8,7 @@ import { createDevlog } from "@/app/forms/actions/DevlogCreate"
 import { getDevlogs } from "@/app/forms/actions/getDevlogs"
 import { updateDevlog } from "@/app/forms/actions/DevlogUpdate"
 import { updateProjectNameAction } from "@/app/forms/actions/UpdateProjectName"
+import { updateProjectDescAction } from "@/app/forms/actions/UpdateProjectDesc"
 
 interface Devlog {
   id: string
@@ -36,6 +37,10 @@ export default function ProjectDetail() {
   const [projectName, setProjectName] = useState<string>("")
   const [isEditingName, setIsEditingName] = useState(false)
   const [tempName, setTempName] = useState<string>("")
+  const [projectDesc, setProjectDesc] = useState<string>("")
+  const [isEditingDesc, setIsEditingDesc] = useState(false)
+  const [tempDesc, setTempDesc] = useState<string>("")
+  const [hackatimeName, setHackatimeName] = useState<string>("")
 
   useEffect(() => {
     if (editorRef.current && !quillRef.current) {
@@ -68,6 +73,8 @@ export default function ProjectDetail() {
           const data = await res.json()
           setProject(data.project)
           setProjectName(data.project.name)
+          setProjectDesc(data.project.desc || "")
+          setHackatimeName(data.project.hackatime_name || "")
         }
       } catch (error) {
         console.error("Failed to fetch project:", error)
@@ -156,6 +163,33 @@ export default function ProjectDetail() {
     }
   }
 
+  const handleEditDesc = () => {
+    setTempDesc(projectDesc)
+    setIsEditingDesc(true)
+  }
+
+  const handleCancelDescEdit = () => {
+    setTempDesc("")
+    setIsEditingDesc(false)
+  }
+
+  const handleDescFormSubmit = async (formData: FormData) => {
+    const newDesc = formData.get("projectDesc") as string
+    if (!newDesc?.trim()) return
+
+    try {
+      const result = await updateProjectDescAction(id, newDesc)
+      if (result.success) {
+        setProjectDesc(result.project.desc)
+        setIsEditingDesc(false)
+        setTempDesc("")
+      }
+    } catch (error) {
+      console.error("Error updating project description:", error)
+    }
+  }
+
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="mb-6">
@@ -198,7 +232,59 @@ export default function ProjectDetail() {
         )}
       </div>
 
-      <form action={async (formData) => { await handleFormSubmit(formData) }} className="space-y-6">
+      {/* Description Section */}
+      <div className="mb-6">
+        {isEditingDesc ? (
+          <form action={async (formData) => { await handleDescFormSubmit(formData) }} className="space-y-3">
+            <label className="block text-sm font-medium">Description</label>
+            <textarea
+              name="projectDesc"
+              value={tempDesc}
+              onChange={(e) => setTempDesc(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded resize-vertical min-h-[100px]"
+              placeholder="Project description"
+            />
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={handleCancelDescEdit}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <h3 className="text-lg font-semibold">Description</h3>
+              <button
+                onClick={handleEditDesc}
+                className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+              >
+                Edit
+              </button>
+            </div>
+            <p className="text-gray-700">{projectDesc || "No description yet"}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Hackatime Project Section */}
+      <div className="mb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <h3 className="text-lg font-semibold">Hackatime Project</h3>
+        </div>
+        <p className="text-gray-700">{hackatimeName || "No hackatime project linked"}</p>
+      </div>
+
+      {/* <form action={async (formData) => { await handleFormSubmit(formData) }} className="space-y-6">
         <div>
           <label className="block text-sm font-medium mb-2">
             Text Content
@@ -277,7 +363,7 @@ export default function ProjectDetail() {
             ))}
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   )
 }

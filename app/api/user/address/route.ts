@@ -39,7 +39,7 @@ export async function GET() {
       firstName: getField(airtableUser.get("First Name")),
       lastName: getField(airtableUser.get("Last Name")),
       email: airtableUser.get("email") || user.email,
-      birthday: getField(airtableUser.get("Birthday (from Hack Clubbers)")),
+      birthdate: getField(airtableUser.get("Birthday (from Hack Clubbers)")),
       address1,
       address2,
       city,

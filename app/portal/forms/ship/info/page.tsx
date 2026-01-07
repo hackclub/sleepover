@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import GradientText from "@/app/components/GradientText";
+import { shipProject } from "@/app/forms/actions/shipProject";
 
 export default function ShipInfoPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectId = searchParams.get("projectId");
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -54,9 +57,73 @@ export default function ShipInfoPage() {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log("Shipping form submitted:", formData, "projectId:", projectId);
-    router.push("/portal");
+  const handleSubmit = async () => {
+    if (!projectId) {
+      alert("Project ID is missing");
+      return;
+    }
+
+    // Validate required fields
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.birthdate ||
+        !formData.address1 || !formData.city || !formData.state || !formData.zip || !formData.country) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      // Get ship data from sessionStorage
+      const shipDataStr = sessionStorage.getItem("shipData");
+      const screenshotDataUrl = sessionStorage.getItem("shipScreenshot");
+
+      if (!shipDataStr) {
+        alert("Shipping details are missing. Please go back and fill in the details.");
+        setSubmitting(false);
+        return;
+      }
+
+      const shipData = JSON.parse(shipDataStr);
+
+      // Create FormData
+      const formDataToSend = new FormData();
+      formDataToSend.append("playable", shipData.playableUrl);
+      formDataToSend.append("code", shipData.repoUrl);
+      formDataToSend.append("github", shipData.githubUsername);
+
+      // Add address information
+      formDataToSend.append("firstName", formData.firstName);
+      formDataToSend.append("lastName", formData.lastName);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("birthdate", formData.birthdate);
+      formDataToSend.append("address1", formData.address1);
+      formDataToSend.append("address2", formData.address2);
+      formDataToSend.append("city", formData.city);
+      formDataToSend.append("state", formData.state);
+      formDataToSend.append("zip", formData.zip);
+      formDataToSend.append("country", formData.country);
+
+      // Convert base64 screenshot to File if exists
+      if (screenshotDataUrl) {
+        const response = await fetch(screenshotDataUrl);
+        const blob = await response.blob();
+        const file = new File([blob], shipData.screenshot || "screenshot.png", { type: blob.type });
+        formDataToSend.append("screenshot", file);
+      }
+
+      // Call the server action
+      await shipProject(formDataToSend, projectId);
+
+      // Clean up sessionStorage
+      sessionStorage.removeItem("shipData");
+      sessionStorage.removeItem("shipScreenshot");
+
+      // Redirect happens in the server action
+    } catch (error) {
+      console.error("Error shipping project:", error);
+      alert("Failed to ship project. Please try again.");
+      setSubmitting(false);
+    }
   };
 
   const handleGoBack = () => {
@@ -72,7 +139,7 @@ export default function ShipInfoPage() {
     >
       {/* Background pattern */}
       <div
-        className="absolute inset-0 opacity-20 pointer-events-none"
+        className="absolute inset-0 opacity-20 pointer-events-none z-0"
         style={{
           backgroundImage: "url('/background/bunny-tile.png')",
           backgroundRepeat: "repeat",
@@ -82,30 +149,14 @@ export default function ShipInfoPage() {
 
       {/* Ship Title */}
       <div className="flex justify-center pt-8 relative z-10">
-        <h1 className="relative font-bold text-[64px] md:text-[96px] text-center">
-          {/* White stroke layer behind */}
-          <span
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-              color: "#FFFFFF",
-              WebkitTextStroke: "10px",
-              filter:
-                "drop-shadow(0px 4px 0px #C6C7E4) drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.2))",
-            }}
+        <h1 className="text-[64px] md:text-[96px] text-center">
+          <GradientText
+            gradient="#89A8EF"
+            strokeWidth="10px"
+            className="text-[64px] md:text-[96px]"
           >
             Ship
-          </span>
-          {/* Text on top */}
-          <span
-            className="relative"
-            style={{
-              fontFamily: "'MADE Tommy Soft', sans-serif",
-              color: "#89A8EF",
-            }}
-          >
-            Ship
-          </span>
+          </GradientText>
         </h1>
       </div>
 
@@ -120,29 +171,14 @@ export default function ShipInfoPage() {
           }}
         >
           {/* Your Info Title */}
-          <h2 className="relative text-[32px] md:text-[40px] font-bold mb-8">
-            {/* White stroke layer behind */}
-            <span
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-                color: "#FFFFFF",
-                WebkitTextStroke: "6px",
-                filter: "drop-shadow(0px 4px 0px #7472A0)",
-              }}
+          <h2 className="text-[32px] md:text-[40px] font-bold mb-8">
+            <GradientText
+              gradient="#D48890"
+              strokeWidth="6px"
+              className="text-[32px] md:text-[40px]"
             >
               Your Info
-            </span>
-            {/* Gradient text on top */}
-            <span
-              className="relative"
-              style={{
-                fontFamily: "'MADE Tommy Soft', sans-serif",
-                color: "#D48890",
-              }}
-            >
-              Your Info
-            </span>
+            </GradientText>
           </h2>
 
           {loading ? (
@@ -415,29 +451,14 @@ export default function ShipInfoPage() {
         </div>
 
         {/* Time to Ship!! */}
-        <h3 className="relative text-center text-[36px] md:text-[48px] font-bold mt-8">
-          {/* White stroke layer behind */}
-          <span
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-              color: "#FFFFFF",
-              WebkitTextStroke: "6px",
-              filter: "drop-shadow(0px 2px 0px #7472A0)",
-            }}
+        <h3 className="text-center text-[36px] md:text-[48px] font-bold mt-8">
+          <GradientText
+            gradient="#7791E6"
+            strokeWidth="6px"
+            className="text-[36px] md:text-[48px]"
           >
             <u>time to ship!!</u>
-          </span>
-          {/* Text on top */}
-          <span
-            className="relative"
-            style={{
-              fontFamily: "'MADE Tommy Soft', sans-serif",
-              color: "#7791E6",
-            }}
-          >
-            <u>time to ship!!</u>
-          </span>
+          </GradientText>
         </h3>
 
         {/* Buttons */}
@@ -445,7 +466,10 @@ export default function ShipInfoPage() {
           {/* OK! Button */}
           <button
             onClick={handleSubmit}
-            className="relative rounded-[16px] px-8 py-3 transition-transform hover:scale-105"
+            disabled={submitting || loading}
+            className={`relative rounded-[16px] px-8 py-3 transition-transform ${
+              submitting || loading ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
+            }`}
             style={{
               background: "linear-gradient(180deg, #869BE7 0%, #B2BDF1 100%)",
               border: "4px solid white",
@@ -466,7 +490,7 @@ export default function ShipInfoPage() {
                 color: "#4E5DA9",
               }}
             >
-              OK!
+              {submitting ? "Shipping..." : "OK!"}
             </span>
           </button>
 

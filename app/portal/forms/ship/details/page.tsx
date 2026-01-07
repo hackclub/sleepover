@@ -1,24 +1,112 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import GradientText from "@/app/components/GradientText";
+
+interface ProjectData {
+  id: string;
+  name: string;
+  desc: string;
+  hours: number;
+  hackatime_name: string;
+  userid: string;
+}
 
 export default function ShipDetailsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectId = searchParams.get("projectId");
-  
+
+  const [loading, setLoading] = useState(true);
+  const [project, setProject] = useState<ProjectData | null>(null);
   const [step1Confirmed, setStep1Confirmed] = useState(false);
-  const [githubUrl, setGithubUrl] = useState("");
-  const [projectUrl, setProjectUrl] = useState("");
+  const [githubUsername, setGithubUsername] = useState("");
+  const [repoUrl, setRepoUrl] = useState("");
+  const [playableUrl, setPlayableUrl] = useState("");
+  const [screenshot, setScreenshot] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
+  const [screenshotError, setScreenshotError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!projectId) {
+      router.push("/portal");
+      return;
+    }
+
+    fetch(`/api/projects/${projectId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          console.error("Failed to fetch project:", data.error);
+          router.push("/portal");
+        } else {
+          setProject(data.project);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch project:", err);
+        setLoading(false);
+        router.push("/portal");
+      });
+  }, [projectId, router]);
 
   const handleStep1Yeah = () => {
     setStep1Confirmed(true);
   };
 
+  const handleScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Check file size (5MB = 5 * 1024 * 1024 bytes)
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        setScreenshotError("Screenshot must be 5MB or less");
+        setScreenshot(null);
+        setScreenshotPreview(null);
+        e.target.value = ""; // Clear the input
+        return;
+      }
+
+      setScreenshotError(null);
+      setScreenshot(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setScreenshotPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleNext = () => {
-    router.push(`/portal/forms/ship/info${projectId ? `?projectId=${projectId}` : ""}`);
+    if (!step1Confirmed) {
+      alert("Please confirm the project information before proceeding");
+      return;
+    }
+    if (!githubUsername || !repoUrl || !playableUrl) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    sessionStorage.setItem("shipData", JSON.stringify({
+      githubUsername,
+      repoUrl,
+      playableUrl,
+      screenshot: screenshot ? screenshot.name : null,
+    }));
+
+    if (screenshot) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        sessionStorage.setItem("shipScreenshot", reader.result as string);
+        router.push(`/portal/forms/ship/info?projectId=${projectId}`);
+      };
+      reader.readAsDataURL(screenshot);
+    } else {
+      router.push(`/portal/forms/ship/info?projectId=${projectId}`);
+    }
   };
 
   const handleGoBack = () => {
@@ -34,7 +122,7 @@ export default function ShipDetailsPage() {
     >
       {/* Background pattern */}
       <div
-        className="absolute inset-0 opacity-20 pointer-events-none"
+        className="absolute inset-0 opacity-20 pointer-events-none z-0"
         style={{
           backgroundImage: "url('/background/bunny-tile.png')",
           backgroundRepeat: "repeat",
@@ -44,30 +132,14 @@ export default function ShipDetailsPage() {
 
       {/* Ship Title */}
       <div className="flex justify-center pt-8 relative z-10">
-        <h1 className="relative font-bold text-[64px] md:text-[96px] text-center">
-          {/* White stroke layer behind */}
-          <span
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-              color: "#FFFFFF",
-              WebkitTextStroke: "10px",
-              filter:
-                "drop-shadow(0px 4px 0px #C6C7E4) drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.2))",
-            }}
+        <h1 className="text-[64px] md:text-[96px] text-center">
+          <GradientText
+            gradient="#89A8EF"
+            strokeWidth="10px"
+            className="text-[64px] md:text-[96px]"
           >
             Ship
-          </span>
-          {/* Text on top */}
-          <span
-            className="relative"
-            style={{
-              fontFamily: "'MADE Tommy Soft', sans-serif",
-              color: "#89A8EF",
-            }}
-          >
-            Ship
-          </span>
+          </GradientText>
         </h1>
       </div>
 
@@ -82,107 +154,69 @@ export default function ShipDetailsPage() {
           }}
         >
           {/* Project Details Title */}
-          <h2 className="relative text-[32px] md:text-[40px] font-bold mb-6">
-            {/* White stroke layer behind */}
-            <span
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                fontFamily: "'MADE Tommy Soft Outline', sans-serif",
-                color: "#FFFFFF",
-                WebkitTextStroke: "6px",
-                filter: "drop-shadow(0px 4px 0px #7472A0)",
-              }}
+          <h2 className="text-[32px] md:text-[40px] font-bold mb-6">
+            <GradientText
+              gradient="#D48890"
+              strokeWidth="6px"
+              className="text-[32px] md:text-[40px]"
             >
               Project Details
-            </span>
-            {/* Gradient text on top */}
-            <span
-              className="relative"
-              style={{
-                fontFamily: "'MADE Tommy Soft', sans-serif",
-                color: "#D48890",
-              }}
-            >
-              Project Details
-            </span>
+            </GradientText>
           </h2>
 
           {/* Step 1 */}
-          <p
-            className="text-[24px] md:text-[32px] font-bold mb-4"
-            style={{
-              fontFamily: "'MADE Tommy Soft', sans-serif",
-              color: "#A8AAEB",
-              textShadow: "0px 4px 0px #7472A0",
-            }}
-          >
-            1. Verify current information:
+          <p className="text-[24px] md:text-[32px] font-bold mb-4">
+            <GradientText
+              gradient="#A8AAEB"
+              strokeWidth="4px"
+              className="text-[24px] md:text-[32px]"
+            >
+              1. Verify current information:
+            </GradientText>
           </p>
 
           {/* Project Info Box */}
-          <div
-            className="rounded-[24px] p-6 mb-6"
-            style={{
-              background: "linear-gradient(to top, #FFF2D4 42%, #FFE8B2 100%)",
-              boxShadow: "0px 4px 4px rgba(116,114,160,0.29)",
-            }}
-          >
-            <div className="flex flex-wrap gap-8">
-              {/* Left column - Project Info */}
-              <div className="flex-1 min-w-[280px]">
-                <h3
-                  className="text-[36px] md:text-[48px] font-bold"
-                  style={{
-                    fontFamily: "'MADE Tommy Soft', sans-serif",
-                    background: "linear-gradient(180deg, #7791E6 0%, #7472A0 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    textShadow: "0px 2px 0px #7472A0",
-                  }}
-                >
-                  project name
-                </h3>
+          {loading ? (
+            <div className="text-center py-8">
+              <p
+                className="text-[20px]"
+                style={{
+                  fontFamily: "'MADE Tommy Soft', sans-serif",
+                  color: "#7472A0",
+                }}
+              >
+                Loading project details...
+              </p>
+            </div>
+          ) : project ? (
+            <div
+              className="rounded-[24px] p-6 mb-6"
+              style={{
+                background: "linear-gradient(to top, #FFF2D4 42%, #FFE8B2 100%)",
+                boxShadow: "0px 4px 4px rgba(116,114,160,0.29)",
+              }}
+            >
+              <div className="flex flex-wrap gap-8">
+                {/* Left column - Project Info */}
+                <div className="flex-1 min-w-[280px]">
+                  <h3 className="text-[36px] md:text-[48px] font-bold">
+                    <GradientText
+                      gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                      strokeWidth="4px"
+                      className="text-[36px] md:text-[48px]"
+                    >
+                      {project.name}
+                    </GradientText>
+                  </h3>
 
-                {/* Hours */}
-                <div className="flex items-center gap-2 mt-2">
-                  <Image
-                    src="/icons/star.svg"
-                    alt="star"
-                    width={28}
-                    height={25}
-                  />
-                  <span
-                    className="text-[20px] md:text-[24px] font-bold underline"
-                    style={{
-                      fontFamily: "'MADE Tommy Soft', sans-serif",
-                      background: "linear-gradient(180deg, #93B4F2 0%, #6988E0 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                    }}
-                  >
-                    ##.# hours
-                  </span>
-                </div>
-                <p
-                  className="text-[16px] md:text-[20px] font-bold opacity-75 ml-[36px]"
-                  style={{
-                    fontFamily: "'MADE Tommy Soft', sans-serif",
-                    color: "#6C6EA0",
-                  }}
-                >
-                  (##.# art, ##.# code)
-                </p>
-
-                {/* Description */}
-                <div className="flex items-start gap-2 mt-4">
-                  <Image
-                    src="/icons/star.svg"
-                    alt="star"
-                    width={28}
-                    height={25}
-                    className="mt-1"
-                  />
-                  <div>
+                  {/* Hours */}
+                  <div className="flex items-center gap-2 mt-2">
+                    <Image
+                      src="/icons/star.svg"
+                      alt="star"
+                      width={28}
+                      height={25}
+                    />
                     <span
                       className="text-[20px] md:text-[24px] font-bold underline"
                       style={{
@@ -192,109 +226,74 @@ export default function ShipDetailsPage() {
                         WebkitTextFillColor: "transparent",
                       }}
                     >
-                      description:
+                      {project.hours.toFixed(1)} hours
                     </span>
-                    <p
-                      className="text-[14px] md:text-[16px] font-bold mt-2 max-w-[300px]"
-                      style={{
-                        fontFamily: "'MADE Tommy Soft', sans-serif",
-                        color: "#7472A0",
-                      }}
-                    >
-                      yap yap yap yap yap yap yap yap yap yap yap yap yap yap
-                      yap yap yap yap yap yap yap yap yap yap yap yap yap yap
-                      yap yap yap yap yap yap yap yap
-                    </p>
+                  </div>
+
+                  {/* Description */}
+                  <div className="flex items-start gap-2 mt-4">
+                    <Image
+                      src="/icons/star.svg"
+                      alt="star"
+                      width={28}
+                      height={25}
+                      className="mt-1"
+                    />
+                    <div>
+                      <span
+                        className="text-[20px] md:text-[24px] font-bold underline"
+                        style={{
+                          fontFamily: "'MADE Tommy Soft', sans-serif",
+                          background: "linear-gradient(180deg, #93B4F2 0%, #6988E0 100%)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                        }}
+                      >
+                        description:
+                      </span>
+                      <p
+                        className="text-[14px] md:text-[16px] font-bold mt-2 max-w-[300px]"
+                        style={{
+                          fontFamily: "'MADE Tommy Soft', sans-serif",
+                          color: "#7472A0",
+                        }}
+                      >
+                        {project.desc}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Right columns - Hackatime & Lapse */}
-              <div className="flex gap-8 flex-wrap">
-                {/* Hackatime Projects */}
-                <div className="text-center">
-                  <h4
-                    className="text-[24px] md:text-[32px] font-bold underline mb-4"
-                    style={{
-                      fontFamily: "'MADE Tommy Soft', sans-serif",
-                      background: "linear-gradient(180deg, #B5AAE7 0%, #D488AD 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                    }}
-                  >
-                    hackatime project(s):
-                  </h4>
-                  {[1, 2].map((i) => (
-                    <div key={i} className="mb-2">
-                      <p
-                        className="text-[16px] md:text-[20px] font-bold underline"
-                        style={{
-                          fontFamily: "'MADE Tommy Soft', sans-serif",
-                          background: "linear-gradient(180deg, #7791E6 0%, #7472A0 100%)",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                        }}
-                      >
-                        hackatime project name
-                      </p>
-                      <p
-                        className="text-[14px] md:text-[16px] font-bold underline"
-                        style={{
-                          fontFamily: "'MADE Tommy Soft', sans-serif",
-                          background: "linear-gradient(180deg, #93B4F2 0%, #6988E0 100%)",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                        }}
-                      >
-                        ##.# hours
-                      </p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Lapse Timelapses */}
-                <div className="text-center">
-                  <h4
-                    className="text-[24px] md:text-[32px] font-bold underline mb-4"
-                    style={{
-                      fontFamily: "'MADE Tommy Soft', sans-serif",
-                      background: "linear-gradient(180deg, #B5AAE7 0%, #D488AD 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                    }}
-                  >
-                    lapse timelapses:
-                  </h4>
-                  {[1, 2].map((i) => (
-                    <div key={i} className="mb-2">
-                      <p
-                        className="text-[16px] md:text-[20px] font-bold underline"
-                        style={{
-                          fontFamily: "'MADE Tommy Soft', sans-serif",
-                          background: "linear-gradient(180deg, #7791E6 0%, #7472A0 100%)",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                        }}
-                      >
-                        lapse timelapse name
-                      </p>
-                      <p
-                        className="text-[14px] md:text-[16px] font-bold underline"
-                        style={{
-                          fontFamily: "'MADE Tommy Soft', sans-serif",
-                          background: "linear-gradient(180deg, #93B4F2 0%, #6988E0 100%)",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                        }}
-                      >
-                        ##.# hours
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                {/* Right column - Hackatime */}
+                {project.hackatime_name && (
+                  <div className="text-center">
+                    <h4
+                      className="text-[24px] md:text-[32px] font-bold underline mb-4"
+                      style={{
+                        fontFamily: "'MADE Tommy Soft', sans-serif",
+                        background: "linear-gradient(180deg, #B5AAE7 0%, #D488AD 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                      }}
+                    >
+                      hackatime project:
+                    </h4>
+                    <p
+                      className="text-[16px] md:text-[20px] font-bold underline"
+                      style={{
+                        fontFamily: "'MADE Tommy Soft', sans-serif",
+                        background: "linear-gradient(180deg, #7791E6 0%, #7472A0 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                      }}
+                    >
+                      {project.hackatime_name}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
+          ) : null}
 
           {/* "this look good?" text and Step 1 buttons */}
           <div className="text-center mb-8">
@@ -312,9 +311,7 @@ export default function ShipDetailsPage() {
             <div className="flex justify-center gap-4">
               <button
                 onClick={handleStep1Yeah}
-                className={`relative rounded-[16px] px-6 py-2 transition-transform hover:scale-105 ${
-                  step1Confirmed ? "ring-2 ring-green-400" : ""
-                }`}
+                className="relative rounded-[16px] px-6 py-2 transition-transform hover:scale-105"
                 style={{
                   background: "linear-gradient(180deg, #869BE7 0%, #B2BDF1 100%)",
                   border: "4px solid white",
@@ -329,13 +326,16 @@ export default function ShipDetailsPage() {
                   }}
                 />
                 <span
-                  className="relative z-10 text-[18px] md:text-[24px] font-bold"
+                  className="relative z-10 text-[18px] md:text-[24px] font-bold flex items-center gap-2"
                   style={{
                     fontFamily: "'MADE Tommy Soft', sans-serif",
                     color: "#4E5DA9",
                   }}
                 >
                   YEAH!
+                  {step1Confirmed && (
+                    <span className="text-green-600 text-[24px] md:text-[28px]">✓</span>
+                  )}
                 </span>
               </button>
               <button
@@ -369,15 +369,14 @@ export default function ShipDetailsPage() {
           </div>
 
           {/* Step 2 */}
-          <p
-            className="text-[24px] md:text-[32px] font-bold mb-4"
-            style={{
-              fontFamily: "'MADE Tommy Soft', sans-serif",
-              color: "#A8AAEB",
-              textShadow: "0px 4px 0px #7472A0",
-            }}
-          >
-            2. Add more information:
+          <p className="text-[24px] md:text-[32px] font-bold mb-4">
+            <GradientText
+              gradient="#A8AAEB"
+              strokeWidth="4px"
+              className="text-[24px] md:text-[32px]"
+            >
+              2. Add more information:
+            </GradientText>
           </p>
 
           {/* Step 2 form box */}
@@ -399,27 +398,56 @@ export default function ShipDetailsPage() {
               >
                 Screenshot
               </label>
-              <div
-                className="w-[200px] h-[130px] rounded-[12px] flex items-center justify-center cursor-pointer"
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleScreenshotChange}
+                id="screenshot-upload"
+                className="hidden"
+              />
+              <label
+                htmlFor="screenshot-upload"
+                className="block w-[200px] h-[130px] rounded-[12px] flex items-center justify-center cursor-pointer overflow-hidden"
                 style={{
-                  background: "#E7AAB2",
-                  opacity: 0.5,
+                  background: screenshotPreview ? "transparent" : "#E7AAB2",
+                  opacity: screenshotPreview ? 1 : 0.5,
                   boxShadow: "0px 4px 8px #6C6EA0",
                 }}
               >
-                <span
-                  className="text-[16px] md:text-[20px] font-medium"
+                {screenshotPreview ? (
+                  <Image
+                    src={screenshotPreview}
+                    alt="Screenshot preview"
+                    width={200}
+                    height={130}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <span
+                    className="text-[16px] md:text-[20px] font-medium"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      color: "#D48890",
+                    }}
+                  >
+                    upload image here
+                  </span>
+                )}
+              </label>
+              {screenshotError && (
+                <p
+                  className="mt-2 text-[16px] md:text-[18px] font-bold"
                   style={{
                     fontFamily: "'MADE Tommy Soft', sans-serif",
-                    color: "#D48890",
+                    color: "#D84855",
                   }}
                 >
-                  upload image here
-                </span>
-              </div>
+                  ⚠️ {screenshotError}
+                </p>
+              )}
             </div>
 
-            {/* GitHub Repo */}
+            {/* GitHub Username */}
             <div className="mb-4">
               <label
                 className="block text-[24px] md:text-[28px] font-medium mb-2"
@@ -428,12 +456,14 @@ export default function ShipDetailsPage() {
                   color: "#7472A0",
                 }}
               >
-                Link to GitHub Repo
+                GitHub Username
               </label>
               <input
                 type="text"
-                value={githubUrl}
-                onChange={(e) => setGithubUrl(e.target.value)}
+                id="github"
+                value={githubUsername}
+                onChange={(e) => setGithubUsername(e.target.value)}
+                placeholder="username"
                 className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
@@ -443,7 +473,7 @@ export default function ShipDetailsPage() {
               />
             </div>
 
-            {/* Shipped Project Link */}
+            {/* Repo URL */}
             <div className="mb-4">
               <label
                 className="block text-[24px] md:text-[28px] font-medium mb-2"
@@ -452,12 +482,39 @@ export default function ShipDetailsPage() {
                   color: "#7472A0",
                 }}
               >
-                Link to Shipped Project
+                Repository URL
               </label>
               <input
-                type="text"
-                value={projectUrl}
-                onChange={(e) => setProjectUrl(e.target.value)}
+                type="url"
+                id="code"
+                value={repoUrl}
+                onChange={(e) => setRepoUrl(e.target.value)}
+                placeholder="https://github.com/..."
+                className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
+                style={{
+                  fontFamily: "'MADE Tommy Soft', sans-serif",
+                  background: "white",
+                  boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
+                }}
+              />
+            </div>
+
+            {/* Playable Project Link */}
+            <div className="mb-4">
+              <label
+                className="block text-[24px] md:text-[28px] font-medium mb-2"
+                style={{
+                  fontFamily: "'MADE Tommy Soft', sans-serif",
+                  color: "#7472A0",
+                }}
+              >
+                Link to Playable/Live Project
+              </label>
+              <input
+                type="url"
+                value={playableUrl}
+                onChange={(e) => setPlayableUrl(e.target.value)}
+                placeholder="https://..."
                 className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
