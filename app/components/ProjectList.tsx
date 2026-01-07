@@ -97,7 +97,7 @@ export default function ProjectList({ projects }: { projects: any[] }) {
           </div>
 
           {/* SHIP! Button */}
-          <Link href={`/portal/forms/ship/${p.id}`}>
+          <Link href={`/portal/forms/ship?projectId=${p.id}`}>
             <button
               className="relative flex items-center justify-center rounded-2xl transition-transform hover:scale-105 cursor-pointer"
               style={{

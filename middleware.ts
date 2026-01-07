@@ -12,9 +12,9 @@ function requireBasicAuth(request: NextRequest) {
   const user = process.env.BASIC_AUTH_USER ?? "";
   const pass = process.env.BASIC_AUTH_PASS ?? "";
 
-  // Fail closed if not configured
+  // Skip basic auth if not configured (development mode)
   if (!user || !pass) {
-    return new NextResponse("Basic auth is not configured.", { status: 500 });
+    return null;
   }
 
   const auth = request.headers.get("authorization");
