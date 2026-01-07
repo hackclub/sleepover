@@ -64,3 +64,18 @@ export async function getUserInfo(accessToken: string) {
 
   return response.json();
 }
+
+export async function getUserAddresses(accessToken: string) {
+  const response = await fetch("https://auth.hackclub.com/api/v1/addresses", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    console.error("Failed to fetch addresses:", response.status);
+    return [];
+  }
+
+  return response.json();
+}

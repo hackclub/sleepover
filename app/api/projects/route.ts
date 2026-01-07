@@ -1,6 +1,8 @@
-import { getProjectsCached } from "@/lib/airtable";
+import { getUsersProjects } from "@/lib/airtable";
 import { getSession } from "@/lib/session";
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(): Promise<Response> {
   const session = await getSession();
@@ -9,7 +11,7 @@ export async function GET(): Promise<Response> {
     return NextResponse.json({ projects: [] }, { status: 401 });
   }
 
-  const projects = await getProjectsCached(session.userId);
+  const projects = await getUsersProjects(session.userId);
 
   return NextResponse.json({ projects: projects ?? [] });
 }

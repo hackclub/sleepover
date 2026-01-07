@@ -5,35 +5,39 @@ import Link from "next/link";
 import Image from "next/image";
 import { deleteProject } from "@/app/forms/actions/deleteProject";
 import GradientText from "./GradientText";
+import DeleteConfirmModal from "./DeleteConfirmModal";
 
 function TrashIcon() {
   return (
-    <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M1 3H10M3.5 3V2C3.5 1.44772 3.94772 1 4.5 1H6.5C7.05228 1 7.5 1.44772 7.5 2V3M9 3V10C9 10.5523 8.55228 11 8 11H3C2.44772 11 2 10.5523 2 10V3H9Z"
-        stroke="#B94D6F"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <Image src="/icons/trashcan.png" alt="trash" width={16} height={18} />
   );
 }
 
-export default function ProjectList({ projects }: { projects: any[] }) {
+export default function ProjectList({ projects: initialProjects }: { projects: any[] }) {
+  const [projects, setProjects] = useState(initialProjects);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [projectToDelete, setProjectToDelete] = useState<{ id: string; name: string } | null>(null);
 
-  const handleDelete = async (projectId: string) => {
-    if (!confirm("Are you sure you want to delete this project?")) return;
+  const handleDeleteClick = (projectId: string, projectName: string) => {
+    setProjectToDelete({ id: projectId, name: projectName });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!projectToDelete) return;
     
-    setDeletingId(projectId);
+    setDeletingId(projectToDelete.id);
     try {
-      await deleteProject(projectId);
+      await deleteProject(projectToDelete.id);
       window.location.reload();
     } catch (error) {
       console.error(error);
       setDeletingId(null);
+      setProjectToDelete(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setProjectToDelete(null);
   };
 
   return (
@@ -79,13 +83,13 @@ export default function ProjectList({ projects }: { projects: any[] }) {
 
             {/* Delete button */}
             <button
-              onClick={() => handleDelete(p.id)}
+              onClick={() => handleDeleteClick(p.id, p.name)}
               disabled={deletingId === p.id}
               className="flex items-center gap-1 mt-1 cursor-pointer disabled:opacity-50"
             >
               <TrashIcon />
               <span
-                className="text-xs font-bold opacity-75"
+                className="text-sm font-bold opacity-75"
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
                   color: "#B94D6F",
@@ -97,7 +101,7 @@ export default function ProjectList({ projects }: { projects: any[] }) {
           </div>
 
           {/* SHIP! Button */}
-          <Link href={`/portal/forms/ship/${p.id}`}>
+          <Link href={`/portal/forms/ship?projectId=${p.id}`}>
             <button
               className="relative flex items-center justify-center rounded-2xl transition-transform hover:scale-105 cursor-pointer"
               style={{
@@ -141,6 +145,14 @@ export default function ProjectList({ projects }: { projects: any[] }) {
           No projects yet. Create your first one!
         </p>
       )}
+
+      <DeleteConfirmModal
+        isOpen={projectToDelete !== null}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        isDeleting={deletingId !== null}
+        projectName={projectToDelete?.name}
+      />
     </div>
   );
 }
