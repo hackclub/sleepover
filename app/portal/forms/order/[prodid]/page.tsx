@@ -45,9 +45,19 @@ export default function OrderProductPage() {
   };
 
   useEffect(() => {
+    // Check if there's a cached balance in sessionStorage for instant display
+    const cachedBalance = sessionStorage.getItem("userBalance");
+    if (cachedBalance) {
+      setUserBalance(Number(cachedBalance));
+    }
+
+    // Fetch the real balance from API and update both state and cache
     fetch("/api/user/currency")
       .then((res) => res.json())
-      .then((data) => setUserBalance(data.balance))
+      .then((data) => {
+        setUserBalance(data.balance);
+        sessionStorage.setItem("userBalance", data.balance.toString());
+      })
       .catch(console.error);
 
     fetch(`/api/shop/${prodId}`)
@@ -92,6 +102,11 @@ export default function OrderProductPage() {
     try {
       const formData = new FormData();
       await orderProduct(formData, prodId);
+
+      // Update the balance in sessionStorage immediately for instant UI update
+      const newBalance = userBalance - product.price;
+      sessionStorage.setItem("userBalance", newBalance.toString());
+
       router.push("/portal/shop");
     } catch (error) {
       console.error("Order failed:", error);

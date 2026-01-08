@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import PortalSidebar from "../../components/PortalSidebar";
 import BunnyTile from "../../components/BunnyTile";
 import FeatherBalance from "../../components/FeatherBalance";
@@ -15,9 +16,19 @@ export default function ShopPage() {
   const [colCount, setColCount] = useState(2);
 
   useEffect(() => {
+    // Check if there's a cached balance in sessionStorage for instant display
+    const cachedBalance = sessionStorage.getItem("userBalance");
+    if (cachedBalance) {
+      setUserBalance(Number(cachedBalance));
+    }
+
+    // Fetch the real balance from API and update both state and cache
     fetch("/api/user/currency")
       .then((res) => res.json())
-      .then((data) => setUserBalance(data.balance))
+      .then((data) => {
+        setUserBalance(data.balance);
+        sessionStorage.setItem("userBalance", data.balance.toString());
+      })
       .catch(console.error);
 
     fetch("/api/shop")
@@ -68,7 +79,20 @@ export default function ShopPage() {
       >
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-4">
-            <div className="hidden md:block flex-1" />
+            <div className="md:flex-1 flex justify-center md:justify-start">
+              <Link href="/portal/shop/orders">
+                <button
+                  className="px-4 md:px-6 py-2 md:py-3 rounded-2xl font-bold text-base md:text-lg transition-all hover:scale-105 shadow-[0px_4px_8px_rgba(108,110,160,0.5)]"
+                  style={{
+                    fontFamily: "'MADE Tommy Soft', sans-serif",
+                    background: "linear-gradient(180deg, #D9DAF8 0%, #FFF0FD 100%)",
+                    color: "#7472A0",
+                  }}
+                >
+                  My Orders
+                </button>
+              </Link>
+            </div>
             <h1
               className="text-5xl md:text-6xl lg:text-8xl font-bold text-center bg-gradient-to-b from-[#7c95e6] to-[#91b0ed] bg-clip-text text-transparent drop-shadow-[0px_4px_4px_rgba(0,0,0,0.51)]"
               style={{

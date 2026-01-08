@@ -40,6 +40,11 @@ const nextConfig: NextConfig = {
         hostname: 'avatars.slack-edge.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'hc-cdn.hel1.your-objectstorage.com',
+        pathname: '/**',
+      },
     ],
   },
   async headers() {

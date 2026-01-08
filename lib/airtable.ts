@@ -241,7 +241,10 @@ export async function addProduct(userid: string, product: string) {
   const product_record = product_records[0];
 
   const currentOrdered = (record.get("ordered") as string[]) ?? [];
-  const updatedOrdered = [...currentOrdered, product];
+  // Only add the product if it's not already in the array to avoid duplicates
+  const updatedOrdered = currentOrdered.includes(product)
+    ? currentOrdered
+    : [...currentOrdered, product];
 
   const currentCurrency = (record.get("currency") as number) ?? 0;
   const updatedCurrency = currentCurrency - Number(product_record.get("price"))
@@ -284,6 +287,75 @@ export async function addFulfillment(userid: string, product: string) {
   ]);
 
   return records[0];
+}
+
+export async function getUserOrders(userid: string) {
+  const users = await getUsersTable().select({
+    filterByFormula: `{id} = '${userid}'`,
+    maxRecords: 1,
+  })
+  .firstPage();
+
+  if (!users.length) return [];
+
+  const user = users[0];
+  const userRecordId = user.getId();
+
+  // Fetch all records and filter manually since Airtable formulas don't work well with linked record arrays
+  const allRecords = await getFulfillmentTable()
+    .select({
+      sort: [{ field: "date", direction: "desc" }],
+    })
+    .all();
+
+  // Filter records where the user field array contains the userRecordId
+  const records = allRecords.filter(r => {
+    const userField = r.get("user") as string[];
+    if (Array.isArray(userField)) {
+      return userField.includes(userRecordId);
+    }
+    return userField === userRecordId;
+  });
+
+  const ordersWithDetails = await Promise.all(
+    records.map(async (r) => {
+      const productIds = r.get("product") as string[];
+      const productId = productIds?.[0];
+
+      let productDetails = null;
+      if (productId) {
+        try {
+          const productRecord = await getProductsTable().find(productId);
+          productDetails = {
+            name: productRecord.get("item_friendly_name") as string,
+            price: productRecord.get("price") as number,
+            image: productRecord.get("image") as string | undefined,
+          };
+        } catch (err) {
+          console.error("Failed to fetch product details:", err);
+        }
+      }
+
+      const address = {
+        line1: String(user.get("Address (Line 1)") || ""),
+        line2: String(user.get("Address (Line 2)") || ""),
+        city: String(user.get("City (from Hack Clubbers)") || ""),
+        state: String(user.get("State (from Hack Clubbers)") || ""),
+        country: String(user.get("Country (from Hack Clubbers)") || ""),
+        zip: String(user.get("ZIP (from Hack Clubbers)") || ""),
+      };
+
+      return {
+        id: r.id,
+        date: r.get("date") as string,
+        status: r.get("status") as string,
+        product: productDetails,
+        address,
+      };
+    })
+  );
+
+  return ordersWithDetails;
 }
 
 export async function createDevlogEntry(projectId: string, date: string, text: string) {
