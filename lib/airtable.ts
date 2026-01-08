@@ -27,6 +27,19 @@ export async function getUserFromId(userid: string) {
   return user[0]
 }
 
+export async function getAllUsers() {
+  const users = await getUsersTable()
+    .select({
+      view: "Grid view"
+    })
+    .all();
+
+  return users.map((user) => ({
+    id: user.get("id") as string,
+    slack_id: user.get("slack_id") as string,
+  }));
+}
+
 function getFulfillmentTable() {
   return getBase()("FULFILLMENT");
 }
