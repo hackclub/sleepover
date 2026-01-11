@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import GradientText from "@/app/components/GradientText";
@@ -13,7 +13,7 @@ const checklistItems = [
   "does your project have a filled-out readME document?",
 ];
 
-export default function ShipChecklistPage() {
+function ShipChecklistContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectId = searchParams.get("projectId");
@@ -228,5 +228,30 @@ export default function ShipChecklistPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ShipChecklistPage() {
+  return (
+    <Suspense fallback={
+      <div
+        className="min-h-screen relative font-sans pb-12 flex items-center justify-center"
+        style={{
+          background: "#C0DEFE",
+        }}
+      >
+        <p
+          className="text-[24px] font-bold"
+          style={{
+            fontFamily: "'MADE Tommy Soft', sans-serif",
+            color: "#7472A0",
+          }}
+        >
+          Loading...
+        </p>
+      </div>
+    }>
+      <ShipChecklistContent />
+    </Suspense>
   );
 }
