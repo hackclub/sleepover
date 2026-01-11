@@ -10,7 +10,7 @@ export async function updateProjectDescAction(projectId: string, desc: string) {
 
   const record = await updateProjectDesc(projectId, desc.trim())
 
-  revalidateTag("projects")
+  revalidateTag("projects", "max")
 
   return {
     success: true,

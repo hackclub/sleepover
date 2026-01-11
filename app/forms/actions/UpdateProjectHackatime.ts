@@ -10,7 +10,7 @@ export async function updateProjectHackatimeAction(projectId: string, hackatime_
 
   const record = await updateProjectHackatime(projectId, hackatime_name.trim())
 
-  revalidateTag("projects")
+  revalidateTag("projects", "max")
 
   return {
     success: true,

@@ -13,7 +13,7 @@ export async function deleteProject(projectId: string) {
     await table.destroy(projectId)
     console.log("Successfully deleted project:", projectId)
     
-    revalidateTag("projects")
+    revalidateTag("projects", "max")
     revalidatePath("/portal")
     return { success: true }
   } catch (error) {
