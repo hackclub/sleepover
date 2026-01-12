@@ -9,6 +9,7 @@ import ProjectList from "../components/ProjectList";
 import NewProjectModal from "../components/NewProjectModal";
 import GradientText from "../components/GradientText";
 import SmallBox from "../components/SmallBox";
+import Script from "next/script";
 
 export default function PortalPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -121,7 +122,23 @@ export default function PortalPage() {
                 body="Hacking with friends? Get food!"
                 isMobile={isMobile}
               >
-                <button>I like free food!</button>
+<>
+      <div className="mt-15"
+        data-fillout-id="pZsjjXn4yAus"
+        data-fillout-embed-type="popup"
+        data-fillout-button-text="Get your HCB grant"
+        data-fillout-dynamic-resize="true"
+        data-fillout-button-color="#FFEBBE"
+        data-fillout-inherit-parameters="true"
+        data-fillout-domain="forms.hackclub.com"
+        data-fillout-popup-size="medium"
+      />
+
+      <Script
+        src="https://server.fillout.com/embed/v1/"
+        strategy="afterInteractive"
+      />
+    </>
               </SmallBox>
 
             {/* Small box #2 */}
