@@ -196,101 +196,80 @@ function ShipDetailsContent() {
                 boxShadow: "0px 4px 4px rgba(116,114,160,0.29)",
               }}
             >
-              <div className="flex flex-wrap gap-8">
-                {/* Left column - Project Info */}
-                <div className="flex-1 min-w-[280px]">
-                  <h3 className="text-[36px] md:text-[48px] font-bold">
-                    <GradientText
-                      gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
-                      strokeWidth="4px"
-                      className="text-[36px] md:text-[48px]"
-                    >
-                      {project.name}
-                    </GradientText>
-                  </h3>
-
-                  {/* Hours */}
-                  <div className="flex items-center gap-2 mt-2">
-                    <Image
-                      src="/icons/star.svg"
-                      alt="star"
-                      width={28}
-                      height={25}
-                    />
-                    <span
-                      className="text-[20px] md:text-[24px] font-bold underline"
-                      style={{
-                        fontFamily: "'MADE Tommy Soft', sans-serif",
-                        background: "linear-gradient(180deg, #93B4F2 0%, #6988E0 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                      }}
-                    >
-                      {project.hours.toFixed(1)} hours
-                    </span>
-                  </div>
-
-                  {/* Description */}
-                  <div className="flex items-start gap-2 mt-4">
-                    <Image
-                      src="/icons/star.svg"
-                      alt="star"
-                      width={28}
-                      height={25}
-                      className="mt-1"
-                    />
-                    <div>
-                      <span
-                        className="text-[20px] md:text-[24px] font-bold underline"
-                        style={{
-                          fontFamily: "'MADE Tommy Soft', sans-serif",
-                          background: "linear-gradient(180deg, #93B4F2 0%, #6988E0 100%)",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                        }}
-                      >
-                        description:
-                      </span>
-                      <p
-                        className="text-[14px] md:text-[16px] font-bold mt-2 max-w-[300px]"
-                        style={{
-                          fontFamily: "'MADE Tommy Soft', sans-serif",
-                          color: "#7472A0",
-                        }}
-                      >
-                        {project.desc}
-                      </p>
-                    </div>
-                  </div>
+              <div>
+                <h3 className="text-[36px] md:text-[48px] font-bold">
+                  <GradientText
+                    gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                    strokeWidth="4px"
+                    className="text-[36px] md:text-[48px]"
+                  >
+                    {project.name}
+                  </GradientText>
+                </h3>
+                <div className="flex items-center gap-2 mb-5">
+                  <span
+                    className="text-[20px] md:text-[24px] font-bold underline"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      background: "linear-gradient(180deg, #93B4F2 0%, #6988E0 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }}
+                  >
+                    {project.desc}
+                  </span>
                 </div>
 
-                {/* Right column - Hackatime */}
-                {project.hackatime_name && (
-                  <div className="text-center">
-                    <h4
-                      className="text-[24px] md:text-[32px] font-bold underline mb-4"
-                      style={{
-                        fontFamily: "'MADE Tommy Soft', sans-serif",
-                        background: "linear-gradient(180deg, #B5AAE7 0%, #D488AD 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                      }}
-                    >
-                      hackatime project:
-                    </h4>
-                    <p
-                      className="text-[16px] md:text-[20px] font-bold underline"
-                      style={{
-                        fontFamily: "'MADE Tommy Soft', sans-serif",
-                        background: "linear-gradient(180deg, #7791E6 0%, #7472A0 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                      }}
-                    >
-                      {project.hackatime_name}
-                    </p>
-                  </div>
-                )}
+                <label
+                className="block text-[24px] md:text-[28px] font-medium mb-2"
+                style={{
+                  fontFamily: "'MADE Tommy Soft', sans-serif",
+                  color: "#7472A0",
+                }}
+              >
+                Hackatime Data:
+              </label>
+                {/* Hours */}
+                <div className="flex items-center gap-2 mt-2">
+                  <Image
+                    src="/icons/star.svg"
+                    alt="star"
+                    width={28}
+                    height={25}
+                  />
+                  <span
+                    className="text-[20px] md:text-[24px] font-bold underline"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      background: "linear-gradient(180deg, #93B4F2 0%, #6988E0 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }}
+                  >
+                    {project.hours.toFixed(1)} hours tracked
+                  </span>
+                </div>
+
+                {/* Hackatime */}
+                <div className="flex items-center gap-2 mt-2">
+                  <Image
+                    src="/icons/star.svg"
+                    alt="star"
+                    width={28}
+                    height={25}
+                  />
+                  <span
+                    className="text-[20px] md:text-[24px] font-bold underline"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      background: "linear-gradient(180deg, #93B4F2 0%, #6988E0 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }}
+                  >
+                    {project.hackatime_name}
+                  </span>
+                </div>
               </div>
             </div>
           ) : null}

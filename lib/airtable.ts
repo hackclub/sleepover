@@ -363,6 +363,7 @@ export async function getUserOrders(userid: string) {
         date: r.get("date") as string,
         status: r.get("status") as string,
         product: productDetails,
+        productId: productId,
         address,
       };
     })
@@ -476,7 +477,9 @@ export async function shipProjectTable(projectid: string, info: any) {
       "Birthday": info.birthdate ? new Date(info.birthdate) : new Date(String(user.get("Birthday (from Hack Clubbers)"))),
       "Playable URL": info.playable_url,
       "Code URL": info.code_url,
-      "userid": user.get("id")
+      "userid": user.get("id"),
+      "displayname": user.get("slack_display_name"),
+      "Project": project.get("name"),
     };
   
     const review = await getReviewTable().create(fields);
@@ -562,3 +565,12 @@ export const getUserHoursCached = unstable_cache(
   ["user-hours-by-user"],
   { revalidate: 60, tags: ["user-hours"] }
 );
+
+export async function getGallery() {
+  const records = await getReviewTable()
+    .select({
+      filterByFormula: `{Status} = 'Approved'`,
+    })
+    .all();
+    return records
+}

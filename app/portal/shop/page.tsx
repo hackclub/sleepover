@@ -10,6 +10,7 @@ import ShopItem, { ShopItemData } from "../../components/ShopItem";
 export default function ShopPage() {
   const [userBalance, setUserBalance] = useState(0);
   const [shopItems, setShopItems] = useState<ShopItemData[]>([]);
+  const [purchasedItemIds, setPurchasedItemIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -36,6 +37,20 @@ export default function ShopPage() {
       .then((data) => {
         setShopItems(data.items);
         setLoading(false);
+      })
+      .catch(console.error);
+
+    // Fetch user orders to track purchased items
+    fetch("/api/shop/orders")
+      .then((res) => res.json())
+      .then((data) => {
+        const orders = data.orders || [];
+        const productIds = new Set(
+          orders
+            .map((order: any) => order.productId)
+            .filter((id: string) => id)
+        );
+        setPurchasedItemIds(productIds);
       })
       .catch(console.error);
   }, []);
@@ -138,12 +153,14 @@ export default function ShopPage() {
                 const row = Math.floor(index / colCount);
                 const col = index % colCount;
                 const variant = (row + col) % 2 === 0 ? "pink" : "purple";
+                const alreadyPurchased = purchasedItemIds.has(item.id);
                 return (
                   <ShopItem
                     key={item.id}
                     item={item}
                     canBuy={userBalance >= item.price}
                     variant={variant}
+                    alreadyPurchased={alreadyPurchased}
                   />
                 );
               })

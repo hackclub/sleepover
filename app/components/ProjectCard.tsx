@@ -2,10 +2,7 @@ import Image from "next/image";
 
 export interface ProjectData {
   id: string;
-  name: string;
-  author: string;
-  description: string;
-  screenshot?: string;
+  fields: any;
   variant: "blue" | "yellow";
 }
 
@@ -15,6 +12,8 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, variant }: ProjectCardProps) {
+  console.log("SCREENSHOT =", project.fields.Screenshot[0].url)
+
   const cardVariant = variant ?? project.variant;
   const isBlue = cardVariant === "blue";
 
@@ -43,7 +42,7 @@ export default function ProjectCard({ project, variant }: ProjectCardProps) {
         className="text-[#6c6ea0] text-xl md:text-2xl font-bold text-center drop-shadow-[0px_4px_4px_rgba(116,114,160,0.62)]"
         style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
       >
-        {project.name}
+        {project.fields.Project}
       </p>
 
       <div
@@ -61,12 +60,13 @@ export default function ProjectCard({ project, variant }: ProjectCardProps) {
         <div
           className="bg-[rgba(108,110,160,0.5)] rounded-[24px] w-[90%] h-[90%] flex items-center justify-center"
         >
-          {project.screenshot ? (
+          {project.fields.Screenshot ? (
             <Image
-              src={project.screenshot}
-              alt={project.name}
-              fill
-              className="object-cover rounded-[24px]"
+              src={project.fields.Screenshot[0].url}
+              alt={project.fields.Project}
+              width="1000"
+              height="1000"
+              className="rounded-[24px]"
             />
           ) : (
             <p
@@ -83,14 +83,14 @@ export default function ProjectCard({ project, variant }: ProjectCardProps) {
         className="text-[#6c6ea0] text-lg md:text-xl font-bold text-center mt-3 drop-shadow-[0px_4px_4px_rgba(116,114,160,0.62)]"
         style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
       >
-        by {project.author}
+        by {project.fields.displayname}
       </p>
 
       <p
         className="text-[#6c6ea0] text-sm md:text-base font-bold text-center mt-2 drop-shadow-[0px_4px_4px_rgba(116,114,160,0.62)] line-clamp-3"
         style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
       >
-        {project.description}
+        {project.fields.Description}
       </p>
     </div>
   );

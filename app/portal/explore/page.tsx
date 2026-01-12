@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import PortalSidebar from "../../components/PortalSidebar";
-import ProjectCard from "../../components/ProjectCard";
+import ProjectCard, { ProjectData } from "../../components/ProjectCard";
 import { placeholderProjects } from "@/lib/projects";
+import { getGallery } from "@/lib/airtable";
+import GradientText from "@/app/components/GradientText";
 
 function useGridColumns(sidebarOpen: boolean, isMobile: boolean) {
   const [cols, setCols] = useState(3);
@@ -31,6 +33,18 @@ function useGridColumns(sidebarOpen: boolean, isMobile: boolean) {
 }
 
 export default function ExplorePage() {
+  const [projects, SetProjects] = useState<ProjectData[]>([]);
+
+  useEffect(() => {
+    fetch("/api/gallery")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("GALLERY ==", data)
+        SetProjects(data.data)
+      })
+      .catch(console.error);
+    }, []);
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const cols = useGridColumns(sidebarOpen, isMobile);
@@ -81,26 +95,13 @@ export default function ExplorePage() {
           </span>
         </h1>
 
-        <p className="text-base md:text-lg lg:text-2xl font-bold text-center mb-8 md:mb-12 relative px-2">
-          <span
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              fontFamily: "'MADE Tommy Soft', sans-serif",
-              WebkitTextStroke: isMobile ? "2px white" : "4px white",
-              color: "transparent",
-            }}
+        <p className="text-base md:text-lg lg:text-2xl text-center mb-8 md:mb-12 px-2">
+          <GradientText
+            gradient="#6c6ea0"
+            strokeWidth={isMobile ? "2px" : "4px"}
           >
             need inspiration? check out awesome projects below - or click on -- to get project inspiration!
-          </span>
-          <span
-            className="relative text-[#6c6ea0]"
-            style={{
-              fontFamily: "'MADE Tommy Soft', sans-serif",
-              textShadow: "0px 4px 4px rgba(0,0,0,0.25)",
-            }}
-          >
-            need inspiration? check out awesome projects below - or click on -- to get project inspiration!
-          </span>
+          </GradientText>
         </p>
 
         <div
@@ -110,7 +111,7 @@ export default function ExplorePage() {
             ${sidebarOpen ? "max-w-5xl" : "xl:grid-cols-4 max-w-7xl"}
           `}
         >
-          {placeholderProjects.map((project, index) => {
+          {projects.map((project, index) => {
             const row = Math.floor(index / cols);
             const col = index % cols;
             const isBlue = (row + col) % 2 === 0;

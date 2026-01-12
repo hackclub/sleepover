@@ -286,7 +286,7 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
 
                     {/* Action Buttons */}
                     <div className="flex gap-2 mt-1">
-                      <Link href="https://hackclub.slack.com" onClick={handleNavClick}>
+                      <Link href="https://app.slack.com/client/E09V59WQY1E/C06T17NQB0B" onClick={handleNavClick}>
                         <Image src="/icons/slack.png" alt="slack" width={iconSize} height={iconSize}/>
                       </Link>
                       <Link href="/" onClick={handleLogout}>
