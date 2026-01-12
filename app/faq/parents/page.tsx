@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import BunnyTile from "../../components/BunnyTile";
+import GradientText from "../../components/GradientText";
 
 export default function ParentsGuide() {
   const [isMobile, setIsMobile] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -14,31 +16,38 @@ export default function ParentsGuide() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  const contentOffset = isMobile ? "0px" : isSidebarOpen ? "clamp(360px, 28vw, 600px)" : "140px";
+
   return (
     <div
       className="font-sans min-h-screen relative"
       style={{ backgroundColor: "#C0DEFE" }}
     >
       <BunnyTile />
-      <Sidebar />
+      <Sidebar onStateChange={setIsSidebarOpen} />
 
       {/* Main Content */}
       <main
-        className="relative z-10 p-6 md:p-12 pt-20 md:pt-12 transition-all duration-300"
-        style={{ marginLeft: isMobile ? "0px" : "420px" }}
+        className="relative z-10 transition-[margin-left] duration-300 p-4 md:p-8 lg:p-12 pt-16 md:pt-8 flex flex-col items-center"
+        style={{ 
+          marginLeft: contentOffset, 
+          marginRight: isMobile ? "0px" : "32px" 
+        }}
       >
-        <h1
-          className="text-[36px] sm:text-[52px] md:text-[80px] font-bold mb-4"
-          style={{
-            fontFamily: "'MADE Tommy Soft', sans-serif",
-            color: "#8183B8",
-            textShadow: "0px 4px 0px #FFFFFF",
-            WebkitTextStroke: isMobile ? "2px #FFFFFF" : "3px #FFFFFF",
-          }}
+        <div
+          className="flex justify-center mb-6 md:mb-8 w-full transition-all duration-300"
+          style={{ maxWidth: isSidebarOpen ? "960px" : "1120px" }}
         >
-          Parent's Guide
-        </h1>
-      </main>
+          <h1 className="text-[40px] md:text-[72px] leading-[50px] md:leading-[90px] text-center">
+            <GradientText
+              gradient="linear-gradient(180deg, #B7C1F2 0%, #89A8EF 100%)"
+              strokeWidth="10px"
+            >
+              Parent's Guide
+            </GradientText>
+          </h1>
+        </div>
+    </main>
     </div>
   );
 }

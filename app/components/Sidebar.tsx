@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import GradientText from "./GradientText";
 
 const navItems = [
   { label: "What is Sleepover?", href: "/faq/sleepover", color: "#9AC6F6" },
-  { label: "Invitation", href: "/faq/invitation", color: "#93B4F2" },
   { label: "Parents Guide", href: "/faq/parents", color: "#8FA8F0" },
   { label: "Travel Guide", href: "/faq/travel", color: "#869EEC" },
   { label: "Packing List", href: "/faq/packing", color: "#7791E6" },
@@ -15,10 +14,11 @@ const navItems = [
 
 type SidebarProps = {
   onStateChange?: (isOpen: boolean) => void;
+  initialOpen?: boolean;
 };
 
-export default function Sidebar({ onStateChange }: SidebarProps) {
-  const [isOpen, setIsOpen] = useState(true);
+export default function Sidebar({ onStateChange, initialOpen = true }: SidebarProps) {
+  const [isOpen, setIsOpen] = useState(initialOpen);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export default function Sidebar({ onStateChange }: SidebarProps) {
           onClick={handleToggle}
           className="fixed bottom-8 z-[60] p-3 rounded-full transition-all duration-300 hover:scale-110"
           style={{
-            left: isOpen ? "410px" : "16px",
+            left: isOpen ? "calc(clamp(320px, 25vw, 520px) - 40px)" : "80px",
             background: "linear-gradient(180deg, #D9DAF8 0%, #FFF0FD 100%)",
             boxShadow: "0px 4px 8px rgba(108, 110, 160, 0.5)",
           }}
@@ -106,17 +106,19 @@ export default function Sidebar({ onStateChange }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 min-h-screen z-50 transition-transform duration-300 ${
-          isMobile ? "w-[280px]" : "w-[460px]"
+        className={`fixed left-0 top-0 min-h-screen z-50 ${
+          isMobile ? "w-[280px]" : ""
         }`}
         style={{
+          width: isMobile ? "280px" : "clamp(320px, 25vw, 520px)",
           transform: isMobile
             ? isOpen
               ? "translateX(0)"
               : "translateX(-100%)"
             : isOpen
             ? "translateX(0)"
-            : "translateX(-100%)",
+            : "translateX(calc(-100% + 96px))",
+          transition: "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
         {/* Sidebar background image */}
@@ -144,18 +146,18 @@ export default function Sidebar({ onStateChange }: SidebarProps) {
           </Link>
 
           {/* Navigation Links */}
-          <nav className="flex flex-col gap-6 md:gap-10 mt-12 md:mt-16 ml-4 md:ml-8">
+          <nav className={`flex flex-col gap-8 md:gap-10 mt-12 md:mt-16 ${isOpen ? "ml-2 md:ml-4" : "items-center"}`}>
             {navItems.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
                 onClick={handleNavClick}
-                className="block leading-[1.1] hover:opacity-90 transition-transform hover:translate-x-[1px]"
-                style={{ fontSize: isMobile ? "22px" : "clamp(30px, 2.5vw, 40px)" }}
+                className="block font-bold leading-[1.1] hover:opacity-90 transition-transform hover:translate-x-[1px]"
+                style={{ fontSize: isMobile ? "22px" : "clamp(26px, 2vw, 40px)", display: isOpen ? "block" : "none" }}
               >
                 <GradientText
                   gradient="linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)"
-                  strokeWidth={isMobile ? "4px" : "7px"}
+                  strokeWidth={isMobile ? "5px" : "7px"}
                 >
                   {item.label}
                 </GradientText>
