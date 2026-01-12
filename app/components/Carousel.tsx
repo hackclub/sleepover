@@ -45,7 +45,7 @@ function CloudCard({ slide }: { slide: Slide }) {
       {/* Curved text label */}
       <svg
         viewBox="0 0 260 60"
-        className="absolute bottom-[10%] left-[55%] -translate-x-1/2 w-[85%]"
+        className="absolute bottom-[17%] left-[50%] -translate-x-1/2 w-[85%]"
       >
         <defs>
           <path
