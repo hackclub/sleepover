@@ -45,7 +45,7 @@ export default function ShopPage() {
       .then((res) => res.json())
       .then((data) => {
         const orders = data.orders || [];
-        const productIds = new Set(
+        const productIds = new Set<string>(
           orders
             .map((order: any) => order.productId)
             .filter((id: string) => id)
