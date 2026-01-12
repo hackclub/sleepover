@@ -107,8 +107,8 @@ export default function ExplorePage() {
         <div
           className={`
             grid gap-4 md:gap-6 mx-auto transition-all duration-300
-            grid-cols-1 sm:grid-cols-2 md:grid-cols-3
-            ${sidebarOpen ? "max-w-5xl" : "xl:grid-cols-4 max-w-7xl"}
+            grid-cols-1 md:grid-cols-2
+            ${sidebarOpen ? "max-w-5xl" : "xl:grid-cols-3 max-w-7xl"}
           `}
         >
           {projects.map((project, index) => {

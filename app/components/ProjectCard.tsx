@@ -12,7 +12,6 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, variant }: ProjectCardProps) {
-  console.log("SCREENSHOT =", project.fields.Screenshot[0].url)
 
   const cardVariant = variant ?? project.variant;
   const isBlue = cardVariant === "blue";
@@ -58,15 +57,14 @@ export default function ProjectCard({ project, variant }: ProjectCardProps) {
         `}
       >
         <div
-          className="bg-[rgba(108,110,160,0.5)] rounded-[24px] w-[90%] h-[90%] flex items-center justify-center"
+          className="relative bg-[red] rounded-[24px] w-[90%] h-[90%] flex items-center justify-center overflow-hidden"
         >
           {project.fields.Screenshot ? (
             <Image
               src={project.fields.Screenshot[0].url}
               alt={project.fields.Project}
-              width="1000"
-              height="1000"
-              className="rounded-[24px]"
+              fill
+              className="rounded-[24px] object-cover"
             />
           ) : (
             <p
