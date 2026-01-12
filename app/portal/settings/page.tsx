@@ -251,11 +251,6 @@ export default function SettingsPage() {
                           {hackatimeData.projects.map((project, index) => (
                             <div
                               key={index}
-                              className="rounded-[16px] p-4"
-                              style={{
-                                background: "linear-gradient(180deg, #FFF2D4 0%, #FFE8B2 100%)",
-                                boxShadow: "0px 2px 0px #9799b63a",
-                              }}
                             >
                               <GradientText
                                 gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
@@ -286,7 +281,7 @@ export default function SettingsPage() {
                         >
                           You don&apos;t have a Hackatime account connected
                         </GradientText>
-                        <h2 className="pt-5">Go <Link href="https://hackatime.hackclub.com/" className="text-[#7791E6]">here</Link> and set up your hackatime account with your Hack Club Auth account.</h2>
+                        <h2 className="pt-5">Go <Link href="https://hackatime.hackclub.com/minimal_login" className="text-[#7791E6]">here</Link> and set up your hackatime account with your Hack Club Auth account.</h2>
                       </div>
                     </div>
                   )}
