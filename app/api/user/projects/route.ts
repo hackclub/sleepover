@@ -1,4 +1,4 @@
-import { getHackProjects } from "@/lib/hackatime";
+import { getHackProjects, isHackatime } from "@/lib/hackatime";
 import { getUserFromId } from "@/lib/airtable";
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/session";
@@ -11,14 +11,16 @@ export async function GET() {
     const userRecord = await getUserFromId(session.userId);
     const slackId = userRecord?.get("slack_id") as string || "";
 
-    const projects = await getHackProjects(slackId);
+    const hasHackatime = await isHackatime(slackId);
+    const projects = hasHackatime ? await getHackProjects(slackId) : [];
 
     console.log("API PROJECTS =", projects)
 
     return NextResponse.json({
-      projects: projects ?? []
+      projects: projects ?? [],
+      hasHackatime
     });
   } catch (error) {
-    return NextResponse.json({ projects: [] });
+    return NextResponse.json({ projects: [], hasHackatime: false });
   }
 }

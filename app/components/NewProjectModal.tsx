@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { createProject } from "@/app/forms/actions/createProject";
+import Link from "next/link";
 
 interface NewProjectModalProps {
   isOpen: boolean;
@@ -14,12 +15,14 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
   const [projects, setProjects] = useState<string[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(false);
   const [projectsError, setProjectsError] = useState<string | null>(null);
+  const [hasHackatime, setHasHackatime] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
 
     setLoadingProjects(true);
     setProjectsError(null);
+    setHasHackatime(null);
 
     fetch("/api/user/projects")
       .then(async (res) => {
@@ -29,11 +32,13 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
       .then((data) => {
         const list = Array.isArray(data.projects) ? data.projects.map(String) : [];
         setProjects(list);
+        setHasHackatime(data.hasHackatime ?? true);
       })
       .catch((err) => {
         console.error(err);
         setProjects([]);
         setProjectsError("Could not load Hackatime projects.");
+        setHasHackatime(false);
       })
       .finally(() => setLoadingProjects(false));
   }, [isOpen]);
@@ -156,7 +161,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
               />
             </div>
 
-            {/* Hackatime Select (styled) */}
+            {/* Hackatime Select or No Account (styled) */}
             <div className="relative mb-6">
               <label
                 className="block text-[20px] md:text-[24px] font-bold mb-2"
@@ -171,67 +176,113 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                 Link Hackatime Project
               </label>
 
-              <div
-                className="relative rounded-[16px] isolate"
-                style={{
-                  background: "linear-gradient(180deg, #FFF6E0 0%, #FFE8B2 100%)",
-                  border: "4px solid white",
-                  boxShadow: "0px 4px 0px #C6C7E4, 0px 6px 8px rgba(116,114,160,0.69)",
-                }}
-              >
-                <div
-                  className="absolute inset-[4px] rounded-[12px] pointer-events-none z-0"
-                  style={{
-                    background: "linear-gradient(180deg, #FFFCF4 12%, #FFE8B2 100%)",
-                    boxShadow: "0px 2px 2px rgba(116,114,160,0.33)",
-                  }}
-                />
+              {hasHackatime === false ? (
+                // No Hackatime Account - Show button with link
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    disabled
+                    className="relative rounded-[16px] w-full px-4 py-3"
+                    style={{
+                      background: "linear-gradient(180deg, #E8E8E8 0%, #CCCCCC 100%)",
+                      border: "4px solid white",
+                      boxShadow: "0px 4px 0px #C6C7E4, 0px 6px 8px rgba(116,114,160,0.69)",
+                    }}
+                  >
+                    <div
+                      className="absolute inset-[4px] rounded-[12px] pointer-events-none"
+                      style={{
+                        background: "linear-gradient(180deg, #F5F5F5 12%, #E8E8E8 100%)",
+                        boxShadow: "0px 2px 2px rgba(116,114,160,0.33)",
+                      }}
+                    />
+                    <span
+                      className="relative z-10 text-[20px] md:text-[24px] font-bold"
+                      style={{
+                        fontFamily: "'MADE Tommy Soft', sans-serif",
+                        color: "#6C6EA0",
+                      }}
+                    >
+                      No Hackatime Account
+                    </span>
+                  </button>
+                  <Link
+                    href="/portal/settings"
+                    className="block text-center text-[16px] md:text-[18px] font-bold underline transition-opacity hover:opacity-80"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      color: "#7684C9",
+                    }}
+                  >
+                    Learn how to set up Hackatime
+                  </Link>
+                </div>
+              ) : (
+                // Has Hackatime - Show dropdown
+                <>
+                  <div
+                    className="relative rounded-[16px] isolate"
+                    style={{
+                      background: "linear-gradient(180deg, #FFF6E0 0%, #FFE8B2 100%)",
+                      border: "4px solid white",
+                      boxShadow: "0px 4px 0px #C6C7E4, 0px 6px 8px rgba(116,114,160,0.69)",
+                    }}
+                  >
+                    <div
+                      className="absolute inset-[4px] rounded-[12px] pointer-events-none z-0"
+                      style={{
+                        background: "linear-gradient(180deg, #FFFCF4 12%, #FFE8B2 100%)",
+                        boxShadow: "0px 2px 2px rgba(116,114,160,0.33)",
+                      }}
+                    />
 
-                <select
-                  name="project"
-                  required
-                  defaultValue=""
-                  className="relative z-10 w-full appearance-none bg-transparent px-4 py-3 pr-10 text-[20px] md:text-[24px] font-bold outline-none cursor-pointer"
-                  style={{
-                    fontFamily: "'MADE Tommy Soft', sans-serif",
-                    background: "linear-gradient(180deg, #7684C9 0%, #7472A0 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  {loadingProjects ? (
-                    <option value="">Loading Hackatime projects…</option>
-                  ) : uniqueProjects.length === 0 ? (
-                    <option value="">
-                      {projectsError ? "Failed to load projects" : "No Hackatime projects found"}
-                    </option>
-                  ) : (
-                    <>
-                      <option value="" disabled>
-                        Select a Hackatime project…
-                      </option>
-                      {uniqueProjects.map((project) => (
-                        <option key={project} value={project} style={{ color: "#6C6EA0" }}>
-                          {project}
+                    <select
+                      name="project"
+                      required
+                      defaultValue=""
+                      className="relative z-10 w-full appearance-none bg-transparent px-4 py-3 pr-10 text-[20px] md:text-[24px] font-bold outline-none cursor-pointer"
+                      style={{
+                        fontFamily: "'MADE Tommy Soft', sans-serif",
+                        background: "linear-gradient(180deg, #7684C9 0%, #7472A0 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                      }}
+                    >
+                      {loadingProjects ? (
+                        <option value="">Loading Hackatime projects…</option>
+                      ) : uniqueProjects.length === 0 ? (
+                        <option value="">
+                          {projectsError ? "Failed to load projects" : "No Hackatime projects found"}
                         </option>
-                      ))}
-                    </>
+                      ) : (
+                        <>
+                          <option value="" disabled>
+                            Select a Hackatime project…
+                          </option>
+                          {uniqueProjects.map((project) => (
+                            <option key={project} value={project} style={{ color: "#6C6EA0" }}>
+                              {project}
+                            </option>
+                          ))}
+                        </>
+                      )}
+                    </select>
+
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#6C6EA0] z-10">
+                      ▼
+                    </div>
+                  </div>
+
+                  {projectsError && (
+                    <div
+                      className="mt-2 text-sm"
+                      style={{ color: "#6C6EA0", fontFamily: "'MADE Tommy Soft', sans-serif" }}
+                    >
+                      {projectsError}
+                    </div>
                   )}
-                </select>
-
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#6C6EA0] z-10">
-                  ▼
-                </div>
-              </div>
-
-              {projectsError && (
-                <div
-                  className="mt-2 text-sm"
-                  style={{ color: "#6C6EA0", fontFamily: "'MADE Tommy Soft', sans-serif" }}
-                >
-                  {projectsError}
-                </div>
+                </>
               )}
             </div>
 
@@ -239,7 +290,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
             <div className="flex justify-center gap-4">
               <button
                 type="submit"
-                disabled={isSubmitting || loadingProjects || uniqueProjects.length === 0}
+                disabled={isSubmitting || loadingProjects || (hasHackatime !== false && uniqueProjects.length === 0)}
                 className="relative rounded-[16px] px-8 py-2.5 transition-transform hover:scale-105 disabled:opacity-70"
                 style={{
                   background: "linear-gradient(0deg, #9AC6F6 0%, #93B4F2 100%)",

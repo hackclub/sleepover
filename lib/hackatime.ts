@@ -25,6 +25,19 @@ export async function getHackProjects(slack_id: string) {
   return name_list
 }
 
+export async function isHackatime(slack_id: string) {
+  const data = await getUserStats(slack_id);
+  console.log("data =", data)
+  const error = data.data.error
+    if (error) {
+      console.log("not undefined")
+      return false;
+    } else {
+      return true;
+    }
+  
+}
+
 export async function getProjectHours(slack_id: string, name: string) {
   const data = await getUserStats(slack_id);
   const projects = data.data.projects;

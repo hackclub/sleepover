@@ -37,13 +37,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'avatars.slack-edge.com',
-        pathname: '/**',
+        hostname: '**',
       },
       {
-        protocol: 'https',
-        hostname: 'hc-cdn.hel1.your-objectstorage.com',
-        pathname: '/**',
+        protocol: 'http',
+        hostname: '**',
       },
     ],
   },

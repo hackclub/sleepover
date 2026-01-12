@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import GradientText from "./GradientText";
 
+const iconSize=25
+
 const navItems = [
   {
     label: "Create",
@@ -109,14 +111,9 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
       await fetch("/api/auth/logout", { method: "POST" });
       // Clear cached user data from sessionStorage
       sessionStorage.removeItem("portalUserData");
-      router.push("/");
     } catch (error) {
       console.error("Logout failed:", error);
     }
-  };
-
-  const handleSlackClick = () => {
-    window.open("https://hackclub.slack.com", "_blank");
   };
 
   return (
@@ -289,32 +286,15 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
 
                     {/* Action Buttons */}
                     <div className="flex gap-2 mt-1">
-                      <button
-                        onClick={handleSlackClick}
-                        className="px-3 py-1 rounded-lg text-[12px] md:text-[14px] font-bold transition-all hover:scale-105"
-                        style={{
-                          fontFamily: "'MADE Tommy Soft', sans-serif",
-                          background: "linear-gradient(180deg, #869BE7 0%, #B2BDF1 100%)",
-                          color: "#4E5DA9",
-                          border: "2px solid white",
-                          boxShadow: "0px 2px 4px rgba(116,114,160,0.4)",
-                        }}
-                      >
-                        Slack
-                      </button>
-                      <button
-                        onClick={handleLogout}
-                        className="px-3 py-1 rounded-lg text-[12px] md:text-[14px] font-bold transition-all hover:scale-105"
-                        style={{
-                          fontFamily: "'MADE Tommy Soft', sans-serif",
-                          background: "linear-gradient(180deg, #E89BA8 0%, #F0B5C0 100%)",
-                          color: "#8A4E5C",
-                          border: "2px solid white",
-                          boxShadow: "0px 2px 4px rgba(116,114,160,0.4)",
-                        }}
-                      >
-                        Logout
-                      </button>
+                      <Link href="https://hackclub.slack.com" onClick={handleNavClick}>
+                        <Image src="/icons/slack.png" alt="slack" width={iconSize} height={iconSize}/>
+                      </Link>
+                      <Link href="/" onClick={handleLogout}>
+                        <Image src="/icons/logout.png" alt="logout" width={iconSize} height={iconSize}/>
+                      </Link>
+                      <Link href="/portal/settings" onClick={handleNavClick}>
+                        <Image src="/icons/setting.png" alt="settings" width={iconSize} height={iconSize}/>
+                      </Link>
                     </div>
                   </div>
                 </div>
