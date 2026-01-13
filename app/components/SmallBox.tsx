@@ -6,9 +6,10 @@ interface SmallBoxProps {
   children?: React.ReactNode;
   height?: string;
   isMobile?: boolean;
+  childrenPosition?: "above" | "below";
 }
 
-export default function SmallBox({ header, body, children, height, isMobile = false }: SmallBoxProps) {
+export default function SmallBox({ header, body, children, height, isMobile = false, childrenPosition = "below" }: SmallBoxProps) {
   const boxHeight = height || (isMobile ? "200px" : "301px");
   const headerHeight = isMobile ? "50px" : "66px";
 
@@ -48,16 +49,23 @@ export default function SmallBox({ header, body, children, height, isMobile = fa
           padding: "8%",
         }}
       >
-        <span style={{ fontSize: "1.4em" }}>
-          <GradientText
-            gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
-            strokeWidth="6px"
-          >
-            {body}
-          </GradientText>
-        </span>
-        {children && (
-          <div className="mt-4">
+        {children && childrenPosition === "above" && (
+          <div className="mt-1 mb-2">
+            {children}
+          </div>
+        )}
+        <div className={children && childrenPosition === "below" ? "-mt-1" : undefined}>
+          <span style={{ fontSize: "1.4em" }}>
+            <GradientText
+              gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+              strokeWidth="6px"
+            >
+              {body}
+            </GradientText>
+          </span>
+        </div>
+        {children && childrenPosition === "below" && (
+          <div className="mt-2">
             {children}
           </div>
         )}

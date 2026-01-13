@@ -6,6 +6,9 @@ import PortalSidebar from "../../components/PortalSidebar";
 import BunnyTile from "../../components/BunnyTile";
 import FeatherBalance from "../../components/FeatherBalance";
 import ShopItem, { ShopItemData } from "../../components/ShopItem";
+import ShopOnboardingNovel from "../../components/ShopOnboardingNovel";
+
+const SHOP_ONBOARDING_KEY = "shopOnboardingComplete";
 
 export default function ShopPage() {
   const [userBalance, setUserBalance] = useState(0);
@@ -15,6 +18,19 @@ export default function ShopPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [colCount, setColCount] = useState(2);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem(SHOP_ONBOARDING_KEY);
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  const handleOnboardingComplete = () => {
+    localStorage.setItem(SHOP_ONBOARDING_KEY, "true");
+    setShowOnboarding(false);
+  };
 
   useEffect(() => {
     // Check if there's a cached balance in sessionStorage for instant display
@@ -83,6 +99,9 @@ export default function ShopPage() {
       className="font-sans min-h-screen relative"
       style={{ backgroundColor: "#C0DEFE" }}
     >
+      {showOnboarding && (
+        <ShopOnboardingNovel onComplete={handleOnboardingComplete} />
+      )}
       <BunnyTile />
       <PortalSidebar onStateChange={setSidebarOpen} />
 

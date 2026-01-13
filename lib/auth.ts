@@ -7,7 +7,7 @@ export const HACKCLUB_AUTH_CONFIG = {
   authorizationUrl: "https://auth.hackclub.com/oauth/authorize",
   tokenUrl: "https://auth.hackclub.com/oauth/token",
   userInfoUrl: "https://auth.hackclub.com/api/v1/me",
-  scopes: "openid email name slack_id verification_status",
+  scopes: "openid email name slack_id verification_status address",
 };
 
 export function generateOAuthState(): string {
@@ -66,16 +66,20 @@ export async function getUserInfo(accessToken: string) {
 }
 
 export async function getUserAddresses(accessToken: string) {
-  const response = await fetch("https://auth.hackclub.com/api/v1/addresses", {
+  const response = await fetch(HACKCLUB_AUTH_CONFIG.userInfoUrl, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
   });
 
   if (!response.ok) {
-    console.error("Failed to fetch addresses:", response.status);
+    console.error("Failed to fetch user info for addresses:", response.status);
     return [];
   }
 
-  return response.json();
+  const data = await response.json();
+  const identity = data.identity || data;
+  
+  // Addresses are returned in the identity object when address scope is granted
+  return identity.addresses || [];
 }

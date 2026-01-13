@@ -222,6 +222,29 @@ export default function Home() {
       </div>
 <AutoplayCarousel slides={slides} speed={1.3} />
 
+      {/* Sticker Sheet Section */}
+      <div className="relative w-full mt-8 sm:mt-12 md:mt-16 px-4 sm:px-8 md:px-16 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-20">
+        {/* Sticker Sheet Image - Left */}
+        <div className="flex justify-center">
+          <img
+            src="/background/sticker_sheet.png"
+            alt="Sticker Sheet"
+            className="w-[200px] sm:w-[280px] md:w-[350px] rounded-lg animate-bounce-slow hover:scale-105 transition-transform duration-300"
+            style={{ boxShadow: "0px 4px 4px rgba(0,0,0,0.25)" }}
+          />
+        </div>
+        {/* Text - Right, Center Aligned */}
+        <div className="flex justify-center max-w-[500px]">
+          <GradientText
+            gradient="linear-gradient(180deg, #6e8ee1 0%, #7579d5 100%)"
+            strokeWidth="8px"
+            className="text-center text-[24px] sm:text-[40px] md:text-[56px] leading-[1.2]"
+          >
+            Sign up now? Get a free sticker sheet - sent straight to you!
+          </GradientText>
+        </div>
+      </div>
+
       {/* ready? text */}
       <div className="relative w-full mt-8 sm:mt-12 md:mt-16 flex justify-center">
         <GradientText

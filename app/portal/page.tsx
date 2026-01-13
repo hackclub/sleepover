@@ -119,26 +119,12 @@ export default function PortalPage() {
               {/* Small box #1 */}
               <SmallBox
                 header="HackDash"
+                
                 body="Hacking with friends? Get food!"
                 isMobile={isMobile}
+                childrenPosition="above"
               >
-<>
-      <div className="mt-15"
-        data-fillout-id="pZsjjXn4yAus"
-        data-fillout-embed-type="popup"
-        data-fillout-button-text="Get your HCB grant"
-        data-fillout-dynamic-resize="true"
-        data-fillout-button-color="#FFEBBE"
-        data-fillout-inherit-parameters="true"
-        data-fillout-domain="forms.hackclub.com"
-        data-fillout-popup-size="medium"
-      />
-
-      <Script
-        src="https://server.fillout.com/embed/v1/"
-        strategy="afterInteractive"
-      />
-    </>
+                <img src="/background/more_bunny.png" alt="bunny" className="w-16 h-16 md:w-30 md:h-25 mx-auto" />
               </SmallBox>
 
             {/* Small box #2 */}
@@ -147,7 +133,35 @@ export default function PortalPage() {
                 body="create a website using any api, spend 10 hours coding, get 3 bonus feathers!!"
                 isMobile={isMobile}
               >
-                <button>Learn more!</button>
+                <button
+                  className="relative flex items-center justify-center rounded-2xl transition-transform hover:scale-105 cursor-pointer mx-auto"
+                  style={{
+                    width: isMobile ? "140px" : "160px",
+                    height: isMobile ? "44px" : "50px",
+                    background: "linear-gradient(180deg, #FFF6E0 0%, #FFE8B2 100%)",
+                    border: "4px solid white",
+                    boxShadow:
+                      "0px 4px 0px 0px #C6C7E4, 0px 6px 8px 0px rgba(116,114,160,0.69)",
+                    borderRadius: "16px",
+                  }}
+                >
+                  <div
+                    className="absolute inset-[4px] rounded-xl"
+                    style={{
+                      background: "linear-gradient(0deg, #FFF2D4 12%, #FFE8B2 100%)",
+                      boxShadow: "0px 2px 2px 0px rgba(116,114,160,0.33)",
+                      borderRadius: "12px",
+                    }}
+                  />
+                  <span className="relative z-10 text-lg md:text-xl">
+                    <GradientText
+                      gradient="linear-gradient(180deg, #7684C9 0%, #7472A0 100%)"
+                      strokeWidth="2px"
+                    >
+                      Learn more!
+                    </GradientText>
+                  </span>
+                </button>
               </SmallBox>
             </div>
 

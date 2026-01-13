@@ -2,19 +2,19 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { onboardingSlides } from "@/lib/onboardingSlides";
+import { shopOnboardingSlides } from "@/lib/shopOnboardingSlides";
 
-interface OnboardingNovelProps {
+interface ShopOnboardingNovelProps {
   onComplete: () => void;
-  userName?: string;
 }
 
-export default function OnboardingNovel({ onComplete, userName = "friend" }: OnboardingNovelProps) {
+export default function ShopOnboardingNovel({ onComplete }: ShopOnboardingNovelProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [displayedText, setDisplayedText] = useState("");
-  const [isTyping, setIsTyping] = useState(true);
-  const slide = onboardingSlides[currentSlide];
+  const [isTyping, setIsTyping] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  const slide = shopOnboardingSlides[currentSlide];
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -22,15 +22,14 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
-  
-  const dialogText = slide.dialogText.replace("{your name}", userName);
 
   useEffect(() => {
+    if (!hasStarted) return;
+    
     setDisplayedText("");
     setIsTyping(true);
     let index = 0;
     
-    // Create audio for typing sound
     const audio = new Audio("/sounds/animal-talking.mp3");
     audio.volume = 0.3;
     audio.loop = true;
@@ -38,8 +37,8 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
     audio.play().catch(() => {});
     
     const interval = setInterval(() => {
-      if (index < dialogText.length) {
-        setDisplayedText(dialogText.slice(0, index + 1));
+      if (index < slide.dialogText.length) {
+        setDisplayedText(slide.dialogText.slice(0, index + 1));
         index++;
       } else {
         setIsTyping(false);
@@ -53,11 +52,15 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
       audio.currentTime = 0;
       clearInterval(interval);
     };
-  }, [currentSlide, dialogText]);
+  }, [currentSlide, slide.dialogText, hasStarted]);
 
   const handleClick = () => {
+    if (!hasStarted) {
+      setHasStarted(true);
+      return;
+    }
     if (isTyping) return;
-    if (currentSlide < onboardingSlides.length - 1) {
+    if (currentSlide < shopOnboardingSlides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
       onComplete();
@@ -69,10 +72,8 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
       className="fixed inset-0 z-[100] cursor-pointer"
       onClick={handleClick}
     >
-      {/* Semi-transparent overlay to dim the background */}
       <div className="absolute inset-0 bg-black/20" />
 
-      {/* Character image - positioned differently on mobile */}
       <div 
         className={`absolute z-10 ${
           isMobile 
@@ -91,9 +92,7 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
         />
       </div>
 
-      {/* Dialog box at the bottom */}
       <div className="absolute bottom-0 left-0 right-0">
-        {/* Yellow accent bar with character name */}
         <div
           className="h-[50px] md:h-[70px] w-full flex items-center px-4 md:px-8"
           style={{
@@ -110,7 +109,6 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
           </p>
         </div>
 
-        {/* Pink dialog area - extends to bottom */}
         <div
           className="w-full px-4 md:px-8 pt-4 md:pt-6 pb-8 md:pb-12"
           style={{
@@ -118,7 +116,6 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
           }}
         >
           <div className={`max-w-4xl ${isMobile ? "mx-auto text-center" : "ml-[300px]"}`}>
-            {/* Dialog text */}
             <p
               className="text-[#6c6ea0] text-lg md:text-2xl font-bold mb-2 md:mb-4"
               style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
@@ -127,15 +124,21 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
               {isTyping && <span className="animate-pulse">|</span>}
             </p>
 
-            {/* Click to continue */}
-            {slide.subText && (
+            {!hasStarted ? (
+              <p
+                className="text-[#7472a0] text-sm md:text-base animate-pulse"
+                style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+              >
+                click to start!
+              </p>
+            ) : slide.subText && !isTyping ? (
               <p
                 className="text-[#7472a0] text-sm md:text-base"
                 style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
               >
                 {slide.subText}
               </p>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
