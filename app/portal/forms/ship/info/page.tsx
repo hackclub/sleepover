@@ -112,16 +112,19 @@ function ShipInfoContent() {
       }
 
       // Call the server action
-      await shipProject(formDataToSend, projectId);
+      const result = await shipProject(formDataToSend, projectId);
 
-      // Clean up sessionStorage
-      sessionStorage.removeItem("shipData");
-      sessionStorage.removeItem("shipScreenshot");
+      if (result.success) {
+        // Clean up sessionStorage
+        sessionStorage.removeItem("shipData");
+        sessionStorage.removeItem("shipScreenshot");
 
-      // Redirect happens in the server action
+        // Redirect to portal
+        router.push("/portal");
+      }
     } catch (error) {
       console.error("Error shipping project:", error);
-      alert("Failed to ship project. Please try again.");
+      alert(`Failed to ship project. Please try again. ${error}`);
       setSubmitting(false);
     }
   };

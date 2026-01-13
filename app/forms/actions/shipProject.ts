@@ -2,7 +2,6 @@
 
 import { getProjectsTable, shipProjectTable } from "@/lib/airtable" // or Airtable init here
 import { getUserInfo } from "@/lib/auth";
-import { redirect } from "next/navigation";
 
 export async function shipProject(formData: FormData, project: string) {
 
@@ -25,5 +24,5 @@ export async function shipProject(formData: FormData, project: string) {
 
   await shipProjectTable(project, info)
 
-  redirect("/portal")
+  return { success: true }
 }
