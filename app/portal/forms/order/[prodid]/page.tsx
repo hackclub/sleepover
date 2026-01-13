@@ -8,6 +8,17 @@ import FeatherBalance from "@/app/components/FeatherBalance";
 import { orderProduct } from "@/app/forms/actions/orderProduct";
 import { ShopItemData } from "@/app/components/ShopItem";
 
+interface HackClubAddress {
+  id: string;
+  name: string;
+  line_1: string;
+  line_2?: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
+}
+
 export default function OrderProductPage() {
   const params = useParams();
   const router = useRouter();
@@ -17,41 +28,34 @@ export default function OrderProductPage() {
   const [userBalance, setUserBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [userAddress, setUserAddress] = useState<{
-    address1: string;
-    address2: string;
-    city: string;
-    state: string;
-    country: string;
-    zip: string;
-  } | null>(null);
+  const [addresses, setAddresses] = useState<HackClubAddress[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>("");
+  const [addressesLoading, setAddressesLoading] = useState(true);
 
-  const fetchAddress = () => {
-    fetch("/api/user/address")
+  const fetchAddresses = () => {
+    setAddressesLoading(true);
+    fetch("/api/user/addresses")
       .then((res) => res.json())
       .then((data) => {
-        if (!data.error && data.address1) {
-          setUserAddress({
-            address1: data.address1,
-            address2: data.address2,
-            city: data.city,
-            state: data.state,
-            country: data.country,
-            zip: data.zip,
-          });
+        const addrs = data.addresses || [];
+        setAddresses(addrs);
+        if (addrs.length > 0 && !selectedAddressId) {
+          setSelectedAddressId(addrs[0].id);
         }
+        setAddressesLoading(false);
       })
-      .catch(console.error);
+      .catch((err) => {
+        console.error("Failed to fetch addresses:", err);
+        setAddressesLoading(false);
+      });
   };
 
   useEffect(() => {
-    // Check if there's a cached balance in sessionStorage for instant display
     const cachedBalance = sessionStorage.getItem("userBalance");
     if (cachedBalance) {
       setUserBalance(Number(cachedBalance));
     }
 
-    // Fetch the real balance from API and update both state and cache
     fetch("/api/user/currency")
       .then((res) => res.json())
       .then((data) => {
@@ -68,30 +72,30 @@ export default function OrderProductPage() {
       })
       .catch(console.error);
 
-    fetchAddress();
+    fetchAddresses();
 
-    // Refetch address when window regains focus (after editing on Hack Club auth)
     const handleFocus = () => {
-      fetchAddress();
+      fetchAddresses();
     };
     window.addEventListener("focus", handleFocus);
     return () => window.removeEventListener("focus", handleFocus);
   }, [prodId]);
 
-  const formatAddress = () => {
-    if (!userAddress) return null;
+  const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
+
+  const formatAddress = (addr: HackClubAddress) => {
     const parts = [
-      userAddress.address1,
-      userAddress.address2,
-      userAddress.city,
-      userAddress.state,
-      userAddress.zip,
-      userAddress.country,
+      addr.line_1,
+      addr.line_2,
+      addr.city,
+      addr.state,
+      addr.postal_code,
+      addr.country,
     ].filter(Boolean);
     return parts.join(", ");
   };
 
-  const handleEditAddress = () => {
+  const handleAddAddress = () => {
     window.open("https://auth.hackclub.com/addresses", "_blank");
   };
 
@@ -103,7 +107,6 @@ export default function OrderProductPage() {
       const formData = new FormData();
       await orderProduct(formData, prodId);
 
-      // Update the balance in sessionStorage immediately for instant UI update
       const newBalance = userBalance - product.price;
       sessionStorage.setItem("userBalance", newBalance.toString());
 
@@ -118,14 +121,12 @@ export default function OrderProductPage() {
   if (loading) {
     return (
       <div className="min-h-screen relative overflow-hidden flex items-center justify-center">
-        {/* Pink gradient background */}
         <div
           className="fixed inset-0 -z-20"
           style={{
             background: "linear-gradient(to bottom, #e6a4ab, #ffe2ea)",
           }}
         />
-        {/* Bunny tile pattern overlay */}
         <div
           className="fixed inset-0 -z-10 opacity-20"
           style={{
@@ -146,14 +147,12 @@ export default function OrderProductPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Pink gradient background */}
       <div
         className="fixed inset-0 -z-20"
         style={{
           background: "linear-gradient(to bottom, #e6a4ab, #ffe2ea)",
         }}
       />
-      {/* Bunny tile pattern overlay */}
       <div
         className="fixed inset-0 -z-10 opacity-20"
         style={{
@@ -165,10 +164,8 @@ export default function OrderProductPage() {
 
       {/* Header */}
       <div className="flex items-center justify-between px-6 md:px-24 py-8 md:py-14">
-        {/* Left spacer for centering */}
         <div className="flex-1" />
 
-        {/* Back to Shop button */}
         <Link
           href="/portal/shop"
           className="flex items-center gap-2 bg-gradient-to-b from-[#c0defe] to-[#9ac6f6] border-4 border-white rounded-2xl px-6 py-3 shadow-[0px_4px_0px_0px_#c6c7e4,0px_6px_8px_0px_rgba(116,114,160,0.69)] hover:scale-105 transition-transform"
@@ -182,7 +179,6 @@ export default function OrderProductPage() {
           </span>
         </Link>
 
-        {/* Feather Balance */}
         <div className="flex-1 flex justify-end">
           <FeatherBalance balance={userBalance} />
         </div>
@@ -194,7 +190,6 @@ export default function OrderProductPage() {
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Left Side - Item Preview */}
             <div className="flex-1 bg-gradient-to-t from-[#fff2d4] to-[#ffe8b2] rounded-2xl shadow-[0px_4px_4px_0px_rgba(116,114,160,0.33)] p-4 md:p-6 flex flex-col">
-              {/* Item Image Container */}
               <div className="flex-1 bg-gradient-to-t from-[#ffe5a9] to-[#f9d588] rounded-2xl shadow-[0px_4px_4px_0px_rgba(116,114,160,0.33)] flex items-center justify-center min-h-[300px] md:min-h-[400px]">
                 {product?.image && (
                   <img
@@ -205,7 +200,6 @@ export default function OrderProductPage() {
                 )}
               </div>
 
-              {/* Item Name */}
               <h2
                 className="bg-gradient-to-b from-[#7684c9] to-[#7472a0] bg-clip-text text-transparent text-4xl md:text-5xl font-bold mt-4"
                 style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
@@ -213,7 +207,6 @@ export default function OrderProductPage() {
                 {product?.name}
               </h2>
 
-              {/* Item Description */}
               <p
                 className="bg-gradient-to-b from-[#7684c9] to-[#7472a0] bg-clip-text text-transparent text-xl md:text-2xl font-bold mt-1"
                 style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
@@ -224,7 +217,6 @@ export default function OrderProductPage() {
 
             {/* Right Side - Order Form */}
             <div className="flex-1 bg-gradient-to-t from-[#fff2d4] to-[#ffe8b2] rounded-2xl shadow-[0px_4px_4px_0px_rgba(116,114,160,0.33)] p-4 md:p-6 flex flex-col gap-4">
-              {/* Complete your order title */}
               <h3
                 className="bg-gradient-to-b from-[#7684c9] to-[#7472a0] bg-clip-text text-transparent text-2xl md:text-3xl font-bold"
                 style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
@@ -232,32 +224,64 @@ export default function OrderProductPage() {
                 Complete your order:
               </h3>
 
-              {/* Shipping Address Display */}
+              {/* Shipping Address Dropdown */}
               <div className="w-full bg-gradient-to-b from-[#c0defe] to-[#9ac6f6] border-4 border-white rounded-2xl px-4 py-3 shadow-[0px_4px_0px_0px_#c6c7e4,0px_6px_8px_0px_rgba(116,114,160,0.69)]">
                 <p
-                  className="text-[#7472a0] text-sm font-medium mb-1"
+                  className="text-[#7472a0] text-sm font-medium mb-2"
                   style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
                 >
                   Shipping Address:
                 </p>
-                <p
-                  className="bg-gradient-to-b from-[#7684c9] to-[#7472a0] bg-clip-text text-transparent text-lg md:text-xl font-bold"
-                  style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
-                >
-                  {formatAddress() || "No address on file"}
-                </p>
+                {addressesLoading ? (
+                  <p
+                    className="text-[#7472a0] text-lg font-bold"
+                    style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+                  >
+                    Loading addresses...
+                  </p>
+                ) : addresses.length === 0 ? (
+                  <p
+                    className="text-[#7472a0] text-lg font-bold"
+                    style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+                  >
+                    No addresses on file
+                  </p>
+                ) : (
+                  <>
+                    <select
+                      value={selectedAddressId}
+                      onChange={(e) => setSelectedAddressId(e.target.value)}
+                      className="w-full bg-white/80 border-2 border-[#c6c7e4] rounded-xl px-4 py-3 text-[#7472a0] font-bold text-lg focus:outline-none focus:ring-2 focus:ring-[#7684c9]"
+                      style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+                    >
+                      {addresses.map((addr) => (
+                        <option key={addr.id} value={addr.id}>
+                          {addr.name ? `${addr.name}: ` : ""}{formatAddress(addr)}
+                        </option>
+                      ))}
+                    </select>
+                    {selectedAddress && (
+                      <p
+                        className="mt-2 text-[#7472a0] text-sm"
+                        style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+                      >
+                        {formatAddress(selectedAddress)}
+                      </p>
+                    )}
+                  </>
+                )}
               </div>
 
-              {/* Edit Address Button */}
+              {/* Add New Address Button */}
               <button
-                onClick={handleEditAddress}
+                onClick={handleAddAddress}
                 className="self-end bg-gradient-to-t from-[#d9daf8] to-[#b5aae7] border-4 border-white rounded-2xl px-6 py-2 shadow-[0px_4px_0px_0px_#c6c7e4,0px_6px_8px_0px_rgba(116,114,160,0.69)] hover:scale-105 transition-transform"
               >
                 <span
                   className="bg-gradient-to-b from-[#7684c9] to-[#7472a0] bg-clip-text text-transparent text-lg font-bold"
                   style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
                 >
-                  Edit Address ↗
+                  {addresses.length === 0 ? "Add Address" : "Manage Addresses"} ↗
                 </span>
               </button>
 
@@ -355,9 +379,9 @@ export default function OrderProductPage() {
               <div className="flex justify-center mt-2">
                 <button
                   onClick={handleOrder}
-                  disabled={submitting || userBalance < (product?.price || 0)}
+                  disabled={submitting || userBalance < (product?.price || 0) || addresses.length === 0}
                   className={`bg-gradient-to-t from-[#d9daf8] to-[#b5aae7] border-4 border-white rounded-2xl px-12 py-3 shadow-[0px_4px_0px_0px_#c6c7e4,0px_6px_8px_0px_rgba(116,114,160,0.69)] transition-transform ${
-                    submitting || userBalance < (product?.price || 0)
+                    submitting || userBalance < (product?.price || 0) || addresses.length === 0
                       ? "opacity-50 cursor-not-allowed"
                       : "hover:scale-105"
                   }`}
@@ -366,7 +390,7 @@ export default function OrderProductPage() {
                     className="bg-gradient-to-b from-[#7684c9] to-[#7472a0] bg-clip-text text-transparent text-xl font-bold"
                     style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
                   >
-                    {submitting ? "Processing..." : "Get!"}
+                    {submitting ? "Processing..." : addresses.length === 0 ? "Add Address First" : "Get!"}
                   </span>
                 </button>
               </div>

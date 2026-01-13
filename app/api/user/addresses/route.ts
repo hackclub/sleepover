@@ -1,25 +1,23 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
 import { getUserAddresses } from "@/lib/auth";
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get("session");
+    const session = await getSession();
 
-    if (!sessionCookie) {
+    if (!session.isLoggedIn) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const sessionData = JSON.parse(sessionCookie.value);
-    const accessToken = sessionData.accessToken;
+    const accessToken = session.accessToken;
 
     if (!accessToken) {
       return NextResponse.json({ error: "No access token" }, { status: 401 });
     }
 
     const addresses = await getUserAddresses(accessToken);
-    console.log("Addresses from Hack Club auth:", addresses);
+    console.log("Addresses structure:", JSON.stringify(addresses, null, 2));
 
     return NextResponse.json({ addresses });
   } catch (error) {

@@ -86,6 +86,7 @@ export async function GET(request: NextRequest) {
     session.email = email;
     session.name = name;
     session.isLoggedIn = true;
+    session.accessToken = tokenData.access_token;
     await session.save();
 
     return NextResponse.redirect(new URL("/portal", baseUrl));

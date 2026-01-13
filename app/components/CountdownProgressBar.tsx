@@ -6,21 +6,30 @@ type CountdownProgressBarProps = {
 };
 
 export default function CountdownProgressBar({ isSidebarOpen = true }: CountdownProgressBarProps) {
-  const [hours, setHours] = useState(0);
+  const [hours, setHours] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
       fetch("/api/user/hours")
         .then((res) => res.json())
         .then((data) => {
-          setHours(data.hours);
+          setHours(data.hours ?? 0);
+          setLoading(false);
         })
-        .catch(console.error);
+        .catch((err) => {
+          console.error(err);
+          setHours(0);
+          setLoading(false);
+        });
     }, []);
 
   var timeLeft = ""
-  var progress = 50
+  var progress = 0
 
-  if (hours>=30) {
+  if (loading || hours === null) {
+    timeLeft = "Loading your progress..."
+    progress = 0
+  } else if (hours >= 30) {
     timeLeft = "Congrats! You have earned enough hours for Sleepover!"
     progress = 100
   } else {
