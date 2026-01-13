@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import PortalSidebar from "../../components/PortalSidebar";
 import ProjectCard, { ProjectData } from "../../components/ProjectCard";
-import { placeholderProjects } from "@/lib/projects";
 import { getGallery } from "@/lib/airtable";
 import GradientText from "@/app/components/GradientText";
 
