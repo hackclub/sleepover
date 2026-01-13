@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Script from "next/script";
 import PortalSidebar from "../components/PortalSidebar";
 import BunnyTile from "../components/BunnyTile";
 import CountdownProgressBar from "../components/CountdownProgressBar";
@@ -9,7 +10,7 @@ import ProjectList from "../components/ProjectList";
 import NewProjectModal from "../components/NewProjectModal";
 import GradientText from "../components/GradientText";
 import SmallBox from "../components/SmallBox";
-import Script from "next/script";
+import Link from "next/link";
 
 export default function PortalPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -66,6 +67,14 @@ export default function PortalPage() {
       className="font-sans min-h-screen relative"
       style={{ backgroundColor: "#C0DEFE" }}
     >
+      {/* Load Fillout SDK */}
+      <Script
+        src="https://server.fillout.com/embed/v1/"
+        strategy="afterInteractive"
+        onLoad={() => console.log("Fillout SDK loaded")}
+        onError={(e) => console.error("Fillout SDK failed to load", e)}
+      />
+
       {/* Disable interactions when onboarding is showing */}
       <div className={showOnboarding ? "pointer-events-none" : ""}>
         <BunnyTile />
@@ -120,11 +129,51 @@ export default function PortalPage() {
               <SmallBox
                 header="HackDash"
                 
-                body="Hacking with friends? Get food!"
+                body=""
                 isMobile={isMobile}
                 childrenPosition="above"
               >
+              
                 <img src="/background/more_bunny.png" alt="bunny" className="w-16 h-16 md:w-30 md:h-25 mx-auto" />
+                          <span style={{ fontSize: "1.4em" }}>
+                            <GradientText
+                              gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                              strokeWidth="6px"
+                            >
+                              Hacking with friends?
+                            </GradientText>
+                          </span>
+                          <Link
+                          href="https://forms.hackclub.com/t/pZsjjXn4yAus"
+                          target="_blank"
+                  className="relative flex items-center justify-center rounded-2xl transition-transform hover:scale-105 cursor-pointer mx-auto"
+                  style={{
+                    width: isMobile ? "140px" : "160px",
+                    height: isMobile ? "44px" : "50px",
+                    background: "linear-gradient(180deg, #FFF6E0 0%, #FFE8B2 100%)",
+                    border: "4px solid white",
+                    boxShadow:
+                      "0px 4px 0px 0px #C6C7E4, 0px 6px 8px 0px rgba(116,114,160,0.69)",
+                    borderRadius: "16px",
+                  }}
+                >
+                  <div
+                    className="absolute inset-[4px] rounded-xl"
+                    style={{
+                      background: "linear-gradient(0deg, #FFF2D4 12%, #FFE8B2 100%)",
+                      boxShadow: "0px 2px 2px 0px rgba(116,114,160,0.33)",
+                      borderRadius: "12px",
+                    }}
+                  />
+                  <span className="relative z-10 text-lg md:text-xl">
+                    <GradientText
+                      gradient="linear-gradient(180deg, #7684C9 0%, #7472A0 100%)"
+                      strokeWidth="2px"
+                    >
+                      Get food!
+                    </GradientText>
+                  </span>
+                </Link>
               </SmallBox>
 
             {/* Small box #2 */}
@@ -133,7 +182,9 @@ export default function PortalPage() {
                 body="create a website using any api, spend 10 hours coding, get 3 bonus feathers!!"
                 isMobile={isMobile}
               >
-                <button
+                <Link
+                  target="_blank"
+                  href="https://108charlotte.github.io/APIs-Guide-Website/"
                   className="relative flex items-center justify-center rounded-2xl transition-transform hover:scale-105 cursor-pointer mx-auto"
                   style={{
                     width: isMobile ? "140px" : "160px",
@@ -161,7 +212,7 @@ export default function PortalPage() {
                       Learn more!
                     </GradientText>
                   </span>
-                </button>
+                </Link>
               </SmallBox>
             </div>
 
