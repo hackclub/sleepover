@@ -28,6 +28,8 @@ function ShipDetailsContent() {
   const [screenshot, setScreenshot] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [screenshotError, setScreenshotError] = useState<string | null>(null);
+  const [submittedToYSWS, setSubmittedToYSWS] = useState(false);
+  const [isMonthlyChallenge, setIsMonthlyChallenge] = useState(false);
 
   useEffect(() => {
     if (!projectId) {
@@ -85,7 +87,7 @@ function ShipDetailsContent() {
       alert("Please confirm the project information before proceeding");
       return;
     }
-    if (!githubUsername || !repoUrl || !playableUrl) {
+    if (!githubUsername || !repoUrl || !playableUrl || !screenshot) {
       alert("Please fill in all required fields");
       return;
     }
@@ -95,6 +97,8 @@ function ShipDetailsContent() {
       repoUrl,
       playableUrl,
       screenshot: screenshot ? screenshot.name : null,
+      submittedToYSWS,
+      isMonthlyChallenge,
     }));
 
     if (screenshot) {
@@ -375,7 +379,7 @@ function ShipDetailsContent() {
                   color: "#7472A0",
                 }}
               >
-                Screenshot
+                Screenshot <span style={{ color: "#D84855" }}>*</span>
               </label>
               <input
                 type="file"
@@ -501,6 +505,49 @@ function ShipDetailsContent() {
                   boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
                 }}
               />
+            </div>
+
+            {/* Checkboxes */}
+            <div className="mt-6 mb-4">
+              <label className="flex items-center gap-4 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={submittedToYSWS}
+                  onChange={(e) => setSubmittedToYSWS(e.target.checked)}
+                  className="w-6 h-6 rounded-[6px] accent-[#869BE7] cursor-pointer"
+                  style={{
+                    boxShadow: "0px 2px 4px rgba(116,114,160,0.4)",
+                  }}
+                />
+                <GradientText
+                  gradient="#7472A0"
+                  strokeWidth="3px"
+                  className="text-[20px] md:text-[24px]"
+                >
+                  Was this project submitted to another You Ship We Ship?
+                </GradientText>
+              </label>
+            </div>
+
+            <div className="mt-4 mb-4">
+              <label className="flex items-center gap-4 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isMonthlyChallenge}
+                  onChange={(e) => setIsMonthlyChallenge(e.target.checked)}
+                  className="w-6 h-6 rounded-[6px] accent-[#869BE7] cursor-pointer"
+                  style={{
+                    boxShadow: "0px 2px 4px rgba(116,114,160,0.4)",
+                  }}
+                />
+                <GradientText
+                  gradient="#7472A0"
+                  strokeWidth="3px"
+                  className="text-[20px] md:text-[24px]"
+                >
+                  Was this for a monthly challenge?
+                </GradientText>
+              </label>
             </div>
           </div>
 

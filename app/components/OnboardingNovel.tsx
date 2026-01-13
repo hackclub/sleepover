@@ -12,6 +12,8 @@ interface OnboardingNovelProps {
 export default function OnboardingNovel({ onComplete, userName = "friend" }: OnboardingNovelProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [displayedText, setDisplayedText] = useState("");
+  const [isTyping, setIsTyping] = useState(true);
   const slide = onboardingSlides[currentSlide];
 
   useEffect(() => {
@@ -23,7 +25,38 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
   
   const dialogText = slide.dialogText.replace("{your name}", userName);
 
+  useEffect(() => {
+    setDisplayedText("");
+    setIsTyping(true);
+    let index = 0;
+    
+    // Create audio for typing sound
+    const audio = new Audio("/sounds/animal-talking.mp3");
+    audio.volume = 0.3;
+    audio.loop = true;
+    audio.playbackRate = 0.9;
+    audio.play().catch(() => {});
+    
+    const interval = setInterval(() => {
+      if (index < dialogText.length) {
+        setDisplayedText(dialogText.slice(0, index + 1));
+        index++;
+      } else {
+        setIsTyping(false);
+        audio.pause();
+        audio.currentTime = 0;
+        clearInterval(interval);
+      }
+    }, 50);
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+      clearInterval(interval);
+    };
+  }, [currentSlide, dialogText]);
+
   const handleClick = () => {
+    if (isTyping) return;
     if (currentSlide < onboardingSlides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
@@ -90,7 +123,8 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
               className="text-[#6c6ea0] text-lg md:text-2xl font-bold mb-2 md:mb-4"
               style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
             >
-              {dialogText}
+              {displayedText}
+              {isTyping && <span className="animate-pulse">|</span>}
             </p>
 
             {/* Click to continue */}
