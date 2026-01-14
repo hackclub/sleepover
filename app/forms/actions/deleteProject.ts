@@ -1,10 +1,23 @@
 "use server"
 
-import { getProjectsTable } from "@/lib/airtable"
+import { getProjectsTable, getProjectById } from "@/lib/airtable"
 import { revalidatePath, revalidateTag } from "next/cache"
+import { requireAuth } from "@/lib/session"
 
 export async function deleteProject(projectId: string) {
   if (!projectId) return { error: "Project ID is required" }
+
+  const session = await requireAuth()
+  const userId = session.userId
+
+  const project = await getProjectById(projectId)
+  if (!project) {
+    return { error: "Project not found" }
+  }
+
+  if (project.userid !== userId) {
+    throw new Error("Not authorized to delete this project")
+  }
 
   console.log("Attempting to delete project:", projectId)
   

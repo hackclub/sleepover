@@ -19,8 +19,9 @@ function getUsersTable() {
 }
 
 export async function getUserFromId(userid: string) {
+  const safeId = escapeFormulaString(userid);
   const user = await getUsersTable().select({
-    filterByFormula: `{id} = '${userid}'`,
+    filterByFormula: `{id} = '${safeId}'`,
     maxRecords: 1,
   })
   .firstPage();
@@ -69,9 +70,11 @@ function getReviewTable() {
 export async function getSingularProject(userid: string, name: string) {
   console.log("userid =", userid)
   console.log("name =", name)
+  const safeUserId = escapeFormulaString(userid);
+  const safeName = escapeFormulaString(name);
   const record = await getProjectsTable()
     .select({
-      filterByFormula: `AND({userid} = '${userid}', {name} = '${name}')`,
+      filterByFormula: `AND({userid} = '${safeUserId}', {name} = '${safeName}')`,
       view: "Grid view",
     })
     .firstPage();
@@ -102,6 +105,9 @@ export function updateProjectHours(projectid: string, hours: number) {
 }
 
 export async function updateProjectName(projectid: string, name: string) {
+  if (typeof name !== "string" || name.length > 200) {
+    throw new Error("Invalid name: must be a string under 200 characters");
+  }
   const record = await getProjectsTable().update([
     {
       "id": projectid,
@@ -113,6 +119,9 @@ export async function updateProjectName(projectid: string, name: string) {
 }
 
 export async function updateProjectDesc(projectid: string, desc: string) {
+  if (typeof desc !== "string" || desc.length > 5000) {
+    throw new Error("Invalid description: must be a string under 5000 characters");
+  }
   const record = await getProjectsTable().update([
     {
       "id": projectid,
@@ -135,9 +144,10 @@ export async function updateProjectHackatime(projectid: string, hackatime_name: 
 }
 
 export async function getUsersProjects(userid: string) {
+  const safeId = escapeFormulaString(userid);
   const records = await getProjectsTable()
   .select({
-    filterByFormula: `{userid} = '${userid}'`,
+    filterByFormula: `{userid} = '${safeId}'`,
     view: "Grid view"
 }).all()
 
@@ -221,9 +231,10 @@ export async function getShopItems() {
 }
 
 export async function getCurrency(userid: string) {
+  const safeId = escapeFormulaString(userid);
   const records = await getShopTable()
     .select({
-      filterByFormula: `{id} = '${userid}'`,
+      filterByFormula: `{id} = '${safeId}'`,
       maxRecords: 1,
     })
     .firstPage();
@@ -234,16 +245,19 @@ export async function getCurrency(userid: string) {
 export async function addProduct(userid: string, product: string) {
   console.log("PRODUCT PASSED =", product)
 
+  const safeUserId = escapeFormulaString(userid);
+  const safeProduct = escapeFormulaString(product);
+
   const records = await getShopTable()
     .select({
-      filterByFormula: `{id} = '${userid}'`,
+      filterByFormula: `{id} = '${safeUserId}'`,
       maxRecords: 1,
     })
     .firstPage();
 
     const product_records = await getProductsTable()
     .select({
-      filterByFormula: `{id} = '${product}'`,
+      filterByFormula: `{id} = '${safeProduct}'`,
       maxRecords: 1,
     })
     .firstPage();
@@ -278,8 +292,9 @@ export async function addProduct(userid: string, product: string) {
 }
 
 export async function addFulfillment(userid: string, product: string) {
+  const safeUserId = escapeFormulaString(userid);
   const user = await getUsersTable().select({
-    filterByFormula: `{id} = '${userid}'`,
+    filterByFormula: `{id} = '${safeUserId}'`,
     maxRecords: 1,
   })
   .firstPage();
@@ -303,8 +318,9 @@ export async function addFulfillment(userid: string, product: string) {
 }
 
 export async function getUserOrders(userid: string) {
+  const safeUserId = escapeFormulaString(userid);
   const users = await getUsersTable().select({
-    filterByFormula: `{id} = '${userid}'`,
+    filterByFormula: `{id} = '${safeUserId}'`,
     maxRecords: 1,
   })
   .firstPage();
@@ -373,6 +389,9 @@ export async function getUserOrders(userid: string) {
 }
 
 export async function createDevlogEntry(projectId: string, date: string, text: string) {
+  if (typeof text !== "string" || text.length > 10000) {
+    throw new Error("Invalid text: must be a string under 10000 characters");
+  }
   const fields = {
     project: [projectId],
     date: date,
@@ -384,6 +403,9 @@ export async function createDevlogEntry(projectId: string, date: string, text: s
 }
 
 export async function updateDevlogEntry(devlogId: string, text: string) {
+  if (typeof text !== "string" || text.length > 10000) {
+    throw new Error("Invalid text: must be a string under 10000 characters");
+  }
   const record = await getDevlogsTable().update(devlogId, {
     text: text,
   });
@@ -439,9 +461,10 @@ export async function shipProjectTable(projectid: string, info: any) {
       }
     }])
 
+    const safeProjectId = escapeFormulaString(projectid);
     const record = await getProjectsTable()
     .select({
-      filterByFormula: `{id} = '${projectid}'`,
+      filterByFormula: `{id} = '${safeProjectId}'`,
       maxRecords: 1,
     })
     .firstPage();
@@ -452,9 +475,10 @@ export async function shipProjectTable(projectid: string, info: any) {
     var user;
 
     if (userid) {
+      const safeUserId = escapeFormulaString(String(userid));
       user = (await getUsersTable()
       .select({
-        filterByFormula: `{id} = '${userid}'`,
+        filterByFormula: `{id} = '${safeUserId}'`,
         maxRecords: 1,
       })
       .firstPage())[0]
@@ -501,8 +525,9 @@ export async function shipProjectTable(projectid: string, info: any) {
 }
 
 export async function getProgressHours(userid: string) {
+  const safeId = escapeFormulaString(userid);
   const user = await getShopTable().select({
-    filterByFormula: `{id} = '${userid}'`,
+    filterByFormula: `{id} = '${safeId}'`,
     maxRecords: 1,
   })
   .firstPage();
