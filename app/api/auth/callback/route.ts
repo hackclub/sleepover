@@ -7,9 +7,12 @@ import { getSession } from "@/lib/session";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 function getBaseUrl(request: NextRequest): string {
-  const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
-  const protocol = request.headers.get("x-forwarded-proto") || "https";
-  return `${protocol}://${host}`;
+  // Use canonical URL from environment or derive from request URL
+  if (process.env.PUBLIC_BASE_URL) {
+    return process.env.PUBLIC_BASE_URL;
+  }
+  // Fallback: use request origin (safer than headers)
+  return request.nextUrl.origin;
 }
 
 export async function GET(request: NextRequest) {

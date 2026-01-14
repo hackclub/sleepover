@@ -19,12 +19,9 @@ export async function deleteProject(projectId: string) {
     throw new Error("Not authorized to delete this project")
   }
 
-  console.log("Attempting to delete project:", projectId)
-  
   try {
     const table = getProjectsTable()
     await table.destroy(projectId)
-    console.log("Successfully deleted project:", projectId)
     
     revalidateTag("projects", "max")
     revalidatePath("/portal")

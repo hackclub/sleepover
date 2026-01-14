@@ -31,9 +31,7 @@ export async function createDevlog(formData: FormData, projectId: string) {
 
   const date = rawDate.slice(0, 10)
 
-  const record = await createDevlogEntry(projectId, date, text)
-
-  console.log("Created devlog:", record)
+  await createDevlogEntry(projectId, date, text)
 
   revalidateTag("projects", "max")
 

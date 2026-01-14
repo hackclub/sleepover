@@ -68,8 +68,6 @@ function getReviewTable() {
 }
 
 export async function getSingularProject(userid: string, name: string) {
-  console.log("userid =", userid)
-  console.log("name =", name)
   const safeUserId = escapeFormulaString(userid);
   const safeName = escapeFormulaString(name);
   const record = await getProjectsTable()
@@ -94,8 +92,8 @@ export async function getProjectById(projectId: string) {
   };
 }
 
-export function updateProjectHours(projectid: string, hours: number) {
-  getProjectsTable().update([
+export async function updateProjectHours(projectid: string, hours: number) {
+  return await getProjectsTable().update([
     {
       "id": projectid,
       "fields": {
@@ -243,8 +241,6 @@ export async function getCurrency(userid: string) {
 }
 
 export async function addProduct(userid: string, product: string) {
-  console.log("PRODUCT PASSED =", product)
-
   const safeUserId = escapeFormulaString(userid);
   const safeProduct = escapeFormulaString(product);
 
@@ -413,22 +409,6 @@ export async function updateDevlogEntry(devlogId: string, text: string) {
 }
 
 export async function getProjectDevlogs(projectId: string) {
-  const all = await getDevlogsTable().select().all();
-
-  console.log("Looking for projectId:", projectId);
-
-  for (const obj of all) {
-    const projField = obj.get("project");
-    console.log("project field:", projField);
-    console.log("project field type:", typeof projField);
-    console.log("is array?", Array.isArray(projField));
-    if (Array.isArray(projField)) {
-      console.log("array contents:", projField[0]);
-      console.log("matches?", projField[0] === projectId);
-    }
-  }
-
-  // Try without any filtering first to see if formula is the issue
   const records = await getDevlogsTable()
     .select({
       sort: [{ field: "date", direction: "desc" }],
@@ -532,11 +512,11 @@ export async function getProgressHours(userid: string) {
   })
   .firstPage();
 
-  console.log(userid)
-  console.log(user)
-
-  return user[0].get("hours_shipped")
+  return user[0]?.get("hours_shipped") ?? 0
 }
+
+const MAX_UPLOAD_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
 async function uploadAttachment({
   baseId,
@@ -549,6 +529,16 @@ async function uploadAttachment({
   fieldNameOrId: string
   file: File
 }) {
+  // Validate file size
+  if (file.size > MAX_UPLOAD_SIZE) {
+    throw new Error("File exceeds maximum size of 5MB")
+  }
+
+  // Validate file type
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    throw new Error("Invalid file type. Only images (JPEG, PNG, GIF, WebP) are allowed.")
+  }
+
   // Convert File -> base64
   const arrayBuffer = await file.arrayBuffer()
   const base64 = Buffer.from(arrayBuffer).toString("base64")

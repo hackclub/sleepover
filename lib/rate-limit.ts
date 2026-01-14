@@ -45,14 +45,22 @@ export function rateLimit(
   };
 }
 
-export function getClientIp(request: Request): string {
+export function getClientIp(request: Request & { ip?: string }): string {
+  // Prefer platform-provided IP (Vercel, Next.js, etc.)
+  if ('ip' in request && request.ip) {
+    return request.ip;
+  }
+
+  // Fallback to headers (only trusted behind proper proxy)
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
     return forwarded.split(",")[0].trim();
   }
+
   const realIp = request.headers.get("x-real-ip");
   if (realIp) {
     return realIp;
   }
+
   return "unknown";
 }
