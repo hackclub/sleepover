@@ -119,10 +119,10 @@ export default function PortalPage() {
           className="w-full flex justify-center mt-6"
           style={{ maxWidth: isSidebarOpen ? "1060px" : "1220px" }}
         >
-          <div className="flex flex-col md:flex-row w-full gap-4 md:gap-6">
+          <div className="flex flex-col md:flex-row w-full gap-4 md:gap-8">
             {/* Left column with two small boxes */}
             <div
-              className="flex flex-col gap-4 md:gap-6 w-full md:w-auto"
+              className="flex flex-col gap-4 md:gap-8 w-full md:w-auto"
               style={{ width: isMobile ? "100%" : "clamp(240px, 28%, 300px)" }}
             >
               {/* Small box #1 */}
@@ -134,15 +134,16 @@ export default function PortalPage() {
                 childrenPosition="above"
               >
               
-                <img src="/background/more_bunny.png" alt="bunny" className="w-16 h-16 md:w-30 md:h-25 mx-auto" />
-                          <span style={{ fontSize: "1.4em" }}>
+                <img src="/background/more_bunny.png" alt="bunny" className="w-12 h-12 md:w-20 md:h-20 mx-auto" />
+                          <span className="text-sm md:text-lg block">
                             <GradientText
                               gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
-                              strokeWidth="6px"
+                              strokeWidth={isMobile ? "4px" : "6px"}
                             >
                               Hacking with friends?
                             </GradientText>
                           </span>
+                          <div className="mt-3 md:mt-4" />
                           <Link
                           href="https://forms.hackclub.com/t/pZsjjXn4yAus"
                           target="_blank"

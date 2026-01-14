@@ -102,20 +102,6 @@ export default function ShopPage() {
       {showOnboarding && (
         <ShopOnboardingNovel onComplete={handleOnboardingComplete} />
       )}
-      <div className="fixed top-4 right-4 z-50">
-        <Link href="/portal/shop/orders">
-          <button
-            className="px-4 md:px-6 py-2 md:py-3 rounded-2xl font-bold text-base md:text-lg transition-all hover:scale-105 shadow-[0px_4px_8px_rgba(108,110,160,0.5)]"
-            style={{
-              fontFamily: "'MADE Tommy Soft', sans-serif",
-              background: "linear-gradient(180deg, #D9DAF8 0%, #FFF0FD 100%)",
-              color: "#7472A0",
-            }}
-          >
-            My Orders
-          </button>
-        </Link>
-      </div>
       <BunnyTile />
       <PortalSidebar onStateChange={setSidebarOpen} />
 
@@ -126,24 +112,66 @@ export default function ShopPage() {
         }}
       >
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-4">
-            <div className="md:flex-1" />
+          {/* Mobile header layout */}
+          <div className="flex flex-col items-center gap-3 mb-4 md:hidden">
             <h1
-              className="text-5xl md:text-6xl lg:text-8xl font-bold text-center bg-gradient-to-b from-[#7c95e6] to-[#91b0ed] bg-clip-text text-transparent drop-shadow-[0px_4px_4px_rgba(0,0,0,0.51)]"
+              className="text-4xl font-bold text-center bg-gradient-to-b from-[#7c95e6] to-[#91b0ed] bg-clip-text text-transparent drop-shadow-[0px_4px_4px_rgba(0,0,0,0.51)]"
               style={{
                 fontFamily: "'MADE Tommy Soft', sans-serif",
-                WebkitTextStroke: isMobile ? "2px white" : "3px white",
+                WebkitTextStroke: "2px white",
               }}
             >
               Shop
             </h1>
-            <div className="md:flex-1 flex justify-center md:justify-end">
+            <div className="flex items-center justify-center gap-3 w-full">
+              <Link href="/portal/shop/orders">
+                <button
+                  className="px-3 py-2 rounded-xl font-bold text-sm transition-all hover:scale-105 shadow-[0px_4px_8px_rgba(108,110,160,0.5)]"
+                  style={{
+                    fontFamily: "'MADE Tommy Soft', sans-serif",
+                    background: "linear-gradient(180deg, #D9DAF8 0%, #FFF0FD 100%)",
+                    color: "#7472A0",
+                  }}
+                >
+                  My Orders
+                </button>
+              </Link>
+              <FeatherBalance balance={userBalance} />
+            </div>
+          </div>
+
+          {/* Desktop header layout */}
+          <div className="hidden md:flex flex-row items-center justify-between mb-4 gap-4">
+            <div className="flex-1 flex justify-start relative z-50">
+              <Link href="/portal/shop/orders">
+                <button
+                  className="px-6 py-3 rounded-2xl font-bold text-lg transition-all hover:scale-105 shadow-[0px_4px_8px_rgba(108,110,160,0.5)]"
+                  style={{
+                    fontFamily: "'MADE Tommy Soft', sans-serif",
+                    background: "linear-gradient(180deg, #D9DAF8 0%, #FFF0FD 100%)",
+                    color: "#7472A0",
+                  }}
+                >
+                  My Orders
+                </button>
+              </Link>
+            </div>
+            <h1
+              className="text-6xl lg:text-8xl font-bold text-center bg-gradient-to-b from-[#7c95e6] to-[#91b0ed] bg-clip-text text-transparent drop-shadow-[0px_4px_4px_rgba(0,0,0,0.51)]"
+              style={{
+                fontFamily: "'MADE Tommy Soft', sans-serif",
+                WebkitTextStroke: "3px white",
+              }}
+            >
+              Shop
+            </h1>
+            <div className="flex-1 flex justify-end">
               <FeatherBalance balance={userBalance} />
             </div>
           </div>
 
           <p
-            className="text-[#6c6ea0] text-lg md:text-xl lg:text-2xl font-bold text-center mb-6 md:mb-8 drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
+            className="text-[#6c6ea0] text-base md:text-xl lg:text-2xl font-bold text-center mb-4 md:mb-8 drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
             style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
           >
             redeem your feathers for prizes here!
@@ -151,8 +179,8 @@ export default function ShopPage() {
 
           <div
             className={`
-              grid gap-4 md:gap-6 transition-all duration-300
-              grid-cols-2
+              grid gap-3 md:gap-6 transition-all duration-300
+              grid-cols-2 overflow-hidden
               ${isMobile 
                 ? "grid-cols-2" 
                 : sidebarOpen 
