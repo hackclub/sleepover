@@ -2,20 +2,18 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import AutoplayCarousel from "./components/Carousel";
 import GradientText from "./components/GradientText";
 import { slides } from "@/app/data/slides";
 
 export default function Home() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
-      router.push("/api/auth/login");
+      window.location.href = "/api/auth/login";
     }
   };
   return (
