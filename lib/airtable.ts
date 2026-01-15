@@ -154,6 +154,7 @@ export async function getUsersProjects(userid: string) {
     name: r.get("name") as string,
     desc: r.get("description") as string,
     hours: r.get("hours") as Number,
+    status: r.get("status") as string,
     hackatime_name: r.get("hackatime_name") as string,
   }));
 

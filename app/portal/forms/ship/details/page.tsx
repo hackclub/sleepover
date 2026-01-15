@@ -30,6 +30,9 @@ function ShipDetailsContent() {
   const [screenshotError, setScreenshotError] = useState<string | null>(null);
   const [submittedToYSWS, setSubmittedToYSWS] = useState(false);
   const [isMonthlyChallenge, setIsMonthlyChallenge] = useState(false);
+  const [repoUrlError, setRepoUrlError] = useState<string | null>(null);
+  const [playableUrlError, setPlayableUrlError] = useState<string | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
 
   useEffect(() => {
     if (!projectId) {
@@ -82,13 +85,66 @@ function ShipDetailsContent() {
     }
   };
 
-  const handleNext = () => {
+  const checkUrlValidity = async (url: string): Promise<boolean> => {
+    try {
+      // First check if it's a valid URL format
+      new URL(url);
+
+      // Use a link checker API to validate the URL
+      const response = await fetch(`https://api.linkpreview.net/?key=YOUR_API_KEY&q=${encodeURIComponent(url)}`);
+
+      if (response.ok) {
+        return true;
+      }
+
+      // Fallback: try a HEAD request to check if URL is accessible
+      await fetch(url, {
+        method: 'HEAD',
+        mode: 'no-cors'
+      });
+      return true; // If no error thrown, URL is at least reachable
+    } catch {
+      return false;
+    }
+  };
+
+  const handleNext = async () => {
+    // Reset errors
+    setRepoUrlError(null);
+    setPlayableUrlError(null);
+
     if (!step1Confirmed) {
       alert("Please confirm the project information before proceeding");
       return;
     }
     if (!githubUsername || !repoUrl || !playableUrl || !screenshot) {
       alert("Please fill in all required fields");
+      return;
+    }
+
+    // Validate URLs
+    setIsValidating(true);
+    let hasErrors = false;
+
+    // Validate both URLs concurrently
+    const [isRepoValid, isPlayableValid] = await Promise.all([
+      checkUrlValidity(repoUrl),
+      checkUrlValidity(playableUrl)
+    ]);
+
+    if (!isRepoValid) {
+      setRepoUrlError("Please enter a valid and accessible URL");
+      hasErrors = true;
+    }
+
+    if (!isPlayableValid) {
+      setPlayableUrlError("Please enter a valid and accessible URL");
+      hasErrors = true;
+    }
+
+    setIsValidating(false);
+
+    if (hasErrors) {
       return;
     }
 
@@ -480,6 +536,17 @@ function ShipDetailsContent() {
                   boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
                 }}
               />
+              {repoUrlError && (
+                <p
+                  className="mt-2 text-[16px] md:text-[18px] font-bold"
+                  style={{
+                    fontFamily: "'MADE Tommy Soft', sans-serif",
+                    color: "#D84855",
+                  }}
+                >
+                  ⚠️ {repoUrlError}
+                </p>
+              )}
             </div>
 
             {/* Playable Project Link */}
@@ -505,6 +572,17 @@ function ShipDetailsContent() {
                   boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
                 }}
               />
+              {playableUrlError && (
+                <p
+                  className="mt-2 text-[16px] md:text-[18px] font-bold"
+                  style={{
+                    fontFamily: "'MADE Tommy Soft', sans-serif",
+                    color: "#D84855",
+                  }}
+                >
+                  ⚠️ {playableUrlError}
+                </p>
+              )}
             </div>
 
             {/* Checkboxes */}
@@ -555,7 +633,8 @@ function ShipDetailsContent() {
           <div className="flex justify-center gap-4">
             <button
               onClick={handleNext}
-              className="relative rounded-[16px] px-6 py-2 transition-transform hover:scale-105"
+              disabled={isValidating}
+              className="relative rounded-[16px] px-6 py-2 transition-transform hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed"
               style={{
                 background: "linear-gradient(180deg, #869BE7 0%, #B2BDF1 100%)",
                 border: "4px solid white",
@@ -576,7 +655,7 @@ function ShipDetailsContent() {
                   color: "#4E5DA9",
                 }}
               >
-                NEXT!
+                {isValidating ? "Validating..." : "NEXT!"}
               </span>
             </button>
             <button
