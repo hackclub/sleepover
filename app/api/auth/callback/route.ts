@@ -8,8 +8,8 @@ import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 function getBaseUrl(request: NextRequest): string {
   // Use canonical URL from environment or derive from request URL
-  if (process.env.PUBLIC_BASE_URL) {
-    return process.env.PUBLIC_BASE_URL;
+  if (process.env.PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL) {
+    return process.env.PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL!;
   }
   // Fallback: use request origin (safer than headers)
   return request.nextUrl.origin;
