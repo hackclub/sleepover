@@ -202,7 +202,7 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
         {/* Content overlay */}
         <div className={`relative z-10 p-6 md:p-8 flex flex-col min-h-screen ${isMobile ? "pt-16" : ""}`}>
           {/* Logo */}
-          <Link href="/" className="mt-8 ml-2 md:ml-4 block">
+          <Link href="/portal" className="mt-8 ml-2 md:ml-4 block">
             <Image
               src="/background/sleepover_logo.PNG"
               alt="Sleepover Logo"
