@@ -55,6 +55,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'v5.airtableusercontent.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'hc-cdn.hel1.your-objectstorage.com',
+      },
     ],
   },
   async headers() {
