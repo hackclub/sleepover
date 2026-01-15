@@ -1,7 +1,8 @@
-const SLEEPOVER_START_DATE = "2026-01-01";
+const start_date = "2026-01-01";
+const end_date = "2026-04-05";
 
 export async function getUserStats(slack_id: string) {
-  const response = await fetch(`https://hackatime.hackclub.com/api/v1/users/${slack_id}/stats?features=projects`, {
+  const response = await fetch(`https://hackatime.hackclub.com/api/v1/users/${slack_id}/stats?features=projects&start_date=${start_date}&end_date=${end_date}`, {
     headers: {
       Authorization: `Bearer ${process.env.HACKATIME_API}`,
     },
@@ -33,6 +34,8 @@ export async function isHackatime(slack_id: string) {
 export async function getProjectHours(slack_id: string, name: string) {
     const data = await getUserStats(slack_id);
     const projects = data.data.projects;
+
+    console.log(projects)
 
     for (const project of projects) {
       if (project.name === name) {
