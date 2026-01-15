@@ -1,17 +1,36 @@
 import { getSingularProject, getUsersProjects, updateProjectHours, getAllUsers } from "@/lib/airtable";
 import { getProjectHours } from "@/lib/hackatime";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
-export async function GET() {
+const UPDATE_JOB_TOKEN = process.env.UPDATE_JOB_TOKEN;
+
+export async function POST(request: NextRequest) {
   try {
-    // Get all registered users
+    const authHeader = request.headers.get("authorization");
+    if (!UPDATE_JOB_TOKEN || authHeader !== `Bearer ${UPDATE_JOB_TOKEN}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const clientIp = getClientIp(request);
+    const rateLimitResult = rateLimit(`update-job:${clientIp}`, {
+      windowMs: 10 * 60 * 1000,
+      maxRequests: 1,
+    });
+
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Too many requests. This job can only run once per 10 minutes." },
+        { status: 429 }
+      );
+    }
+
     const allUsers = await getAllUsers();
     console.log(`Processing ${allUsers.length} users`);
 
     let successCount = 0;
     let errorCount = 0;
 
-    // Process each user
     for (const user of allUsers) {
       try {
         const id = user.id;

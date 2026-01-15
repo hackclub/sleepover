@@ -14,16 +14,20 @@ export async function createProject(formData: FormData) {
   const session = await requireAuth();
   const id = session.userId;
 
+  // Input validation
+  if (!name) return { error: "Name is required" }
+  if (name.length > 200) return { error: "Name too long (max 200 characters)" }
+  if (desc.length > 5000) return { error: "Description too long (max 5000 characters)" }
+  if (project.length > 200) return { error: "Project identifier too long (max 200 characters)" }
+
   // Get slack_id from Airtable user record
   const userRecord = await getUserFromId(id);
   const slackid = userRecord?.get("slack_id") as string || "";
 
-  if (!name) return { error: "Name is required" }
-
   const hours = await getProjectHours(slackid, project)
 
   const table = await getProjectsTable()
-  const record = await table.create({
+  await table.create({
     userid: id,
     name: name,
     desc: desc,
@@ -33,6 +37,5 @@ export async function createProject(formData: FormData) {
 
   revalidateTag("projects", "max");
 
-  console.log("record =", record)
   redirect("/portal")
 }

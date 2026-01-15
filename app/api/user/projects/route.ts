@@ -14,8 +14,6 @@ export async function GET() {
     const hasHackatime = await isHackatime(slackId);
     const projects = hasHackatime ? await getHackProjects(slackId) : [];
 
-    console.log("API PROJECTS =", projects)
-
     return NextResponse.json({
       projects: projects ?? [],
       hasHackatime

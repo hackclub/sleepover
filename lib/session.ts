@@ -9,8 +9,13 @@ export interface SessionData {
   accessToken?: string;
 }
 
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret || sessionSecret.length < 32) {
+  throw new Error("SESSION_SECRET must be at least 32 characters");
+}
+
 const sessionOptions: SessionOptions = {
-  password: process.env.SESSION_SECRET!,
+  password: sessionSecret,
   cookieName: "sleepover_session",
   cookieOptions: {
     httpOnly: true,

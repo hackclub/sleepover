@@ -89,11 +89,9 @@ export async function middleware(request: NextRequest) {
     );
 
     if (!session.isLoggedIn) {
-      const host =
-        request.headers.get("x-forwarded-host") || request.headers.get("host");
-      const protocol = request.headers.get("x-forwarded-proto") || "https";
-      const baseUrl = `${protocol}://${host}`;
-      const url = new URL("/", baseUrl);
+      const url = request.nextUrl.clone();
+      url.pathname = "/";
+      url.search = "";
       url.searchParams.set("error", "auth_required");
       return NextResponse.redirect(url);
     }

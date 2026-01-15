@@ -17,7 +17,6 @@ export async function GET() {
     }
 
     const addresses = await getUserAddresses(accessToken);
-    console.log("Addresses structure:", JSON.stringify(addresses, null, 2));
 
     return NextResponse.json({ addresses });
   } catch (error) {
