@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import GradientText from "./GradientText";
 
-const iconSize=25
+const iconSize=44
 
 const navItems = [
   {
@@ -287,13 +287,13 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
                     {/* Action Buttons */}
                     <div className="flex gap-2 mt-1">
                       <Link href="https://app.slack.com/client/E09V59WQY1E/C06T17NQB0B" onClick={handleNavClick}>
-                        <Image src="/icons/slack.png" alt="slack" width={iconSize} height={iconSize}/>
+                        <Image src="/icons/slack2.png" alt="slack" width={iconSize} height={iconSize}/>
                       </Link>
                       <Link href="/" onClick={handleLogout}>
-                        <Image src="/icons/logout.png" alt="logout" width={iconSize} height={iconSize}/>
+                        <Image src="/icons/logout2.png" alt="logout" width={iconSize+5} style={{paddingTop: 5, paddingLeft: 5}} height={iconSize+5}/>
                       </Link>
                       <Link href="/portal/settings" onClick={handleNavClick}>
-                        <Image src="/icons/setting.png" alt="settings" width={iconSize} height={iconSize}/>
+                        <Image src="/icons/setting2.png" alt="settings" width={iconSize-6} style={{paddingTop: 2}} height={iconSize-6}/>
                       </Link>
                     </div>
                   </div>
