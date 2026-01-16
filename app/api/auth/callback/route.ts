@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
     const existingUser = await findUserByEmail(email);
 
     if (existingUser) {
-      await updateUser(existingUser.id, {
+      await updateUser(existingUser.recordId, {
         name,
         slack_id: userInfo.slack_id || "",
         slack_display_name: slackInfo?.display_name || "",
@@ -95,7 +95,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.redirect(new URL("/portal", baseUrl));
   } catch (error) {
-    console.error("Auth callback error:", error instanceof Error ? error.message : "unknown");
+    console.error("Auth callback error:", error);
     return NextResponse.redirect(new URL("/?error=auth_failed", baseUrl));
   }
 }
