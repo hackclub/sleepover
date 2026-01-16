@@ -14,7 +14,7 @@ export function generateOAuthState(): string {
   return crypto.randomBytes(32).toString("hex");
 }
 
-export function getAuthorizationUrl(state: string) {
+export function getAuthorizationUrl(state: string, email?: string) {
   const params = new URLSearchParams({
     client_id: HACKCLUB_AUTH_CONFIG.clientId,
     redirect_uri: HACKCLUB_AUTH_CONFIG.redirectUri,
@@ -22,6 +22,10 @@ export function getAuthorizationUrl(state: string) {
     scope: HACKCLUB_AUTH_CONFIG.scopes,
     state,
   });
+
+  if (email) {
+    params.set("login_hint", email);
+  }
 
   return `${HACKCLUB_AUTH_CONFIG.authorizationUrl}?${params.toString()}`;
 }
