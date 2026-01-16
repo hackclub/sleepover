@@ -22,3 +22,5 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
