@@ -35,8 +35,6 @@ export async function getProjectHours(slack_id: string, name: string) {
     const data = await getUserStats(slack_id);
     const projects = data.data.projects;
 
-    console.log(projects)
-
     for (const project of projects) {
       if (project.name === name) {
         const hours = project.hours;

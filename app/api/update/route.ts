@@ -26,7 +26,6 @@ export async function POST(request: NextRequest) {
     }
 
     const allUsers = await getAllUsers();
-    console.log(`Processing ${allUsers.length} users`);
 
     let successCount = 0;
     let errorCount = 0;
@@ -37,12 +36,10 @@ export async function POST(request: NextRequest) {
         const slack_id = user.slack_id;
 
         if (!id || !slack_id) {
-          console.log(`Skipping user with missing id or slack_id:`, user);
           continue;
         }
 
         const projects = await getUsersProjects(id);
-        console.log(`User ${id} has ${projects.length} projects`);
 
         for (const project of projects) {
           try {
@@ -50,7 +47,6 @@ export async function POST(request: NextRequest) {
             if (!found) continue;
             const hours = await getProjectHours(slack_id, project.hackatime_name);
             await updateProjectHours(found.id, hours);
-            console.log(`Updated ${project.name} for user ${id}: ${hours} hours`);
           } catch (projectError) {
             console.error(`Error updating project ${project.name} for user ${id}:`, projectError);
           }

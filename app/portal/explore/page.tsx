@@ -38,7 +38,6 @@ export default function ExplorePage() {
     fetch("/api/gallery")
       .then((res) => res.json())
       .then((data) => {
-        console.log("GALLERY ==", data)
         SetProjects(data.data)
       })
       .catch(console.error);

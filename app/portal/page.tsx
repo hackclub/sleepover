@@ -72,8 +72,6 @@ export default function PortalPage() {
   
   const contentOffset = isMobile ? "0px" : isSidebarOpen ? "clamp(360px, 28vw, 600px)" : "140px";
 
-  console.log(userProjects)
-
   return (
     <div
       className="font-sans min-h-screen relative"
