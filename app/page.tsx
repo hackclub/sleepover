@@ -2,17 +2,27 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import AutoplayCarousel from "./components/Carousel";
 import GradientText from "./components/GradientText";
 import { slides } from "@/app/data/slides";
 
 export default function Home() {
   const [email, setEmail] = useState("");
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const utmSource = searchParams.get("utm_source");
+    if (utmSource) {
+      localStorage.setItem("utm_source", utmSource);
+    }
+  }, [searchParams]);
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
+      localStorage.setItem("signup_email", email);
       window.location.href = "/api/auth/login";
     }
   };

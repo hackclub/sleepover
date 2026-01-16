@@ -51,6 +51,18 @@ export default function PortalPage() {
         }
       })
       .catch(() => {});
+
+    // Send stored utm_source to server after auth
+    const utmSource = localStorage.getItem("utm_source");
+    if (utmSource) {
+      fetch("/api/user/utm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ utm_source: utmSource }),
+      }).then(() => {
+        localStorage.removeItem("utm_source");
+      }).catch(() => {});
+    }
   }, []);
 
   const handleOnboardingComplete = () => {
