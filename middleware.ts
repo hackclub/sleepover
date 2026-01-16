@@ -7,45 +7,45 @@ const sessionOptions = {
   cookieName: "sleepover_session",
 };
 
-// --- BASIC AUTH (username/password) ---
-function requireBasicAuth(request: NextRequest) {
-  const user = process.env.BASIC_AUTH_USER ?? "";
-  const pass = process.env.BASIC_AUTH_PASS ?? "";
+// // --- BASIC AUTH (username/password) ---
+// function requireBasicAuth(request: NextRequest) {
+//   const user = process.env.BASIC_AUTH_USER ?? "";
+//   const pass = process.env.BASIC_AUTH_PASS ?? "";
 
-  // Skip basic auth if not configured (development mode)
-  if (!user || !pass) {
-    return null;
-  }
+//   // Skip basic auth if not configured (development mode)
+//   if (!user || !pass) {
+//     return null;
+//   }
 
-  const auth = request.headers.get("authorization");
+//   const auth = request.headers.get("authorization");
 
-  if (!auth?.startsWith("Basic ")) {
-    return new NextResponse("Authentication required.", {
-      status: 401,
-      headers: { "WWW-Authenticate": 'Basic realm="Protected"' },
-    });
-  }
+//   if (!auth?.startsWith("Basic ")) {
+//     return new NextResponse("Authentication required.", {
+//       status: 401,
+//       headers: { "WWW-Authenticate": 'Basic realm="Protected"' },
+//     });
+//   }
 
-  let decoded = "";
-  try {
-    decoded = atob(auth.slice("Basic ".length));
-  } catch {
-    return new NextResponse("Invalid authentication header.", {
-      status: 401,
-      headers: { "WWW-Authenticate": 'Basic realm="Protected"' },
-    });
-  }
+//   let decoded = "";
+//   try {
+//     decoded = atob(auth.slice("Basic ".length));
+//   } catch {
+//     return new NextResponse("Invalid authentication header.", {
+//       status: 401,
+//       headers: { "WWW-Authenticate": 'Basic realm="Protected"' },
+//     });
+//   }
 
-  const [u, p] = decoded.split(":");
-  if (u !== user || p !== pass) {
-    return new NextResponse("Invalid credentials.", {
-      status: 401,
-      headers: { "WWW-Authenticate": 'Basic realm="Protected"' },
-    });
-  }
+//   const [u, p] = decoded.split(":");
+//   if (u !== user || p !== pass) {
+//     return new NextResponse("Invalid credentials.", {
+//       status: 401,
+//       headers: { "WWW-Authenticate": 'Basic realm="Protected"' },
+//     });
+//   }
 
-  return null; // ✅ authenticated
-}
+//   return null; // ✅ authenticated
+// }
 
 function isPublicAssetPath(pathname: string) {
   // Allowlist: public folders + standard public files
@@ -63,22 +63,7 @@ function isPublicAssetPath(pathname: string) {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ✅ Bypass basic auth for ALL API routes
-  const isApi = pathname === "/api" || pathname.startsWith("/api/");
-
-  // ✅ Bypass basic auth for Next.js internal routes (image optimizer, etc.)
-  const isNextInternal = pathname.startsWith("/_next/");
-
-  // ✅ Bypass basic auth for public assets (so next/image optimizer can fetch them)
-  const isPublicAsset = isPublicAssetPath(pathname);
-
-  // 🔐 Apply basic auth everywhere except API + Next.js internals + public assets
-  if (!isApi && !isNextInternal && !isPublicAsset) {
-    const basic = requireBasicAuth(request);
-    if (basic) return basic;
-  }
-
-  // 🔐 Session-based auth for /portal (still enforced even though /portal is behind basic auth too)
+  // 🔐 Session-based auth for /portal
   if (pathname.startsWith("/portal")) {
     const response = NextResponse.next();
 
