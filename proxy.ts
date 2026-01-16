@@ -60,7 +60,7 @@ function isPublicAssetPath(pathname: string) {
   );
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 🔐 Session-based auth for /portal
@@ -89,7 +89,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Run middleware on everything EXCEPT Next internals
+    // Run proxy on everything EXCEPT Next internals
     "/((?!_next/static|_next/image).*)",
   ],
 };
