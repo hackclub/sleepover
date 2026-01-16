@@ -308,51 +308,98 @@ export async function getCurrency(userid: string) {
     return records[0]?.get("currency") ?? 0
 }
 
+const locks = new Map<string, Promise<void>>();
+
+async function withPurchaseLock<T>(userid: string, fn: () => Promise<T>): Promise<T> {
+  const key = `purchase:${userid}`;
+  
+  while (locks.has(key)) {
+    await locks.get(key);
+  }
+  
+  let resolve: () => void;
+  const lockPromise = new Promise<void>((r) => { resolve = r; });
+  locks.set(key, lockPromise);
+  
+  try {
+    return await fn();
+  } finally {
+    locks.delete(key);
+    resolve!();
+  }
+}
+
+const SINGLE = ["rec4wZN4c2OdkWMnc"]; // Sticker sheet
+
 export async function addProduct(userid: string, product: string) {
-  const safeUserId = escapeFormulaString(userid);
-  const safeProduct = escapeFormulaString(product);
+  return withPurchaseLock(userid, async () => {
+    const safeUserId = escapeFormulaString(userid);
 
-  const records = await getShopTable()
-    .select({
-      filterByFormula: `{id} = '${safeUserId}'`,
-      maxRecords: 1,
-    })
-    .firstPage();
+    if (!/^rec[a-zA-Z0-9]{14}$/.test(product)) {
+      throw new Error("Product not found");
+    }
 
-    const product_records = await getProductsTable()
-    .select({
-      filterByFormula: `{id} = '${safeProduct}'`,
-      maxRecords: 1,
-    })
-    .firstPage();
+    const [records, product_record] = await Promise.all([
+      getShopTable()
+        .select({
+          filterByFormula: `{id} = '${safeUserId}'`,
+          maxRecords: 1,
+        })
+        .firstPage(),
+      getProductsTable().find(product).catch(() => null),
+    ]);
 
-  if (!records.length) throw new Error(`No record found for userid=${userid}`);
+    if (!product_record) {
+      throw new Error("Product not found");
+    }
 
-  const record = records[0];
-  const product_record = product_records[0];
+    if (!records.length) {
+      throw new Error("User not found");
+    }
 
-  const currentOrdered = (record.get("ordered") as string[]) ?? [];
-  // Only add the product if it's not already in the array to avoid duplicates
-  const updatedOrdered = currentOrdered.includes(product)
-    ? currentOrdered
-    : [...currentOrdered, product];
+    const record = records[0];
+    const price = Number(product_record.get("price"));
 
-  const currentCurrency = (record.get("currency") as number) ?? 0;
-  const updatedCurrency = currentCurrency - Number(product_record.get("price"))
+    if (isNaN(price) || price < 0) {
+      throw new Error("Invalid product price");
+    }
 
-  await getShopTable().update([
-    {
-      id: record.id,
-      fields: {
-        ordered: updatedOrdered,
-        currency: updatedCurrency,
+    const currentOrdered = (record.get("ordered") as string[]) ?? [];
+    const currentCurrency = (record.get("currency") as number) ?? 0;
+
+    if (SINGLE.includes(product) && currentOrdered.includes(product)) {
+      throw new Error("You have already purchased this!");
+    }
+
+    if (currentCurrency < price) {
+      throw new Error("Insufficient balance");
+    }
+
+    const updatedOrdered = [...currentOrdered, product];
+    const updatedCurrency = currentCurrency - price;
+
+    const freshRecord = await getShopTable().find(record.id);
+    const freshCurrency = (freshRecord.get("currency") as number) ?? 0;
+    const freshOrdered = (freshRecord.get("ordered") as string[]) ?? [];
+
+    if (freshCurrency !== currentCurrency || freshOrdered.length !== currentOrdered.length) {
+      throw new Error("Woah you are going too fast! Please try again.");
+    }
+
+    await getShopTable().update([
+      {
+        id: record.id,
+        fields: {
+          ordered: updatedOrdered,
+          currency: updatedCurrency,
+        },
       },
-    },
-  ]);
+    ]);
 
-  addFulfillment(userid, product)
+    addFulfillment(userid, product);
 
-  return "success";
+    return "success";
+  });
 }
 
 export async function hasUserOrderedProduct(userid: string, product: string): Promise<boolean> {
