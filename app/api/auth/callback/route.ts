@@ -5,6 +5,7 @@ import { getSlackUserInfo } from "@/lib/slack";
 import { cookies } from "next/headers";
 import { getSession } from "@/lib/session";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { triggerPyramidSync } from "@/lib/pyramidSync";
 
 function getBaseUrl(request: NextRequest): string {
   // Use canonical URL from environment or derive from request URL
@@ -81,6 +82,7 @@ export async function GET(request: NextRequest) {
         slack_avatar_url: slackInfo?.avatar_url || "",
         verification_status: userInfo.verification_status || "",
         utm_source: "",
+        referral_code: "",
       });
     }
 
@@ -92,6 +94,9 @@ export async function GET(request: NextRequest) {
     session.isLoggedIn = true;
     session.accessToken = tokenData.access_token;
     await session.save();
+
+    // Trigger pyramid sync if user has referral code
+    triggerPyramidSync(userInfo.id);
 
     return NextResponse.redirect(new URL("/portal", baseUrl));
   } catch (error) {

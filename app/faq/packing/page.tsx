@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Sidebar from "../../components/Sidebar";
 import BunnyTile from "../../components/BunnyTile";
 import GradientText from "../../components/GradientText";
+import ReferralCapture from "../../components/ReferralCapture";
 
 export default function PackingList() {
   const [isMobile, setIsMobile] = useState(false);
@@ -23,6 +24,9 @@ export default function PackingList() {
       className="font-sans min-h-screen relative"
       style={{ backgroundColor: "#C0DEFE" }}
     >
+      <Suspense fallback={null}>
+        <ReferralCapture />
+      </Suspense>
       <BunnyTile />
       <Sidebar onStateChange={setIsSidebarOpen} />
 

@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import ReferralCapture from "../components/ReferralCapture";
 
 function SignupContent() {
   const searchParams = useSearchParams();
@@ -15,6 +16,7 @@ function SignupContent() {
         background: "linear-gradient(180deg, #C7D6FF 0%, #E8D5F2 50%, #FFFFFF 100%)",
       }}
     >
+      <ReferralCapture />
       <h1
         className="text-[32px] sm:text-[48px] md:text-[64px] font-bold text-center mb-8"
         style={{

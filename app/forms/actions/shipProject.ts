@@ -2,6 +2,7 @@
 
 import { getProjectById, shipProjectTable } from "@/lib/airtable"
 import { requireAuth } from "@/lib/session";
+import { triggerPyramidSync } from "@/lib/pyramidSync";
 
 export async function shipProject(formData: FormData, projectId: string) {
   const session = await requireAuth()
@@ -57,6 +58,9 @@ export async function shipProject(formData: FormData, projectId: string) {
   }
 
   await shipProjectTable(projectId, info)
+
+  // Trigger pyramid sync in background (non-blocking)
+  triggerPyramidSync(userId)
 
   return { success: true }
 }

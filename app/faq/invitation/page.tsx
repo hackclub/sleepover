@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Sidebar from "../../components/Sidebar";
 import BunnyTile from "../../components/BunnyTile";
+import ReferralCapture from "../../components/ReferralCapture";
 
 export default function Invitation() {
   const [isMobile, setIsMobile] = useState(false);
@@ -19,6 +20,9 @@ export default function Invitation() {
       className="font-sans min-h-screen relative"
       style={{ backgroundColor: "#C0DEFE" }}
     >
+      <Suspense fallback={null}>
+        <ReferralCapture />
+      </Suspense>
       <BunnyTile />
       <Sidebar />
 
