@@ -589,6 +589,7 @@ function ShipDetailsContent() {
             <div className="mt-6 mb-4">
               <label className="flex items-center gap-4 cursor-pointer">
                 <input
+                  id="ysws"
                   type="checkbox"
                   checked={submittedToYSWS}
                   onChange={(e) => setSubmittedToYSWS(e.target.checked)}
@@ -610,6 +611,7 @@ function ShipDetailsContent() {
             <div className="mt-4 mb-4">
               <label className="flex items-center gap-4 cursor-pointer">
                 <input
+                  id="challenge"
                   type="checkbox"
                   checked={isMonthlyChallenge}
                   onChange={(e) => setIsMonthlyChallenge(e.target.checked)}

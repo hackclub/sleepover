@@ -503,6 +503,8 @@ export async function shipProjectTable(projectid: string, info: any) {
       "userid": user.get("id"),
       "displayname": user.get("slack_display_name"),
       "Project": project.get("name"),
+      "YSWS": info.ysws,
+      "Challenge": info.challenge,
     };
   
     const review = await getReviewTable().create(fields);

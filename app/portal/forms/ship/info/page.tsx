@@ -22,6 +22,8 @@ function ShipInfoContent() {
     city: "",
     state: "",
     zip: "",
+    ysws: "",
+    challenge: "",
   });
 
   useEffect(() => {
@@ -40,6 +42,8 @@ function ShipInfoContent() {
             city: data.city || "",
             state: data.state || "",
             zip: data.zip || "",
+            ysws: data.ysws || "",
+            challenge: data.challenge || "",
           });
         }
         setLoading(false);
@@ -102,6 +106,9 @@ function ShipInfoContent() {
       formDataToSend.append("state", formData.state);
       formDataToSend.append("zip", formData.zip);
       formDataToSend.append("country", formData.country);
+      // Convert boolean values from shipData to string booleans for Airtable checkbox fields
+      formDataToSend.append("ysws", String(shipData.submittedToYSWS));
+      formDataToSend.append("challenge", String(shipData.isMonthlyChallenge));
 
       // Convert base64 screenshot to File if exists
       if (screenshotDataUrl) {

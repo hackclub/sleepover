@@ -35,6 +35,8 @@ export async function shipProject(formData: FormData, projectId: string) {
     state: String(formData.get("state") ?? ""),
     zip: String(formData.get("zip") ?? ""),
     country: String(formData.get("country") ?? ""),
+    ysws: formData.get("ysws") === "true",
+    challenge: formData.get("challenge") === "true",
   }
 
   // Input validation

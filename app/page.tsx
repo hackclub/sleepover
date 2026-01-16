@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import AutoplayCarousel from "./components/Carousel";
 import GradientText from "./components/GradientText";
 import { slides } from "@/app/data/slides";
 
-export default function Home() {
+function HomeContent() {
   const [email, setEmail] = useState("");
   const searchParams = useSearchParams();
 
@@ -436,5 +436,13 @@ export default function Home() {
       </div>
 
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
