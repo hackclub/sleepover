@@ -505,6 +505,7 @@ export async function shipProjectTable(projectid: string, info: any) {
       "Project": project.get("name"),
       "YSWS": info.ysws,
       "Challenge": info.challenge,
+      "hours": project.get("hours"),
     };
   
     const review = await getReviewTable().create(fields);
