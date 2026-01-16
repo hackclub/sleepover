@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import AutoplayCarousel from "./components/Carousel";
 import GradientText from "./components/GradientText";
 import { slides } from "@/app/data/slides";
+import ReferralCapture from "./components/ReferralCapture";
 
 function HomeContent() {
   const [email, setEmail] = useState("");
@@ -28,6 +29,7 @@ function HomeContent() {
   };
   return (
     <main className="relative z-10 min-h-screen overflow-hidden pb-40">
+      <ReferralCapture />
       {/* Blue diagonal cutout background (anchored, non-tiling, masked) */}
       <div
         className="pointer-events-none absolute left-0 right-0 top-[300px] sm:top-[400px] md:top-[542px] h-[600px] sm:h-[800px] md:h-[1100px] pt-30"

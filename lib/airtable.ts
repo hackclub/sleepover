@@ -62,6 +62,10 @@ export function getDevlogsTable() {
   return getBase()("devlogs");
 }
 
+export function getPyramidTable() {
+  return getBase()("pyramid");
+}
+
 //YSWS database
 function getReviewTable() {
   return getBase()("YSWS Project Submission");
@@ -170,6 +174,7 @@ export interface UserRecord {
   slack_avatar_url?: string;
   verification_status?: string;
   utm_source?: string;
+  referral_code?: string;
   created_at: string;
 }
 
@@ -199,6 +204,7 @@ export async function createUser(user: Omit<UserRecord, "created_at">) {
     slack_avatar_url: user.slack_avatar_url || "",
     verification_status: user.verification_status || "",
     utm_source: user.utm_source || "",
+    referral_code: user.referral_code || "",
     created_at: new Date().toISOString(),
   };
 
@@ -609,4 +615,57 @@ export async function getGallery() {
     })
     .all();
     return records
+}
+
+export async function getAllUsersWithReferralCode() {
+  const users = await getUsersTable()
+    .select({
+      filterByFormula: `AND({referral_code} != '', {referral_code} != BLANK())`,
+      view: "Grid view"
+    })
+    .all();
+
+  return users.map((user) => ({
+    id: user.get("id") as string,
+    email: user.get("email") as string,
+    slack_id: user.get("slack_id") as string,
+    referral_code: user.get("referral_code") as string,
+    verification_status: user.get("verification_status") as string,
+  }));
+}
+
+export async function upsertPyramidRecord(data: {
+  email: string;
+  hours: number;
+  projects_shipped: number;
+  idv_status: string;
+  referral_code: string;
+}) {
+  const safeEmail = escapeFormulaString(data.email);
+
+  // Check if record exists
+  const existing = await getPyramidTable()
+    .select({
+      filterByFormula: `{Email} = '${safeEmail}'`,
+      maxRecords: 1,
+    })
+    .firstPage();
+
+  const fields = {
+    Email: data.email,
+    Hours: data.hours,
+    "Projects Shipped": data.projects_shipped,
+    "IDV Status": data.idv_status,
+    "Referral Code": data.referral_code,
+  };
+
+  if (existing.length > 0) {
+    // Update existing record
+    await getPyramidTable().update(existing[0].id, fields);
+    return existing[0];
+  } else {
+    // Create new record
+    const record = await getPyramidTable().create(fields);
+    return record;
+  }
 }
