@@ -53,12 +53,13 @@ export default function WhatIsSleepover() {
             <p
               className="text-[16px] md:text-[20px] leading-relaxed"
               style={{
-                fontFamily: "'MADE Tommy Soft', sans-serif",
-                color: "#6C6EA0",
-                textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
-              }}
-            >
-              Sleepover is a cozy, slumber party style hackathon for teen girls. Sleepover is a part of Hack Club's Athena Initiative, designed to encourage girls to code and 'ship' technical projects.
+                                fontFamily: "'MADE Tommy Soft', sans-serif",
+                                fontWeight: "bold",
+                                color: "#6C6EA0",
+                                textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
+                              }}
+                            >
+                              Sleepover is a cozy, slumber party style hackathon for teen girls. Sleepover is a part of Hack Club's Athena Initiative, designed to encourage girls to code and 'ship' technical projects.
             </p>
 
             {/* When and Where */}
@@ -75,6 +76,7 @@ export default function WhatIsSleepover() {
                 className="text-[16px] md:text-[20px] leading-relaxed"
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
+                  fontWeight: "bold",
                   color: "#6C6EA0",
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
@@ -97,6 +99,7 @@ export default function WhatIsSleepover() {
                 className="text-[16px] md:text-[20px] leading-relaxed"
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
+                  fontWeight: "bold",
                   color: "#6C6EA0",
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
@@ -119,6 +122,7 @@ export default function WhatIsSleepover() {
                 className="text-[16px] md:text-[20px] leading-relaxed mb-4"
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
+                  fontWeight: "bold",
                   color: "#6C6EA0",
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
@@ -129,6 +133,7 @@ export default function WhatIsSleepover() {
                 className="text-[16px] md:text-[20px] leading-relaxed"
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
+                  fontWeight: "bold",
                   color: "#6C6EA0",
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
@@ -151,6 +156,7 @@ export default function WhatIsSleepover() {
                 className="text-[16px] md:text-[20px] leading-relaxed mb-4"
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
+                  fontWeight: "bold",
                   color: "#6C6EA0",
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
@@ -161,11 +167,81 @@ export default function WhatIsSleepover() {
                 className="text-[16px] md:text-[20px] leading-relaxed"
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
+                  fontWeight: "bold",
                   color: "#6C6EA0",
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
                 You can also track art hours using Lapse! Art cannot be more than 30% of your project.
+              </p>
+            </div>
+
+            {/* Can I submit projects from other YSWS */}
+            <div>
+              <h2 className="text-[24px] md:text-[36px] mb-3">
+                <GradientText
+                  gradient="linear-gradient(180deg, #B7C1F2 0%, #89A8EF 100%)"
+                  strokeWidth="6px"
+                >
+                  Can I submit projects from other YSWS (you-ship, we-ships) to Sleepover?
+                </GradientText>
+              </h2>
+              <p
+                className="text-[16px] md:text-[20px] leading-relaxed"
+                style={{
+                  fontFamily: "'MADE Tommy Soft', sans-serif",
+                  fontWeight: "bold",
+                  color: "#6C6EA0",
+                  textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
+                }}
+              >
+                Yes - but only for hours - not for feathers. You must submit it to the other program first and get it approved before submitting to Sleepover.
+              </p>
+            </div>
+
+            {/* From when can I submit projects */}
+            <div>
+              <h2 className="text-[24px] md:text-[36px] mb-3">
+                <GradientText
+                  gradient="linear-gradient(180deg, #B7C1F2 0%, #89A8EF 100%)"
+                  strokeWidth="6px"
+                >
+                  From when can I submit projects?
+                </GradientText>
+              </h2>
+              <p
+                className="text-[16px] md:text-[20px] leading-relaxed"
+                style={{
+                  fontFamily: "'MADE Tommy Soft', sans-serif",
+                  fontWeight: "bold",
+                  color: "#6C6EA0",
+                  textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
+                }}
+              >
+                You can submit projects starting from the 1st of January!
+              </p>
+            </div>
+
+            {/* What are the monthly challenges */}
+            <div>
+              <h2 className="text-[24px] md:text-[36px] mb-3">
+                <GradientText
+                  gradient="linear-gradient(180deg, #B7C1F2 0%, #89A8EF 100%)"
+                  strokeWidth="6px"
+                >
+                  What are the monthly challenges?
+                </GradientText>
+              </h2>
+              <p
+                className="text-[16px] md:text-[20px] leading-relaxed"
+                style={{
+                  fontFamily: "'MADE Tommy Soft', sans-serif",
+                  fontWeight: "bold",
+                  color: "#6C6EA0",
+                  textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
+                }}
+              >
+                Each month, we'll release a challenge to help you level up your technical skills. Build projects based on the challenge prompt, work on it for at least 10 hours, and we'll give you three extra artifacts!
               </p>
             </div>
 
@@ -183,6 +259,7 @@ export default function WhatIsSleepover() {
                 className="text-[16px] md:text-[20px] leading-relaxed"
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
+                  fontWeight: "bold",
                   color: "#6C6EA0",
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
@@ -205,6 +282,7 @@ export default function WhatIsSleepover() {
                 className="text-[16px] md:text-[20px] leading-relaxed"
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
+                  fontWeight: "bold",
                   color: "#6C6EA0",
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
