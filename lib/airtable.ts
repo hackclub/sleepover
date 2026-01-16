@@ -169,6 +169,7 @@ export interface UserRecord {
   slack_display_name?: string;
   slack_avatar_url?: string;
   verification_status?: string;
+  utm_source?: string;
   created_at: string;
 }
 
@@ -197,6 +198,7 @@ export async function createUser(user: Omit<UserRecord, "created_at">) {
     slack_display_name: user.slack_display_name || "",
     slack_avatar_url: user.slack_avatar_url || "",
     verification_status: user.verification_status || "",
+    utm_source: user.utm_source || "",
     created_at: new Date().toISOString(),
   };
 
