@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
 import { getUserAddresses } from "@/lib/auth";
+import { rejectCrossOrigin } from "@/lib/security";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const crossOriginError = rejectCrossOrigin(request);
+  if (crossOriginError) return crossOriginError;
+
   try {
     const session = await getSession();
 
