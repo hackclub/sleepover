@@ -16,7 +16,7 @@ export async function GET(): Promise<Response> {
   
   // Get slack_id to fetch fresh hours from Hackatime (filtered to 2026)
   const userRecord = await getUserFromId(session.userId);
-  const slackId = userRecord?.get("slack_id") as string || "";
+  const slackId = userRecord?.slack_id || "";
 
   // Update hours with fresh data from Hackatime (only hours since Jan 1, 2026)
   const projectsWithFreshHours = await Promise.all(

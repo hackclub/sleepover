@@ -22,7 +22,7 @@ export async function createProject(formData: FormData) {
 
   // Get slack_id from Airtable user record
   const userRecord = await getUserFromId(id);
-  const slackid = userRecord?.get("slack_id") as string || "";
+  const slackid = userRecord?.slack_id || "";
 
   const hours = await getProjectHours(slackid, project)
 

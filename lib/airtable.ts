@@ -20,12 +20,39 @@ function getUsersTable() {
 
 export async function getUserFromId(userid: string) {
   const safeId = escapeFormulaString(userid);
-  const user = await getUsersTable().select({
+  const records = await getUsersTable().select({
     filterByFormula: `{id} = '${safeId}'`,
     maxRecords: 1,
   })
   .firstPage();
-  return user[0]
+  
+  const user = records[0];
+  if (!user) return null;
+  
+  const getField = (field: unknown): string => {
+    if (Array.isArray(field)) return String(field[0] || "");
+    return String(field || "");
+  };
+
+  return {
+    recordId: user.id,
+    id: user.get("id") as string,
+    email: user.get("email") as string,
+    name: user.get("name") as string | undefined,
+    slack_id: user.get("slack_id") as string | undefined,
+    slack_display_name: user.get("slack_display_name") as string | undefined,
+    slack_avatar_url: user.get("slack_avatar_url") as string | undefined,
+    verification_status: user.get("verification_status") as string | undefined,
+    firstName: getField(user.get("First Name")),
+    lastName: getField(user.get("Last Name")),
+    birthdate: getField(user.get("Birthday (from Hack Clubbers)")),
+    address1: getField(user.get("Address Line 1 (from Hack Clubbers)")),
+    address2: getField(user.get("Address Line 2 (from Hack Clubbers)")),
+    city: getField(user.get("City (from Hack Clubbers)")),
+    state: getField(user.get("State (from Hack Clubbers)")),
+    country: getField(user.get("Country (from Hack Clubbers)")),
+    zip: getField(user.get("ZIP (from Hack Clubbers)")),
+  };
 }
 
 export async function getAllUsers() {
@@ -70,14 +97,25 @@ function getReviewTable() {
 export async function getSingularProject(userid: string, name: string) {
   const safeUserId = escapeFormulaString(userid);
   const safeName = escapeFormulaString(name);
-  const record = await getProjectsTable()
+  const records = await getProjectsTable()
     .select({
       filterByFormula: `AND({userid} = '${safeUserId}', {name} = '${safeName}')`,
       view: "Grid view",
     })
     .firstPage();
 
-  return record[0];
+  const project = records[0];
+  if (!project) return null;
+  
+  return {
+    id: project.id,
+    name: project.get("name") as string,
+    desc: project.get("desc") as string,
+    hours: project.get("hours") as number,
+    status: project.get("status") as string,
+    hackatime_name: project.get("hackatime_name") as string,
+    userid: project.get("userid") as string,
+  };
 }
 
 export async function getProjectById(projectId: string) {
@@ -186,7 +224,19 @@ export async function findUserByEmail(email: string) {
     })
     .firstPage();
 
-  return records[0] || null;
+  const user = records[0];
+  if (!user) return null;
+  
+  return {
+    recordId: user.id,
+    id: user.get("id") as string,
+    email: user.get("email") as string,
+    name: user.get("name") as string | undefined,
+    slack_id: user.get("slack_id") as string | undefined,
+    slack_display_name: user.get("slack_display_name") as string | undefined,
+    slack_avatar_url: user.get("slack_avatar_url") as string | undefined,
+    verification_status: user.get("verification_status") as string | undefined,
+  };
 }
 
 export async function createUser(user: Omit<UserRecord, "created_at">) {
@@ -203,7 +253,11 @@ export async function createUser(user: Omit<UserRecord, "created_at">) {
   };
 
   const record = await getUsersTable().create(fields);
-  return record;
+  return {
+    recordId: record.id,
+    id: record.get("id") as string,
+    email: record.get("email") as string,
+  };
 }
 
 export async function updateUser(
@@ -211,7 +265,11 @@ export async function updateUser(
   updates: Partial<UserRecord>
 ) {
   const record = await getUsersTable().update(recordId, updates);
-  return record;
+  return {
+    recordId: record.id,
+    id: record.get("id") as string,
+    email: record.get("email") as string,
+  };
 }
 
 export async function getShopItems() {
@@ -522,7 +580,11 @@ export async function shipProjectTable(projectid: string, info: any) {
     //send dm
     projectReviewMessage(user.get("email"), "Congrats on shipping your project for Sleepover! Your project will be reviewed soon, and any status updates will be sent here.")
     
-    return review
+    return {
+      id: review.id,
+      project: review.get("Project") as string,
+      status: "Pending",
+    };
     }
 }
 
@@ -609,5 +671,15 @@ export async function getGallery() {
       filterByFormula: `{Status} = 'Approved'`,
     })
     .all();
-    return records
+    
+  return records.map((r) => ({
+    id: r.id,
+    project: r.get("Project") as string,
+    description: r.get("Description") as string,
+    displayname: r.get("displayname") as string,
+    playableUrl: r.get("Playable URL") as string,
+    codeUrl: r.get("Code URL") as string,
+    screenshot: r.get("Screenshot") as unknown,
+    ysws: r.get("YSWS") as string,
+  }));
 }

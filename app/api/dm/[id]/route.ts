@@ -42,13 +42,12 @@ export async function POST(
     }
 
     const user = await getUserFromId(id);
-    const email = user?.get?.("email");
 
-    if (!email) {
+    if (!user?.email) {
       return NextResponse.json({ error: "User email not found" }, { status: 404 });
     }
 
-    await projectReviewMessage(email, dmMsg);
+    await projectReviewMessage(user.email, dmMsg);
 
     return NextResponse.json({ message: "good" }, { status: 200 });
   } catch (error) {
