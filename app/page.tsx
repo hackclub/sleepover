@@ -108,11 +108,16 @@ export default function Home() {
         />
 
         <div
-          className="w-[280px] h-[185px] sm:w-[350px] sm:h-[230px] md:w-[450px] md:h-[300px] min-[1792px]:w-[513px] min-[1792px]:h-[338px] rounded-[15px]"
-          style={{
-            background: "linear-gradient(180deg, #919ED5 0%, #9199CB 60.1%, #9199CB 100%)",
-          }}
-        />
+          className="w-[320px] h-[180px] sm:w-[400px] sm:h-[225px] md:w-[530px] md:h-[298px] min-[1792px]:w-[600px] min-[1792px]:h-[338px] rounded-[8px] overflow-hidden border-4 border-[#919ED5] mt-4"
+        >
+          <iframe
+            className="w-full h-full"
+            src="https://www.youtube.com/embed/FIyDH5dm5eo"
+            title="YouTube video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
       </div>
 
       <form
