@@ -2,6 +2,7 @@ import { getSingularProject, getUsersProjects, updateProjectHours, getAllUsers }
 import { getProjectHours } from "@/lib/hackatime";
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { triggerPyramidSync } from "@/lib/pyramidSync";
 
 const UPDATE_JOB_TOKEN = process.env.UPDATE_JOB_TOKEN;
 
@@ -58,6 +59,9 @@ export async function POST(request: NextRequest) {
         errorCount++;
       }
     }
+
+    // Trigger pyramid sync in background after hours are updated
+    triggerPyramidSync();
 
     return NextResponse.json({
       success: true,

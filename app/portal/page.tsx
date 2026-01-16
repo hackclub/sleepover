@@ -63,6 +63,24 @@ export default function PortalPage() {
         localStorage.removeItem("utm_source");
       }).catch(() => {});
     }
+
+    // Send stored referral code to server after auth
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift();
+    };
+    const referralCode = getCookie("referral_code");
+    if (referralCode) {
+      fetch("/api/user/referral", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ referral_code: decodeURIComponent(referralCode) }),
+      }).then(() => {
+        // Delete cookie after successful save
+        document.cookie = "referral_code=; path=/; max-age=0";
+      }).catch(() => {});
+    }
   }, []);
 
   const handleOnboardingComplete = () => {
