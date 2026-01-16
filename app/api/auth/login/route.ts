@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
     path: "/",
   });
 
-  const authUrl = getAuthorizationUrl(state);
+  const email = request.nextUrl.searchParams.get("email");
+  const authUrl = getAuthorizationUrl(state, email || undefined);
   return NextResponse.redirect(authUrl);
 }

@@ -23,7 +23,7 @@ function HomeContent() {
     e.preventDefault();
     if (email) {
       localStorage.setItem("signup_email", email);
-      window.location.href = "/api/auth/login";
+      window.location.href = `/api/auth/login?email=${encodeURIComponent(email)}`;
     }
   };
   return (
@@ -76,7 +76,24 @@ function HomeContent() {
             strokeWidth="5px"
             className="text-[12px] sm:text-[16px] md:text-[22px] min-[1792px]:text-[40px] leading-[16px] sm:leading-[22px] md:leading-[30px] min-[1792px]:leading-[50px]"
           >
-            hack club&apos;s athena initiative presents:
+            <a
+              href="https://hackclub.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline hover:decoration-wavy hover:underline-offset-4 hover:decoration-2 transition-all"
+            >
+              hack club
+            </a>
+            &apos;s{" "}
+            <a
+              href="https://athena.hackclub.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline hover:decoration-wavy hover:underline-offset-4 hover:decoration-2 transition-all"
+            >
+              athena initiative
+            </a>{" "}
+            presents:
           </GradientText>
         </div>
 
@@ -104,7 +121,7 @@ function HomeContent() {
           alt="Sleepover Logo"
           width={700}
           height={500}
-          className="w-72 sm:w-96 md:w-[550px] min-[1792px]:w-[600px] h-auto"
+          className="w-72 sm:w-96 md:w-[550px] min-[1792px]:w-[600px] h-auto animate-wiggle"
         />
 
         <div
@@ -397,27 +414,39 @@ function HomeContent() {
           back to top ↑
         </a>
       </div>
-      <style jsx>{`
+      <style jsx global>{`
         @keyframes float {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-10px); }
+        }
+        @keyframes wiggle {
+          0%, 100% { transform: rotate(0deg); }
+          25% { transform: rotate(-2deg); }
+          75% { transform: rotate(2deg); }
+        }
+        .animate-wiggle {
+          animation: wiggle 2s ease-in-out infinite;
         }
       `}</style>
 
       {/* Footer Text */}
       <div className="w-full flex flex-col items-center mt-8 sm:mt-12 gap-2 px-4">
-        <span
+        <GradientText
+          gradient="linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)"
+          strokeWidth="5px"
           className="text-[18px] sm:text-[24px] md:text-[32px]"
-          style={{
-            fontFamily: "'MADE Tommy Soft', sans-serif",
-            fontWeight: 400,
-            lineHeight: "1.25",
-            textAlign: "center",
-            color: "#9DC9F7",
-          }}
         >
-          made with &lt;3 by teens, for teens
-        </span>
+          brought to you by the{" "}
+          <a
+            href="https://athena.hackclub.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline hover:decoration-wavy hover:underline-offset-4 hover:decoration-2 transition-all"
+          >
+            athena initiative
+          </a>{" "}
+          ♡
+        </GradientText>
         <a
           href="https://hackclub.com"
           target="_blank"
