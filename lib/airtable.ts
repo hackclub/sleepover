@@ -290,6 +290,22 @@ export async function addProduct(userid: string, product: string) {
   return "success";
 }
 
+export async function hasUserOrderedProduct(userid: string, product: string): Promise<boolean> {
+  const safeUserId = escapeFormulaString(userid);
+  
+  const records = await getShopTable()
+    .select({
+      filterByFormula: `{id} = '${safeUserId}'`,
+      maxRecords: 1,
+    })
+    .firstPage();
+
+  if (!records.length) return false;
+
+  const currentOrdered = (records[0].get("ordered") as string[]) ?? [];
+  return currentOrdered.includes(product);
+}
+
 export async function addFulfillment(userid: string, product: string) {
   const safeUserId = escapeFormulaString(userid);
   const user = await getUsersTable().select({
