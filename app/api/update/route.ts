@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
         for (const project of projects) {
           try {
             const found = await getSingularProject(id, project.name);
+            if (!found) continue;
             const hours = await getProjectHours(slack_id, project.hackatime_name);
             await updateProjectHours(found.id, hours);
             console.log(`Updated ${project.name} for user ${id}: ${hours} hours`);

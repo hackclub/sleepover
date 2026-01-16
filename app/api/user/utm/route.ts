@@ -16,11 +16,7 @@ export async function POST(request: NextRequest) {
 
     const airtableUser = await findUserByEmail(user.email);
     if (airtableUser) {
-      // Only update if utm_source not already set
-      const currentUtm = airtableUser.get("utm_source");
-      if (!currentUtm) {
-        await updateUser(airtableUser.id, { utm_source });
-      }
+      await updateUser(airtableUser.recordId, { utm_source });
     }
 
     return NextResponse.json({ success: true });

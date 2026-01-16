@@ -9,7 +9,7 @@ export async function GET() {
 
     // Get slack_id from Airtable user record
     const userRecord = await getUserFromId(session.userId);
-    const slackId = userRecord?.get("slack_id") as string || "";
+    const slackId = userRecord?.slack_id || "";
 
     const hasHackatime = await isHackatime(slackId);
     const projects = hasHackatime ? await getHackProjects(slackId) : [];

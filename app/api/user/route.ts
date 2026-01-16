@@ -22,9 +22,9 @@ export async function GET() {
     return NextResponse.json({
       email: user.email,
       name: user.name,
-      slack_display_name: airtableUser.get("slack_display_name") || user.name,
-      slack_avatar_url: airtableUser.get("slack_avatar_url") || null,
-      slack_id: airtableUser.get("slack_id") || null,
+      slack_display_name: airtableUser.slack_display_name || user.name,
+      slack_avatar_url: airtableUser.slack_avatar_url || null,
+      slack_id: airtableUser.slack_id || null,
     });
   } catch (error) {
     console.error("Error fetching user from Airtable:", error);

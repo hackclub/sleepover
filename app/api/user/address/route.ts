@@ -16,32 +16,17 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Helper to get first element if array, or value directly
-    const getField = (field: unknown): string => {
-      if (Array.isArray(field)) {
-        return String(field[0] || "");
-      }
-      return String(field || "");
-    };
-
-    const address1 = getField(airtableUser.get("Address Line 1 (from Hack Clubbers)"));
-    const address2 = getField(airtableUser.get("Address Line 2 (from Hack Clubbers)"));
-    const city = getField(airtableUser.get("City (from Hack Clubbers)"));
-    const state = getField(airtableUser.get("State (from Hack Clubbers)"));
-    const country = getField(airtableUser.get("Country (from Hack Clubbers)"));
-    const zip = getField(airtableUser.get("ZIP (from Hack Clubbers)"));
-
     return NextResponse.json({
-      firstName: getField(airtableUser.get("First Name")),
-      lastName: getField(airtableUser.get("Last Name")),
-      email: airtableUser.get("email") || user.email,
-      birthdate: getField(airtableUser.get("Birthday (from Hack Clubbers)")),
-      address1,
-      address2,
-      city,
-      state,
-      country,
-      zip,
+      firstName: airtableUser.firstName,
+      lastName: airtableUser.lastName,
+      email: airtableUser.email || user.email,
+      birthdate: airtableUser.birthdate,
+      address1: airtableUser.address1,
+      address2: airtableUser.address2,
+      city: airtableUser.city,
+      state: airtableUser.state,
+      country: airtableUser.country,
+      zip: airtableUser.zip,
     });
   } catch (error) {
     console.error("Error fetching user address:", error);
