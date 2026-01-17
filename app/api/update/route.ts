@@ -6,7 +6,7 @@ import { triggerPyramidSync } from "@/lib/pyramidSync";
 
 const UPDATE_JOB_TOKEN = process.env.UPDATE_JOB_TOKEN;
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get("authorization");
     if (!UPDATE_JOB_TOKEN || authHeader !== `Bearer ${UPDATE_JOB_TOKEN}`) {
@@ -31,6 +31,8 @@ export async function POST(request: NextRequest) {
     let successCount = 0;
     let errorCount = 0;
 
+    var count = 0;
+
     for (const user of allUsers) {
       try {
         const id = user.id;
@@ -48,6 +50,7 @@ export async function POST(request: NextRequest) {
             if (!found) continue;
             const hours = await getProjectHours(slack_id, project.hackatime_name);
             await updateProjectHours(found.id, hours);
+            count++;
           } catch (projectError) {
             console.error(`Error updating project ${project.name} for user ${id}:`, projectError);
           }
@@ -65,7 +68,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `Processed ${allUsers.length} users`,
+      message: `Processed ${allUsers.length} users and ${count} projects`,
       successCount,
       errorCount,
     });
