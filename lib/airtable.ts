@@ -272,6 +272,32 @@ export async function updateUser(
   };
 }
 
+export async function updateUserPronouns(userId: string, pronouns: string) {
+  const safeId = escapeFormulaString(userId);
+  const records = await getUsersTable()
+    .select({
+      filterByFormula: `{id} = '${safeId}'`,
+      maxRecords: 1,
+    })
+    .firstPage();
+
+  if (!records.length) {
+    throw new Error("User not found");
+  }
+
+  const record = records[0];
+  await getUsersTable().update([
+      {
+        id: record.id,
+        fields: {
+          pronouns: pronouns
+        },
+      },
+    ]);
+
+  return { success: true };
+}
+
 export async function getShopItems() {
   const records = await getProductsTable()
     .select({

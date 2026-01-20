@@ -5,6 +5,9 @@ export interface OnboardingSlide {
   subText?: string;
   characterImage: string;
   characterPosition: "left" | "right";
+  requiresInput?: boolean;
+  inputType?: "radio";
+  inputOptions?: string[];
 }
 
 export const onboardingSlides: OnboardingSlide[] = [
@@ -50,6 +53,16 @@ export const onboardingSlides: OnboardingSlide[] = [
   },
   {
     id: 6,
+    characterName: "Pancake",
+    dialogText: "Sleepover is for girls, but no matter your gender, feel free to look at the platform! What pronouns do you use?",
+    characterImage: "/background/bunny-talking.png",
+    characterPosition: "left",
+    requiresInput: true,
+    inputType: "radio",
+    inputOptions: ["she/her", "he/him", "they/them"],
+  },
+  {
+    id: 7,
     characterName: "Pancake",
     dialogText: "ready to get started? create your first project now!",
     subText: "click to continue!",

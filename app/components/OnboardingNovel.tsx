@@ -5,7 +5,7 @@ import Image from "next/image";
 import { onboardingSlides } from "@/lib/onboardingSlides";
 
 interface OnboardingNovelProps {
-  onComplete: () => void;
+  onComplete: (pronouns?: string) => void;
   userName?: string;
 }
 
@@ -14,6 +14,7 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
   const [isMobile, setIsMobile] = useState(false);
   const [displayedText, setDisplayedText] = useState("");
   const [isTyping, setIsTyping] = useState(true);
+  const [selectedPronouns, setSelectedPronouns] = useState<string>("");
   const slide = onboardingSlides[currentSlide];
 
   useEffect(() => {
@@ -57,17 +58,23 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
 
   const handleClick = () => {
     if (isTyping) return;
+
+    // If this slide requires input and none is selected, don't proceed
+    if (slide.requiresInput && !selectedPronouns) {
+      return;
+    }
+
     if (currentSlide < onboardingSlides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      onComplete();
+      onComplete(selectedPronouns);
     }
   };
 
   return (
     <div
-      className="fixed inset-0 z-[100] cursor-pointer"
-      onClick={handleClick}
+      className={`fixed inset-0 z-[100] ${slide.requiresInput ? "" : "cursor-pointer"}`}
+      onClick={slide.requiresInput ? undefined : handleClick}
     >
       {/* Semi-transparent overlay to dim the background */}
       <div className="absolute inset-0 bg-black/20" />
@@ -127,14 +134,62 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
               {isTyping && <span className="animate-pulse">|</span>}
             </p>
 
+            {/* Radio buttons for pronouns selection */}
+            {slide.requiresInput && slide.inputType === "radio" && slide.inputOptions && !isTyping && (
+              <div className="flex flex-col md:flex-row gap-3 md:gap-4 my-4 items-center justify-center md:justify-start">
+                {slide.inputOptions.map((option) => (
+                  <label
+                    key={option}
+                    className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
+                      selectedPronouns === option
+                        ? "bg-[#7684c9] text-white"
+                        : "bg-white/60 text-[#6c6ea0] hover:bg-white/80"
+                    }`}
+                    style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedPronouns(option);
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="pronouns"
+                      value={option}
+                      checked={selectedPronouns === option}
+                      onChange={() => setSelectedPronouns(option)}
+                      className="w-4 h-4"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <span className="text-base md:text-lg font-bold">{option}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+
             {/* Click to continue */}
-            {slide.subText && (
+            {slide.subText && !slide.requiresInput && (
               <p
                 className="text-[#7472a0] text-sm md:text-base"
                 style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
               >
                 {slide.subText}
               </p>
+            )}
+
+            {/* Continue button for input slides */}
+            {slide.requiresInput && !isTyping && (
+              <button
+                onClick={handleClick}
+                disabled={!selectedPronouns}
+                className={`mt-4 px-6 py-2 rounded-xl text-base md:text-lg font-bold transition-all ${
+                  selectedPronouns
+                    ? "bg-[#7684c9] text-white hover:bg-[#6073b8] cursor-pointer"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+                style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+              >
+                Continue →
+              </button>
             )}
           </div>
         </div>

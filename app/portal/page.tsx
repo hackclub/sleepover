@@ -11,6 +11,7 @@ import NewProjectModal from "../components/NewProjectModal";
 import GradientText from "../components/GradientText";
 import SmallBox from "../components/SmallBox";
 import Link from "next/link";
+import { updatePronouns } from "../forms/actions/updatePronouns";
 
 export default function PortalPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -83,9 +84,18 @@ export default function PortalPage() {
     }
   }, []);
 
-  const handleOnboardingComplete = () => {
+  const handleOnboardingComplete = async (pronouns?: string) => {
     localStorage.setItem("hasSeenOnboarding", "true");
     setShowOnboarding(false);
+
+    // Save pronouns to Airtable if provided
+    if (pronouns) {
+      try {
+        await updatePronouns(pronouns);
+      } catch (error) {
+        console.error("Failed to save pronouns:", error);
+      }
+    }
   };
   
   const contentOffset = isMobile ? "0px" : isSidebarOpen ? "clamp(360px, 28vw, 600px)" : "140px";
