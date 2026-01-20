@@ -1,13 +1,28 @@
 import crypto from "crypto";
 
+function getRedirectUri(): string {
+  // If explicitly set in env, use that
+  if (process.env.HACKCLUB_REDIRECT_URI) {
+    return process.env.HACKCLUB_REDIRECT_URI;
+  }
+
+  // In development, use localhost
+  if (process.env.NODE_ENV === "development") {
+    return "http://localhost:3000/api/auth/callback";
+  }
+
+  // In production, use the production URL
+  return "https://sleepover.hackclub.com/api/auth/callback";
+}
+
 export const HACKCLUB_AUTH_CONFIG = {
   clientId: process.env.HACKCLUB_CLIENT_ID!,
   clientSecret: process.env.HACKCLUB_CLIENT_SECRET!,
-  redirectUri: process.env.HACKCLUB_REDIRECT_URI || "https://sleepover.hackclub.com/api/auth/callback",
+  redirectUri: getRedirectUri(),
   authorizationUrl: "https://auth.hackclub.com/oauth/authorize",
   tokenUrl: "https://auth.hackclub.com/oauth/token",
   userInfoUrl: "https://auth.hackclub.com/api/v1/me",
-  scopes: "openid email name slack_id verification_status address",
+  scopes: "openid email name slack_id verification_status",
 };
 
 export function generateOAuthState(): string {
