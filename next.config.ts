@@ -37,27 +37,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '*.hackclub.com',
+        hostname: '**',
       },
       {
-        protocol: 'https',
-        hostname: 'slack-imgs.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'avatars.slack-edge.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.slack-edge.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'v5.airtableusercontent.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'hc-cdn.hel1.your-objectstorage.com',
+        protocol: 'http',
+        hostname: '**',
       },
     ],
   },
