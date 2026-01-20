@@ -1,7 +1,27 @@
+import { getSession } from "./session";
+
 const start_date = "2026-01-01";
 const end_date = "2026-04-05";
 
+export async function getUsernameFromEmail(email: string) {
+  const response = await fetch("https://hackatime.hackclub.com/api/admin/v1/user/get_user_by_email", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.HACKATIME_API_KEY}`
+      },
+      body: JSON.stringify({ email: email })
+    });
+
+    if (!response.ok) {
+    throw new Error("Failed to get user info");
+  }
+
+  return response.json();
+}
+
 export async function getUserStats(slack_id: string) {
+
   const response = await fetch(`https://hackatime.hackclub.com/api/v1/users/${slack_id}/stats?features=projects&start_date=${start_date}&end_date=${end_date}`, {
     headers: {
       Authorization: `Bearer ${process.env.HACKATIME_API}`,
@@ -9,7 +29,24 @@ export async function getUserStats(slack_id: string) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to get user info");
+    console.log("not working with slack, trying with email")
+
+    const session = await getSession()
+    const email = session.email
+    const userid = (await getUsernameFromEmail(email)).user_id
+
+    const response2 = await fetch(`https://hackatime.hackclub.com/api/v1/users/${userid}/stats?features=projects&start_date=${start_date}&end_date=${end_date}`, {
+    headers: {
+      Authorization: `Bearer ${process.env.HACKATIME_API}`,
+    },
+  });
+
+    if (!response2.ok) {
+      throw new Error("Failed to get user info.");
+    }
+
+    return response2.json()
+
   }
 
   return response.json();
