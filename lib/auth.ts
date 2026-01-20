@@ -5,15 +5,11 @@ function getRedirectUri(): string {
   if (process.env.HACKCLUB_REDIRECT_URI) {
     return process.env.HACKCLUB_REDIRECT_URI;
   }
-
-  // In development, use localhost
-  if (process.env.NODE_ENV === "development") {
-    return "http://localhost:3000/api/auth/callback";
+  else {
+    return "";
   }
-
-  // In production, use the production URL
-  return "https://sleepover.hackclub.com/api/auth/callback";
 }
+
 
 export const HACKCLUB_AUTH_CONFIG = {
   clientId: process.env.HACKCLUB_CLIENT_ID!,
