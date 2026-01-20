@@ -94,7 +94,6 @@ export async function getUserAddresses(accessToken: string) {
 
   const data = await response.json();
   const identity = data.identity || data;
-  console.log(identity)
 
   // Addresses are returned in the identity object when address scope is granted
   return identity.addresses || [];

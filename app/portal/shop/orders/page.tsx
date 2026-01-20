@@ -52,7 +52,6 @@ export default function OrdersPage() {
     fetch("/api/user/info")
       .then((res) => res.json())
       .then((data) => {
-        console.log("DATA =", data)
         setBasic({line1: data.address1 || "", line2: data.address2 || "", zip: data.zip || "", country: data.country || "", city: data.city || "", state: data.state || ""});
         setLoading(false);
       })
