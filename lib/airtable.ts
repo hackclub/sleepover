@@ -331,7 +331,7 @@ async function withPurchaseLock<T>(userid: string, fn: () => Promise<T>): Promis
 
 const SINGLE = ["rec4wZN4c2OdkWMnc"]; // Sticker sheet
 
-export async function addProduct(userid: string, product: string) {
+export async function addProduct(userid: string, product: string, address?: string) {
   return withPurchaseLock(userid, async () => {
     const safeUserId = escapeFormulaString(userid);
 
@@ -396,7 +396,7 @@ export async function addProduct(userid: string, product: string) {
       },
     ]);
 
-    addFulfillment(userid, product);
+    addFulfillment(userid, product, address);
 
     return "success";
   });
@@ -418,7 +418,7 @@ export async function hasUserOrderedProduct(userid: string, product: string): Pr
   return currentOrdered.includes(product);
 }
 
-export async function addFulfillment(userid: string, product: string) {
+export async function addFulfillment(userid: string, product: string, address?: string) {
   const safeUserId = escapeFormulaString(userid);
   const user = await getUsersTable().select({
     filterByFormula: `{id} = '${safeUserId}'`,
@@ -428,12 +428,16 @@ export async function addFulfillment(userid: string, product: string) {
 
   const date = new Date().toISOString().slice(0, 10);
 
-  const fields = {
+  const fields: Record<string, any> = {
     user: [user[0].getId()],
     product: [product],
     date: date,
     status: "Unfulfilled",
   };
+
+  if (address) {
+    fields.Address = address;
+  }
 
   const records = await getFulfillmentTable().create([
     {
@@ -492,14 +496,8 @@ export async function getUserOrders(userid: string) {
         }
       }
 
-      const address = {
-        line1: String(user.get("Address (Line 1)") || ""),
-        line2: String(user.get("Address (Line 2)") || ""),
-        city: String(user.get("City (from Hack Clubbers)") || ""),
-        state: String(user.get("State (from Hack Clubbers)") || ""),
-        country: String(user.get("Country (from Hack Clubbers)") || ""),
-        zip: String(user.get("ZIP (from Hack Clubbers)") || ""),
-      };
+      // Get address from Fulfillment record, or empty string if not present
+      const address = String(r.get("Address") || "");
 
       return {
         id: r.id,

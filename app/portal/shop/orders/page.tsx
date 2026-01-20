@@ -11,24 +11,16 @@ interface OrderProduct {
   image?: string;
 }
 
-interface OrderAddress {
-  line1: string;
-  line2: string;
-  city: string;
-  state: string;
-  country: string;
-  zip: string;
-}
-
 interface Order {
   id: string;
   date: string;
   status: string;
   product: OrderProduct | null;
-  address: OrderAddress;
+  address: any;
 }
 
 export default function OrdersPage() {
+  const [basicAddress, setBasic] = useState<any>();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -43,6 +35,20 @@ export default function OrdersPage() {
       })
       .catch((err) => {
         console.error("Failed to fetch orders:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/user/address")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("DATA =", data)
+        setBasic(data || "");
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch address:", err);
         setLoading(false);
       });
   }, []);
@@ -63,13 +69,13 @@ export default function OrdersPage() {
     });
   };
 
-  const formatAddress = (address: OrderAddress) => {
+  const formatAddress = (address: any) => {
     const parts = [
-      address.line1,
-      address.line2,
+      address.line_1,
+      address.line_2,
       address.city,
       address.state,
-      address.zip,
+      address.postal_code,
       address.country,
     ].filter((part) => part && part.trim() !== "");
 
@@ -208,7 +214,7 @@ export default function OrdersPage() {
                           className="text-base font-bold text-[#6c6ea0]"
                           style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
                         >
-                          {formatAddress(order.address) || "No address provided"}
+                          {order.address || formatAddress(basicAddress) || "Sorry, no address."}
                         </p>
                       </div>
 

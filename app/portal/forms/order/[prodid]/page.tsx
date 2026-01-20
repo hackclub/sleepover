@@ -106,7 +106,8 @@ export default function OrderProductPage() {
 
     try {
       const formData = new FormData();
-      await orderProduct(formData, prodId);
+      const addressString = selectedAddress ? formatAddress(selectedAddress) : "";
+      await orderProduct(formData, prodId, addressString);
 
       const newBalance = userBalance - product.price;
       sessionStorage.setItem("userBalance", newBalance.toString());
