@@ -94,7 +94,31 @@ export async function getUserAddresses(accessToken: string) {
 
   const data = await response.json();
   const identity = data.identity || data;
-  
+  console.log(identity)
+
   // Addresses are returned in the identity object when address scope is granted
   return identity.addresses || [];
+}
+
+export async function getPrimaryAddress(accessToken: string) {
+  const response = await fetch(HACKCLUB_AUTH_CONFIG.userInfoUrl, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    console.error("Failed to fetch user info for primary address:", response.status);
+    return null;
+  }
+
+  const data = await response.json();
+  const identity = data.identity || data;
+  const addresses = identity.addresses || [];
+
+  // Find the address with primary: true
+  const primaryAddress = addresses.find((addr: any) => addr.primary === true);
+
+  // Return primary address if found, otherwise return the first address, or null
+  return primaryAddress || addresses[0] || null;
 }

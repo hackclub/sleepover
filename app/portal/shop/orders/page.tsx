@@ -11,6 +11,15 @@ interface OrderProduct {
   image?: string;
 }
 
+interface Address {
+  line1: string;
+  line2: string;
+  city: string;
+  zip: string;
+  state: string;
+  country: string;
+}
+
 interface Order {
   id: string;
   date: string;
@@ -20,7 +29,7 @@ interface Order {
 }
 
 export default function OrdersPage() {
-  const [basicAddress, setBasic] = useState<any>();
+  const [basicAddress, setBasic] = useState<Address>({line1: "", line2: "", zip: "", state: "", city: "", country:""});
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -40,11 +49,11 @@ export default function OrdersPage() {
   }, []);
 
   useEffect(() => {
-    fetch("/api/user/address")
+    fetch("/api/user/info")
       .then((res) => res.json())
       .then((data) => {
         console.log("DATA =", data)
-        setBasic(data || "");
+        setBasic({line1: data.address1 || "", line2: data.address2 || "", zip: data.zip || "", country: data.country || "", city: data.city || "", state: data.state || ""});
         setLoading(false);
       })
       .catch((err) => {

@@ -16,18 +16,20 @@ function ShipInfoContent() {
     lastName: "",
     email: "",
     birthdate: "",
-    address1: "",
-    address2: "",
-    country: "",
-    city: "",
-    state: "",
-    zip: "",
     ysws: "",
     challenge: "",
   });
+  const [address, setAddress] = useState({
+    address1: "",
+    address2: "",
+    city: "",
+    state: "",
+    zip: "",
+    country: "",
+  });
 
   useEffect(() => {
-    fetch("/api/user/address")
+    fetch("/api/user/info")
       .then((res) => res.json())
       .then((data) => {
         if (!data.error) {
@@ -36,14 +38,16 @@ function ShipInfoContent() {
             lastName: data.lastName || "",
             email: data.email || "",
             birthdate: data.birthday || "",
+            ysws: data.ysws || "",
+            challenge: data.challenge || "",
+          });
+          setAddress({
             address1: data.address1 || "",
             address2: data.address2 || "",
-            country: data.country || "",
             city: data.city || "",
             state: data.state || "",
             zip: data.zip || "",
-            ysws: data.ysws || "",
-            challenge: data.challenge || "",
+            country: data.country || "",
           });
         }
         setLoading(false);
@@ -68,9 +72,14 @@ function ShipInfoContent() {
     }
 
     // Validate required fields
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.birthdate ||
-        !formData.address1 || !formData.city || !formData.state || !formData.zip || !formData.country) {
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.birthdate) {
       alert("Please fill in all required fields");
+      return;
+    }
+
+    // Validate that user has an address
+    if (!address.address1 || !address.city || !address.state || !address.zip || !address.country) {
+      alert("Please add a primary address on Hack Club Auth before shipping your project. Click 'Manage Addresses' to add one.");
       return;
     }
 
@@ -100,12 +109,6 @@ function ShipInfoContent() {
       formDataToSend.append("lastName", formData.lastName);
       formDataToSend.append("email", formData.email);
       formDataToSend.append("birthdate", formData.birthdate);
-      formDataToSend.append("address1", formData.address1);
-      formDataToSend.append("address2", formData.address2);
-      formDataToSend.append("city", formData.city);
-      formDataToSend.append("state", formData.state);
-      formDataToSend.append("zip", formData.zip);
-      formDataToSend.append("country", formData.country);
       // Convert boolean values from shipData to string booleans for Airtable checkbox fields
       formDataToSend.append("ysws", String(shipData.submittedToYSWS));
       formDataToSend.append("challenge", String(shipData.isMonthlyChallenge));
@@ -305,8 +308,8 @@ function ShipInfoContent() {
               />
             </div>
 
-            {/* Address Line 1 */}
-            <div>
+            {/* Shipping Address Display */}
+            <div className="mt-6">
               <label
                 className="block text-[24px] md:text-[28px] font-medium mb-2"
                 style={{
@@ -314,145 +317,42 @@ function ShipInfoContent() {
                   color: "#7472A0",
                 }}
               >
-                Address Line 1
+                Shipping Address (Primary on Hack Club Auth)
               </label>
-              <input
-                type="text"
-                name="address1"
-                value={formData.address1}
-                onChange={handleChange}
-                className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
+              <div
+                className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg"
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
-                  background: "white",
-                  boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
-                }}
-              />
-            </div>
-
-            {/* Address Line 2 (Optional) */}
-            <div>
-              <label
-                className="block text-[24px] md:text-[28px] font-medium mb-2"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  color: "#7472A0",
+                  background: "#F5F0FF",
+                  border: "2px solid #E8E4F3",
                 }}
               >
-                Address Line 2{" "}
-                <span className="text-[14px] opacity-75">(optional)</span>
-              </label>
-              <input
-                type="text"
-                name="address2"
-                value={formData.address2}
-                onChange={handleChange}
-                className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  background: "white",
-                  boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
-                }}
-              />
-            </div>
-
-            {/* Country */}
-            <div>
-              <label
-                className="block text-[24px] md:text-[28px] font-medium mb-2"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  color: "#7472A0",
-                }}
-              >
-                Country
-              </label>
-              <input
-                type="text"
-                name="country"
-                value={formData.country}
-                onChange={handleChange}
-                className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  background: "white",
-                  boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
-                }}
-              />
-            </div>
-
-            {/* City */}
-            <div>
-              <label
-                className="block text-[24px] md:text-[28px] font-medium mb-2"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  color: "#7472A0",
-                }}
-              >
-                City
-              </label>
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  background: "white",
-                  boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
-                }}
-              />
-            </div>
-
-            {/* State/Province and ZIP */}
-            <div className="flex gap-4 flex-wrap">
-              <div className="flex-1 min-w-[200px]">
-                <label
-                  className="block text-[24px] md:text-[28px] font-medium mb-2"
-                  style={{
-                    fontFamily: "'MADE Tommy Soft', sans-serif",
-                    color: "#7472A0",
-                  }}
-                >
-                  State/Province
-                </label>
-                <input
-                  type="text"
-                  name="state"
-                  value={formData.state}
-                  onChange={handleChange}
-                  className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
-                  style={{
-                    fontFamily: "'MADE Tommy Soft', sans-serif",
-                    background: "white",
-                    boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
-                  }}
-                />
+                {address.address1 || address.city || address.state || address.zip || address.country ? (
+                  <>
+                    {address.address1 && <p>{address.address1}</p>}
+                    {address.address2 && <p>{address.address2}</p>}
+                    <p>
+                      {[address.city, address.state, address.zip].filter(Boolean).join(", ")}
+                    </p>
+                    {address.country && <p>{address.country}</p>}
+                  </>
+                ) : (
+                  <p className="text-[#9B9DB8]">No address on file</p>
+                )}
               </div>
-              <div className="flex-1 min-w-[200px]">
-                <label
-                  className="block text-[24px] md:text-[28px] font-medium mb-2"
-                  style={{
-                    fontFamily: "'MADE Tommy Soft', sans-serif",
-                    color: "#7472A0",
-                  }}
+              <div className="flex justify-end mt-2">
+                <button
+                  type="button"
+                  onClick={() => window.open("https://auth.hackclub.com/addresses", "_blank")}
+                  className="bg-gradient-to-t from-[#d9daf8] to-[#b5aae7] border-4 border-white rounded-2xl px-6 py-2 shadow-[0px_4px_0px_0px_#c6c7e4,0px_6px_8px_0px_rgba(116,114,160,0.69)] hover:scale-105 transition-transform"
                 >
-                  ZIP/Postal Code
-                </label>
-                <input
-                  type="text"
-                  name="zip"
-                  value={formData.zip}
-                  onChange={handleChange}
-                  className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
-                  style={{
-                    fontFamily: "'MADE Tommy Soft', sans-serif",
-                    background: "white",
-                    boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
-                  }}
-                />
+                  <span
+                    className="bg-gradient-to-b from-[#7684c9] to-[#7472a0] bg-clip-text text-transparent text-lg font-bold"
+                    style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+                  >
+                    Manage Addresses ↗
+                  </span>
+                </button>
               </div>
             </div>
           </div>

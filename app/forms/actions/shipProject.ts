@@ -1,11 +1,17 @@
 "use server"
 
 import { getProjectById, shipProjectTable } from "@/lib/airtable"
-import { requireAuth } from "@/lib/session";
+import { getSession } from "@/lib/session";
 import { triggerPyramidSync } from "@/lib/pyramidSync";
+import { getUserInfo, getPrimaryAddress } from "@/lib/auth";
 
 export async function shipProject(formData: FormData, projectId: string) {
-  const session = await requireAuth()
+  const session = await getSession()
+
+  if (!session.isLoggedIn || !session.userId) {
+    throw new Error("Unauthorized");
+  }
+
   const userId = session.userId
 
   if (!projectId) {
@@ -21,21 +27,37 @@ export async function shipProject(formData: FormData, projectId: string) {
     throw new Error("Not authorized to ship this project")
   }
 
+  // Get user info and primary address
+  const accessToken = session.accessToken;
+  if (!accessToken) {
+    throw new Error("No access token available")
+  }
+
+  const [userInfo, primaryAddress] = await Promise.all([
+    getUserInfo(accessToken),
+    getPrimaryAddress(accessToken)
+  ]);
+
+  const identity = userInfo.identity || userInfo;
+
+  const birthdateValue = formData.get("birthdate");
+  const birthdate = birthdateValue ? String(birthdateValue) : identity.birthday || "";
+
   const info = {
     playable_url: String(formData.get("playable") ?? ""),
     code_url: String(formData.get("code") ?? ""),
     screenshot: formData.get("screenshot") as File,
     github: String(formData.get("github") ?? ""),
-    firstName: String(formData.get("firstName") ?? ""),
-    lastName: String(formData.get("lastName") ?? ""),
-    email: String(formData.get("email") ?? ""),
-    birthdate: String(formData.get("birthdate") ?? ""),
-    address1: String(formData.get("address1") ?? ""),
-    address2: String(formData.get("address2") ?? ""),
-    city: String(formData.get("city") ?? ""),
-    state: String(formData.get("state") ?? ""),
-    zip: String(formData.get("zip") ?? ""),
-    country: String(formData.get("country") ?? ""),
+    firstName: String(formData.get("firstName") ?? identity.first_name ?? ""),
+    lastName: String(formData.get("lastName") ?? identity.first_name ?? ""),
+    email: identity.email || session.email || "",
+    birthdate: birthdate,
+    address1: primaryAddress?.line_1 || "",
+    address2: primaryAddress?.line_2 || "",
+    city: primaryAddress?.city || "",
+    state: primaryAddress?.state || "",
+    zip: primaryAddress?.postal_code || "",
+    country: primaryAddress?.country || "",
     ysws: formData.get("ysws") === "true",
     challenge: formData.get("challenge") === "true",
   }
@@ -52,9 +74,6 @@ export async function shipProject(formData: FormData, projectId: string) {
   }
   if (info.firstName.length > 100 || info.lastName.length > 100) {
     throw new Error("Name fields too long (max 100 characters)")
-  }
-  if (info.address1.length > 200 || info.address2.length > 200) {
-    throw new Error("Address fields too long (max 200 characters)")
   }
 
   await shipProjectTable(projectId, info)
