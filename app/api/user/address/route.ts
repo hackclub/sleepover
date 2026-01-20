@@ -1,39 +1,33 @@
 import { NextResponse } from "next/server";
-import { getCurrentUser } from "@/lib/session";
-import { getUserFromId } from "@/lib/airtable";
+import { getSession } from "@/lib/session";
+import { getUserAddresses } from "@/lib/auth";
 import { rejectCrossOrigin } from "@/lib/security";
 
 export async function GET(request: Request) {
   const crossOriginError = rejectCrossOrigin(request);
   if (crossOriginError) return crossOriginError;
 
-  const user = await getCurrentUser();
-
-  if (!user) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-
   try {
-    const airtableUser = await getUserFromId(user.userId);
-    
-    if (!airtableUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const session = await getSession();
+
+    if (!session.isLoggedIn) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    return NextResponse.json({
-      firstName: airtableUser.firstName,
-      lastName: airtableUser.lastName,
-      email: airtableUser.email || user.email,
-      birthdate: airtableUser.birthdate,
-      address1: airtableUser.address1,
-      address2: airtableUser.address2,
-      city: airtableUser.city,
-      state: airtableUser.state,
-      country: airtableUser.country,
-      zip: airtableUser.zip,
-    });
+    const accessToken = session.accessToken;
+
+    if (!accessToken) {
+      return NextResponse.json({ error: "No access token" }, { status: 401 });
+    }
+
+    const addresses = await getUserAddresses(accessToken);
+
+    // Return the first address if available, or empty object
+    const address = addresses.length > 0 ? addresses[0] : {};
+
+    return NextResponse.json(address);
   } catch (error) {
-    console.error("Error fetching user address:", error);
+    console.error("Error fetching address:", error);
     return NextResponse.json({ error: "Failed to fetch address" }, { status: 500 });
   }
 }

@@ -38,6 +38,7 @@ export default function OrderProductPage() {
       .then((res) => res.json())
       .then((data) => {
         const addrs = data.addresses || [];
+        console.log("ADDRESSES =", addrs)
         setAddresses(addrs);
         if (addrs.length > 0 && !selectedAddressId) {
           setSelectedAddressId(addrs[0].id);
