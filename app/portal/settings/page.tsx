@@ -281,7 +281,151 @@ export default function SettingsPage() {
                         >
                           You don&apos;t have a Hackatime account connected
                         </GradientText>
-                        <h2 className="pt-5">Go <Link href="https://hackatime.hackclub.com/minimal_login" className="text-[#7791E6]">here</Link> and set up your hackatime account with your Hack Club Auth account.</h2>
+                      </div>
+                      <div className="space-y-6 text-left max-w-2xl mx-auto">
+                        <div className="space-y-2">
+                          <h3 className="text-xl font-semibold">
+                            <GradientText
+                              gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                              strokeWidth="5px"
+                            >
+                              What is Hackatime?
+                            </GradientText>
+                          </h3>
+                          <p className="text-base leading-relaxed">
+                            <GradientText
+                              gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                              strokeWidth="3px"
+                            >
+                              Hackatime is a free tool from Hack Club that shows you how much time you spend coding. You can see what other Hack Clubbers are building too!
+                            </GradientText>
+                          </p>
+                        </div>
+
+                        <div className="space-y-4">
+                          <h3 className="text-xl font-semibold">
+                            <GradientText
+                              gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                              strokeWidth="5px"
+                            >
+                              How do I set it up?
+                            </GradientText>
+                          </h3>
+
+                          <div className="space-y-3">
+                            <div className="flex gap-3">
+                              <span className="text-base font-semibold flex-shrink-0">
+                                <GradientText
+                                  gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                                  strokeWidth="4px"
+                                >
+                                  Step 1:
+                                </GradientText>
+                              </span>
+                              <p className="text-base leading-relaxed">
+                                <GradientText
+                                  gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                                  strokeWidth="3px"
+                                >
+                                  Go{" "}
+                                </GradientText>
+                                <Link
+                                  href="https://hackatime.hackclub.com/minimal_login"
+                                  className="text-[#7791E6] font-semibold underline hover:opacity-80 transition-opacity mx-1"
+                                >
+                                  here
+                                </Link>{" "}
+                                <GradientText
+                                  gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                                  strokeWidth="3px"
+                                >
+                                  and create a Hackatime account using <strong>Hack Club Auth</strong>, or the <strong>same email</strong> used by your Hack Club Slack account.
+                                </GradientText>
+                              </p>
+                            </div>
+
+                            <div className="flex gap-3">
+                              <span className="text-base font-semibold flex-shrink-0">
+                                <GradientText
+                                  gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                                  strokeWidth="4px"
+                                >
+                                  Step 2:
+                                </GradientText>
+                              </span>
+                              <p className="text-base leading-relaxed">
+                                <GradientText
+                                  gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                                  strokeWidth="3px"
+                                >
+                                  Follow the{" "}
+                                </GradientText>
+                                <Link
+                                  href="https://hackatime.hackclub.com/my/wakatime_setup"
+                                  className="text-[#7791E6] font-semibold underline hover:opacity-80 transition-opacity mx-1"
+                                >
+                                  instructions
+                                </Link>{" "}
+                                <GradientText
+                                  gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                                  strokeWidth="3px"
+                                >
+                                  to install the Wakatime extension in your code editor to track your coding time.
+                                </GradientText>
+                              </p>
+                            </div>
+
+                            <div className="flex gap-3">
+                              <span className="text-base font-semibold flex-shrink-0">
+                                <GradientText
+                                  gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                                  strokeWidth="4px"
+                                >
+                                  Step 3:
+                                </GradientText>
+                              </span>
+                              <p className="text-base leading-relaxed">
+                                <GradientText
+                                  gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                                  strokeWidth="3px"
+                                >
+                                  Go to{" "}
+                                </GradientText>
+                                <Link
+                                  href="https://hackatime.hackclub.com/"
+                                  className="text-[#7791E6] font-semibold underline hover:opacity-80 transition-opacity mx-1"
+                                >
+                                  hackatime.hackclub.com
+                                </Link>{" "}
+                                <GradientText
+                                  gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                                  strokeWidth="3px"
+                                >
+                                  and log in. Come back to Sleepover, and see if your account is shown.
+                                </GradientText>
+                              </p>
+                            </div>
+
+                            <div className="flex gap-3">
+                              <span className="text-base font-semibold flex-shrink-0">
+                                <GradientText
+                                  gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                                  strokeWidth="4px"
+                                >
+                                  Step 4:
+                                </GradientText>
+                              </span>
+                              <p className="text-base leading-relaxed">
+                                <GradientText
+                                  gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                                  strokeWidth="3px"
+                                >
+                                  After you install Wakatime in your code editor, start coding, and see the projects pop up!
+                                </GradientText>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
