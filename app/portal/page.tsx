@@ -38,7 +38,7 @@ export default function PortalPage() {
   }, []);
 
   useEffect(() => {
-    const hasSeenOnboarding = localStorage.getItem("hasSeenOnboarding");
+    const hasSeenOnboarding = localStorage.getItem("hasSeenOnboardingV2");
     if (!hasSeenOnboarding) {
       setShowOnboarding(true);
     }
@@ -85,7 +85,7 @@ export default function PortalPage() {
   }, []);
 
   const handleOnboardingComplete = async (pronouns?: string) => {
-    localStorage.setItem("hasSeenOnboarding", "true");
+    localStorage.setItem("hasSeenOnboardingV2", "true");
     setShowOnboarding(false);
 
     // Save pronouns to Airtable if provided
