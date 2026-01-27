@@ -18,7 +18,7 @@ export const HACKCLUB_AUTH_CONFIG = {
   authorizationUrl: "https://auth.hackclub.com/oauth/authorize",
   tokenUrl: "https://auth.hackclub.com/oauth/token",
   userInfoUrl: "https://auth.hackclub.com/api/v1/me",
-  scopes: "openid email name slack_id verification_status address birthdate",
+  scopes: "openid email name slack_id verification_status address",
 };
 
 export function generateOAuthState(): string {

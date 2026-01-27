@@ -98,7 +98,27 @@ export default function ExplorePage() {
             gradient="#6c6ea0"
             strokeWidth={isMobile ? "2px" : "4px"}
           >
-            need inspiration? check out awesome projects below - or click on -- to get project inspiration!
+            need inspiration? check out awesome projects below - or learn to make some awesome projects through
+          </GradientText>
+          {" "}
+          <a 
+            href="https://guides.hackclub.com" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="inline-block transition-all duration-200 hover:scale-110 hover:drop-shadow-[0_4px_8px_rgba(108,110,160,0.5)]"
+          >
+            <GradientText
+              gradient="#6c6ea0"
+              strokeWidth={isMobile ? "2px" : "4px"}
+            >
+              guides
+            </GradientText>
+          </a>
+          <GradientText
+            gradient="#6c6ea0"
+            strokeWidth={isMobile ? "2px" : "4px"}
+          >
+            !
           </GradientText>
         </p>
 
