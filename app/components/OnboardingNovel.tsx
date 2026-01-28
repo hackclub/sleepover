@@ -83,7 +83,7 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
       <div 
         className={`absolute z-10 ${
           isMobile 
-            ? "bottom-[180px] left-1/2 -translate-x-1/2 w-[140px] h-[180px]" 
+            ? `${slide.requiresInput ? "bottom-[280px]" : "bottom-[140px]"} left-[10px] w-[80px] h-[100px]`
             : "bottom-[10px] left-[30px] w-[220px] h-[280px]"
         }`}
       >
@@ -119,7 +119,7 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
 
         {/* Pink dialog area - extends to bottom */}
         <div
-          className="w-full px-4 md:px-8 pt-4 md:pt-6 pb-8 md:pb-12"
+          className="w-full px-4 md:px-8 pt-3 md:pt-6 pb-6 md:pb-12"
           style={{
             background: "linear-gradient(180deg, #FFE2EA 0%, #FFEBF6 100%)",
           }}
@@ -127,7 +127,7 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
           <div className={`max-w-4xl ${isMobile ? "mx-auto text-center" : "ml-[300px]"}`}>
             {/* Dialog text */}
             <p
-              className="text-[#6c6ea0] text-lg md:text-2xl font-bold mb-2 md:mb-4"
+              className="text-[#6c6ea0] text-base md:text-2xl font-bold mb-2 md:mb-4"
               style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
             >
               {displayedText}
@@ -136,11 +136,11 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
 
             {/* Radio buttons for pronouns selection */}
             {slide.requiresInput && slide.inputType === "radio" && slide.inputOptions && !isTyping && (
-              <div className="flex flex-col md:flex-row gap-3 md:gap-4 my-4 items-center justify-center md:justify-start">
+              <div className="flex flex-wrap gap-2 md:gap-4 my-3 md:my-4 items-center justify-center md:justify-start">
                 {slide.inputOptions.map((option) => (
                   <label
                     key={option}
-                    className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
+                    className={`cursor-pointer flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-xl transition-all ${
                       selectedPronouns === option
                         ? "bg-[#7684c9] text-white"
                         : "bg-white/60 text-[#6c6ea0] hover:bg-white/80"
@@ -160,7 +160,7 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
                       className="w-4 h-4"
                       onClick={(e) => e.stopPropagation()}
                     />
-                    <span className="text-base md:text-lg font-bold">{option}</span>
+                    <span className="text-sm md:text-lg font-bold">{option}</span>
                   </label>
                 ))}
               </div>
