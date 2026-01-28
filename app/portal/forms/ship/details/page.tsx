@@ -87,22 +87,9 @@ function ShipDetailsContent() {
 
   const checkUrlValidity = async (url: string): Promise<boolean> => {
     try {
-      // First check if it's a valid URL format
-      new URL(url);
-
-      // Use a link checker API to validate the URL
-      const response = await fetch(`https://api.linkpreview.net/?key=YOUR_API_KEY&q=${encodeURIComponent(url)}`);
-
-      if (response.ok) {
-        return true;
-      }
-
-      // Fallback: try a HEAD request to check if URL is accessible
-      await fetch(url, {
-        method: 'HEAD',
-        mode: 'no-cors'
-      });
-      return true; // If no error thrown, URL is at least reachable
+      const parsed = new URL(url);
+      // Only allow http/https protocols
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
     } catch {
       return false;
     }
