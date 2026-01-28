@@ -25,6 +25,20 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=()",
   },
+  {
+    key: "Content-Security-Policy",
+    value: [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://open.spotify.com https://www.youtube.com https://server.fillout.com",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: https://avatars.slack-edge.com https://*.airtableusercontent.com",
+      "font-src 'self' data:",
+      "frame-src https://open.spotify.com https://www.youtube.com https://server.fillout.com",
+      "connect-src 'self' https://api.hackclub.com",
+      "object-src 'none'",
+      "base-uri 'self'",
+    ].join("; "),
+  },
 ];
 
 const nextConfig: NextConfig = {
@@ -37,14 +51,15 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**',
+        hostname: 'avatars.slack-edge.com',
       },
       {
-        protocol: 'http',
-        hostname: '**',
+        protocol: 'https',
+        hostname: '*.airtableusercontent.com',
       },
     ],
   },
+  poweredByHeader: false,
   async headers() {
     return [
       {
