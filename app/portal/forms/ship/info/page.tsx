@@ -115,9 +115,16 @@ function ShipInfoContent() {
 
       // Convert base64 screenshot to File if exists
       if (screenshotDataUrl) {
-        const response = await fetch(screenshotDataUrl);
-        const blob = await response.blob();
-        const file = new File([blob], shipData.screenshot || "screenshot.png", { type: blob.type });
+        const [header, base64Data] = screenshotDataUrl.split(",");
+        const mimeMatch = header.match(/:(.*?);/);
+        const mimeType = mimeMatch ? mimeMatch[1] : "image/png";
+        const byteString = atob(base64Data);
+        const arrayBuffer = new Uint8Array(byteString.length);
+        for (let i = 0; i < byteString.length; i++) {
+          arrayBuffer[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([arrayBuffer], { type: mimeType });
+        const file = new File([blob], shipData.screenshot || "screenshot.png", { type: mimeType });
         formDataToSend.append("screenshot", file);
       }
 
