@@ -97,7 +97,17 @@ export default function ProjectList({ projects: initialProjects }: { projects: a
                   gradient="linear-gradient(180deg, #B5AAE7 0%, #D488AD 100%)"
                   strokeWidth="4px"
                 >
-                  {p.hackatime_name || "hackatime project"}
+                  {(() => {
+                    try {
+                      const projects = JSON.parse(p.hackatime_name);
+                      if (Array.isArray(projects) && projects.length > 0) {
+                        return projects.join(", ");
+                      }
+                    } catch {
+                      // Not JSON, display as-is for backward compatibility
+                    }
+                    return p.hackatime_name || "hackatime project";
+                  })()}
                 </GradientText>
               </span>
             </div>

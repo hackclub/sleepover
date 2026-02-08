@@ -81,3 +81,32 @@ export async function getProjectHours(slack_id: string, name: string) {
     }
     return 0;
   }
+
+export async function getMultipleProjectHours(slack_id: string, projectNames: string[]): Promise<number> {
+  const data = await getUserStats(slack_id);
+  const projects = data.data.projects;
+
+  let totalHours = 0;
+  for (const projectName of projectNames) {
+    const project = projects.find((p: any) => p.name === projectName);
+    if (project) {
+      totalHours += project.hours + project.minutes / 60;
+    }
+  }
+  return totalHours;
+}
+
+export function parseHackatimeProjects(hackatime_name: string | null | undefined): string[] {
+  if (!hackatime_name) return [];
+
+  // Try parsing as JSON array
+  try {
+    const parsed = JSON.parse(hackatime_name);
+    if (Array.isArray(parsed)) return parsed;
+  } catch {
+    // Not JSON, treat as single project name
+  }
+
+  // Single string - wrap in array for backward compatibility
+  return [hackatime_name];
+}

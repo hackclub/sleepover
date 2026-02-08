@@ -314,7 +314,17 @@ function ShipDetailsContent() {
                       WebkitTextFillColor: "transparent",
                     }}
                   >
-                    {project.hackatime_name}
+                    {(() => {
+                      try {
+                        const projects = JSON.parse(project.hackatime_name);
+                        if (Array.isArray(projects) && projects.length > 0) {
+                          return projects.join(", ");
+                        }
+                      } catch {
+                        // Not JSON, display as-is for backward compatibility
+                      }
+                      return project.hackatime_name;
+                    })()}
                   </span>
                 </div>
               </div>

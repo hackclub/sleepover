@@ -17,12 +17,16 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
   const [projectsError, setProjectsError] = useState<string | null>(null);
   const [hasHackatime, setHasHackatime] = useState<boolean | null>(null);
 
+  // State for managing multiple project selections
+  const [selectedProjects, setSelectedProjects] = useState<string[]>([""]);
+
   useEffect(() => {
     if (!isOpen) return;
 
     setLoadingProjects(true);
     setProjectsError(null);
     setHasHackatime(null);
+    setSelectedProjects([""]); // Reset selections when modal opens
 
     fetch("/api/user/projects")
       .then(async (res) => {
@@ -45,6 +49,27 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
   // ✅ Deduplicate so keys are unique and dropdown doesn't show duplicates
   const uniqueProjects = useMemo(() => Array.from(new Set(projects)), [projects]);
+
+  // Get available projects for a specific dropdown (excluding already selected ones)
+  const getAvailableProjects = (currentIndex: number) => {
+    const selectedInOtherDropdowns = selectedProjects.filter((p, i) => i !== currentIndex && p !== "");
+    return uniqueProjects.filter(project => !selectedInOtherDropdowns.includes(project));
+  };
+
+  // Handlers for dynamic dropdowns
+  const addProjectDropdown = () => {
+    setSelectedProjects([...selectedProjects, ""]);
+  };
+
+  const removeProjectDropdown = (index: number) => {
+    setSelectedProjects(selectedProjects.filter((_, i) => i !== index));
+  };
+
+  const updateProjectSelection = (index: number, value: string) => {
+    const newSelections = [...selectedProjects];
+    newSelections[index] = value;
+    setSelectedProjects(newSelections);
+  };
 
   if (!isOpen) return null;
 
@@ -173,7 +198,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                   backgroundClip: "text",
                 }}
               >
-                Link Hackatime Project
+                Link Hackatime Projects
               </label>
 
               {hasHackatime === false ? (
@@ -218,29 +243,112 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                   </Link>
                 </div>
               ) : (
-                // Has Hackatime - Show dropdown
-                <>
-                  <div
-                    className="relative rounded-[16px] isolate"
+                // Has Hackatime - Show dynamic dropdowns
+                <div className="space-y-3">
+                  {selectedProjects.map((selectedProject, index) => (
+                    <div key={index} className="flex gap-2 items-center">
+                      <div
+                        className="relative rounded-[16px] isolate flex-1"
+                        style={{
+                          background: "linear-gradient(180deg, #FFF6E0 0%, #FFE8B2 100%)",
+                          border: "4px solid white",
+                          boxShadow: "0px 4px 0px #C6C7E4, 0px 6px 8px rgba(116,114,160,0.69)",
+                        }}
+                      >
+                        <div
+                          className="absolute inset-[4px] rounded-[12px] pointer-events-none z-0"
+                          style={{
+                            background: "linear-gradient(180deg, #FFFCF4 12%, #FFE8B2 100%)",
+                            boxShadow: "0px 2px 2px rgba(116,114,160,0.33)",
+                          }}
+                        />
+
+                        <select
+                          name="projects[]"
+                          required
+                          value={selectedProject}
+                          onChange={(e) => updateProjectSelection(index, e.target.value)}
+                          className="relative z-10 w-full appearance-none bg-transparent px-4 py-3 pr-10 text-[20px] md:text-[24px] font-bold outline-none cursor-pointer"
+                          style={{
+                            fontFamily: "'MADE Tommy Soft', sans-serif",
+                            background: "linear-gradient(180deg, #7684C9 0%, #7472A0 100%)",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                            backgroundClip: "text",
+                          }}
+                        >
+                          {loadingProjects ? (
+                            <option value="">Loading Hackatime projects…</option>
+                          ) : uniqueProjects.length === 0 ? (
+                            <option value="">
+                              {projectsError ? "Failed to load projects" : "No Hackatime projects found"}
+                            </option>
+                          ) : (
+                            <>
+                              <option value="" disabled>
+                                Select a Hackatime project…
+                              </option>
+                              {getAvailableProjects(index).map((project) => (
+                                <option key={project} value={project} style={{ color: "#6C6EA0" }}>
+                                  {project}
+                                </option>
+                              ))}
+                            </>
+                          )}
+                        </select>
+
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#6C6EA0] z-10">
+                          ▼
+                        </div>
+                      </div>
+
+                      {/* Remove button (only show if more than one dropdown) */}
+                      {selectedProjects.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeProjectDropdown(index)}
+                          className="relative rounded-[12px] px-3 py-2 transition-transform hover:scale-105"
+                          style={{
+                            background: "linear-gradient(180deg, #FFE2EA 0%, #E6A4AB 100%)",
+                            border: "3px solid white",
+                            boxShadow: "0px 3px 0px #C6C7E4, 0px 4px 6px rgba(116,114,160,0.69)",
+                          }}
+                        >
+                          <span
+                            className="text-[18px] font-bold"
+                            style={{
+                              fontFamily: "'MADE Tommy Soft', sans-serif",
+                              color: "#7472A0",
+                            }}
+                          >
+                            ✕
+                          </span>
+                        </button>
+                      )}
+                    </div>
+                  ))}
+
+                  {/* Add Project button */}
+                  <button
+                    type="button"
+                    onClick={addProjectDropdown}
+                    disabled={loadingProjects || uniqueProjects.length === 0}
+                    className="relative rounded-[16px] w-full px-4 py-2 transition-transform hover:scale-105 disabled:opacity-70"
                     style={{
-                      background: "linear-gradient(180deg, #FFF6E0 0%, #FFE8B2 100%)",
+                      background: "linear-gradient(0deg, #C0DEFE 0%, #9AC6F6 100%)",
                       border: "4px solid white",
                       boxShadow: "0px 4px 0px #C6C7E4, 0px 6px 8px rgba(116,114,160,0.69)",
                     }}
                   >
                     <div
-                      className="absolute inset-[4px] rounded-[12px] pointer-events-none z-0"
+                      className="absolute inset-[4px] rounded-[12px] pointer-events-none"
                       style={{
-                        background: "linear-gradient(180deg, #FFFCF4 12%, #FFE8B2 100%)",
+                        background: "linear-gradient(180deg, #E8F4FF 12%, #C0DEFE 100%)",
                         boxShadow: "0px 2px 2px rgba(116,114,160,0.33)",
                       }}
                     />
-
-                    <select
-                      name="project"
-                      required
-                      defaultValue=""
-                      className="relative z-10 w-full appearance-none bg-transparent px-4 py-3 pr-10 text-[20px] md:text-[24px] font-bold outline-none cursor-pointer"
+                    <span
+                      className="relative z-10 text-[16px] md:text-[18px] font-bold"
                       style={{
                         fontFamily: "'MADE Tommy Soft', sans-serif",
                         background: "linear-gradient(180deg, #7684C9 0%, #7472A0 100%)",
@@ -249,30 +357,9 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                         backgroundClip: "text",
                       }}
                     >
-                      {loadingProjects ? (
-                        <option value="">Loading Hackatime projects…</option>
-                      ) : uniqueProjects.length === 0 ? (
-                        <option value="">
-                          {projectsError ? "Failed to load projects" : "No Hackatime projects found"}
-                        </option>
-                      ) : (
-                        <>
-                          <option value="" disabled>
-                            Select a Hackatime project…
-                          </option>
-                          {uniqueProjects.map((project) => (
-                            <option key={project} value={project} style={{ color: "#6C6EA0" }}>
-                              {project}
-                            </option>
-                          ))}
-                        </>
-                      )}
-                    </select>
-
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#6C6EA0] z-10">
-                      ▼
-                    </div>
-                  </div>
+                      + Add Another Hackatime Project
+                    </span>
+                  </button>
 
                   {projectsError && (
                     <div
@@ -282,7 +369,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                       {projectsError}
                     </div>
                   )}
-                </>
+                </div>
               )}
             </div>
 
@@ -290,7 +377,12 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
             <div className="flex justify-center gap-4">
               <button
                 type="submit"
-                disabled={isSubmitting || loadingProjects || (hasHackatime !== false && uniqueProjects.length === 0)}
+                disabled={
+                  isSubmitting ||
+                  loadingProjects ||
+                  (hasHackatime !== false && uniqueProjects.length === 0) ||
+                  (hasHackatime !== false && selectedProjects.every(p => !p))
+                }
                 className="relative rounded-[16px] px-8 py-2.5 transition-transform hover:scale-105 disabled:opacity-70"
                 style={{
                   background: "linear-gradient(0deg, #9AC6F6 0%, #93B4F2 100%)",

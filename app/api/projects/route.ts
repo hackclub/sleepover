@@ -1,5 +1,5 @@
 import { getUsersProjects, getUserFromId } from "@/lib/airtable";
-import { getProjectHours } from "@/lib/hackatime";
+import { getMultipleProjectHours, parseHackatimeProjects } from "@/lib/hackatime";
 import { getSession } from "@/lib/session";
 import { NextResponse } from "next/server";
 
@@ -13,7 +13,7 @@ export async function GET(): Promise<Response> {
   }
 
   const projects = await getUsersProjects(session.userId);
-  
+
   // Get slack_id to fetch fresh hours from Hackatime (filtered to 2026)
   const userRecord = await getUserFromId(session.userId);
   const slackId = userRecord?.slack_id || "";
@@ -23,7 +23,9 @@ export async function GET(): Promise<Response> {
     (projects ?? []).map(async (project) => {
       if (slackId && project.hackatime_name) {
         try {
-          const freshHours = await getProjectHours(slackId, project.hackatime_name);
+          // Parse hackatime_name as JSON array (or single string for backward compat)
+          const hackatimeProjects = parseHackatimeProjects(project.hackatime_name);
+          const freshHours = await getMultipleProjectHours(slackId, hackatimeProjects);
           return { ...project, hours: freshHours };
         } catch (error) {
           console.error(`Error fetching hours for ${project.hackatime_name}:`, error);

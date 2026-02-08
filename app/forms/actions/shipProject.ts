@@ -1,6 +1,7 @@
 "use server"
 
-import { getProjectById, shipProjectTable } from "@/lib/airtable"
+import { getProjectById, shipProjectTable, updateProjectHours, getUserFromId } from "@/lib/airtable"
+import { getMultipleProjectHours, parseHackatimeProjects } from "@/lib/hackatime";
 import { getSession } from "@/lib/session";
 import { triggerPyramidSync } from "@/lib/pyramidSync";
 import { getUserInfo, getPrimaryAddress } from "@/lib/auth";
@@ -25,6 +26,21 @@ export async function shipProject(formData: FormData, projectId: string) {
 
   if (project.userid !== userId) {
     throw new Error("Not authorized to ship this project")
+  }
+
+  // Update project hours in Airtable with fresh data from Hackatime before shipping
+  const userRecord = await getUserFromId(userId);
+  const slackId = userRecord?.slack_id || "";
+
+  if (slackId && project.hackatime_name) {
+    try {
+      const hackatimeProjects = parseHackatimeProjects(project.hackatime_name);
+      const freshHours = await getMultipleProjectHours(slackId, hackatimeProjects);
+      await updateProjectHours(projectId, freshHours);
+    } catch (error) {
+      console.error(`Error updating hours before shipping:`, error);
+      // Continue with shipping even if hours update fails
+    }
   }
 
   // Get user info and primary address

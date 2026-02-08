@@ -1,5 +1,5 @@
 import { getSingularProject, getUsersProjects, updateProjectHours, getAllUsers } from "@/lib/airtable";
-import { getProjectHours } from "@/lib/hackatime";
+import { getMultipleProjectHours, parseHackatimeProjects } from "@/lib/hackatime";
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { triggerPyramidSync } from "@/lib/pyramidSync";
@@ -48,7 +48,10 @@ export async function GET(request: NextRequest) {
           try {
             const found = await getSingularProject(id, project.name);
             if (!found) continue;
-            const hours = await getProjectHours(slack_id, project.hackatime_name);
+
+            // Parse hackatime_name as JSON array (or single string for backward compat)
+            const hackatimeProjects = parseHackatimeProjects(project.hackatime_name);
+            const hours = await getMultipleProjectHours(slack_id, hackatimeProjects);
             await updateProjectHours(found.id, hours);
             count++;
           } catch (projectError) {
