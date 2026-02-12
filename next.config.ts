@@ -27,11 +27,11 @@ const securityHeaders = [
   },
   {
     key: "Content-Security-Policy",
-    value: [
+      value: [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://open.spotify.com https://www.youtube.com https://server.fillout.com",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https://avatars.slack-edge.com https://*.airtableusercontent.com",
+      "img-src 'self' data: https://avatars.slack-edge.com https://*.airtableusercontent.com https://user-cdn.hackclub-assets.com https://cdn.hackclub.com",
       "font-src 'self' data:",
       "frame-src https://open.spotify.com https://www.youtube.com https://server.fillout.com",
       "connect-src 'self' https://api.hackclub.com",
@@ -57,6 +57,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '*.airtableusercontent.com',
       },
+        {
+          protocol: 'https',
+          hostname: 'user-cdn.hackclub-assets.com',
+        },
+        {
+          protocol: 'https',
+          hostname: 'cdn.hackclub.com',
+        },
     ],
   },
   poweredByHeader: false,
