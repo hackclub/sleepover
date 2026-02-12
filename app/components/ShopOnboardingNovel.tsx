@@ -14,6 +14,11 @@ export default function ShopOnboardingNovel({ onComplete }: ShopOnboardingNovelP
   const [displayedText, setDisplayedText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [speedMultiplier, setSpeedMultiplier] = useState<number>(() => {
+    if (typeof window === "undefined") return 1;
+    const v = localStorage.getItem("onboardingSpeed");
+    return v ? parseFloat(v) : 1;
+  });
   const slide = shopOnboardingSlides[currentSlide];
 
   useEffect(() => {
@@ -33,9 +38,12 @@ export default function ShopOnboardingNovel({ onComplete }: ShopOnboardingNovelP
     const audio = new Audio("/sounds/animal-talking.mp3");
     audio.volume = 0.3;
     audio.loop = true;
-    audio.playbackRate = 0.9;
+    audio.playbackRate = Math.min(2.5, Math.max(0.6, 1.2 * speedMultiplier));
     audio.play().catch(() => {});
-    
+
+    const baseInterval = 25;
+    const intervalMs = Math.max(6, Math.round(baseInterval / speedMultiplier));
+
     const interval = setInterval(() => {
       if (index < slide.dialogText.length) {
         setDisplayedText(slide.dialogText.slice(0, index + 1));
@@ -46,13 +54,13 @@ export default function ShopOnboardingNovel({ onComplete }: ShopOnboardingNovelP
         audio.currentTime = 0;
         clearInterval(interval);
       }
-    }, 50);
+    }, intervalMs);
     return () => {
       audio.pause();
       audio.currentTime = 0;
       clearInterval(interval);
     };
-  }, [currentSlide, slide.dialogText, hasStarted]);
+  }, [currentSlide, slide.dialogText, hasStarted, speedMultiplier]);
 
   const handleClick = () => {
     if (!hasStarted) {
@@ -110,11 +118,36 @@ export default function ShopOnboardingNovel({ onComplete }: ShopOnboardingNovelP
         </div>
 
         <div
-          className="w-full px-4 md:px-8 pt-4 md:pt-6 pb-8 md:pb-12"
+          className="w-full px-4 md:px-8 pt-4 md:pt-6 pb-8 md:pb-12 relative"
           style={{
             background: "linear-gradient(180deg, #FFE2EA 0%, #FFEBF6 100%)",
           }}
         >
+          {/* Right-side speed control */}
+          <div className="absolute right-4 top-3 flex items-center gap-2">
+            <label
+              className="text-sm text-[#6c6ea0]"
+              style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+            >
+              Speed
+            </label>
+            <input
+              type="range"
+              min="0.5"
+              max="3"
+              step="0.1"
+              value={speedMultiplier}
+              onChange={(e) => {
+                const v = parseFloat(e.target.value);
+                setSpeedMultiplier(v);
+                try {
+                  localStorage.setItem("onboardingSpeed", String(v));
+                } catch (err) {}
+              }}
+              className="w-36"
+              aria-label="Typing speed"
+            />
+          </div>
           <div className={`max-w-4xl ${isMobile ? "mx-auto text-center" : "ml-[300px]"}`}>
             <p
               className="text-[#6c6ea0] text-lg md:text-2xl font-bold mb-2 md:mb-4"
@@ -123,6 +156,8 @@ export default function ShopOnboardingNovel({ onComplete }: ShopOnboardingNovelP
               {displayedText}
               {isTyping && <span className="animate-pulse">|</span>}
             </p>
+
+            {/* (moved speed control to the right side) */}
 
             {!hasStarted ? (
               <p

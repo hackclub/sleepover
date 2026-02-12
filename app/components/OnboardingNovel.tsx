@@ -15,6 +15,11 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
   const [displayedText, setDisplayedText] = useState("");
   const [isTyping, setIsTyping] = useState(true);
   const [selectedPronouns, setSelectedPronouns] = useState<string>("");
+  const [speedMultiplier, setSpeedMultiplier] = useState<number>(() => {
+    if (typeof window === "undefined") return 1;
+    const v = localStorage.getItem("onboardingSpeed");
+    return v ? parseFloat(v) : 1;
+  });
   const slide = onboardingSlides[currentSlide];
 
   useEffect(() => {
@@ -35,9 +40,13 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
     const audio = new Audio("/sounds/animal-talking.mp3");
     audio.volume = 0.3;
     audio.loop = true;
-    audio.playbackRate = 0.9;
+    // playbackRate keyed to user speed
+    audio.playbackRate = Math.min(2.5, Math.max(0.6, 1.2 * speedMultiplier));
     audio.play().catch(() => {});
-    
+
+    const baseInterval = 25; // ms per char at multiplier = 1
+    const intervalMs = Math.max(6, Math.round(baseInterval / speedMultiplier));
+
     const interval = setInterval(() => {
       if (index < dialogText.length) {
         setDisplayedText(dialogText.slice(0, index + 1));
@@ -48,13 +57,13 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
         audio.currentTime = 0;
         clearInterval(interval);
       }
-    }, 50);
+    }, intervalMs);
     return () => {
       audio.pause();
       audio.currentTime = 0;
       clearInterval(interval);
     };
-  }, [currentSlide, dialogText]);
+  }, [currentSlide, dialogText, speedMultiplier]);
 
   const handleClick = () => {
     if (isTyping) return;
@@ -119,11 +128,36 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
 
         {/* Pink dialog area - extends to bottom */}
         <div
-          className="w-full px-4 md:px-8 pt-3 md:pt-6 pb-6 md:pb-12"
+          className="w-full px-4 md:px-8 pt-3 md:pt-6 pb-6 md:pb-12 relative"
           style={{
             background: "linear-gradient(180deg, #FFE2EA 0%, #FFEBF6 100%)",
           }}
         >
+          {/* Right-side speed control */}
+          <div className="absolute right-4 top-3 flex items-center gap-2">
+            <label
+              className="text-sm text-[#6c6ea0]"
+              style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+            >
+              Speed
+            </label>
+            <input
+              type="range"
+              min="0.5"
+              max="3"
+              step="0.1"
+              value={speedMultiplier}
+              onChange={(e) => {
+                const v = parseFloat(e.target.value);
+                setSpeedMultiplier(v);
+                try {
+                  localStorage.setItem("onboardingSpeed", String(v));
+                } catch (err) {}
+              }}
+              className="w-36"
+              aria-label="Typing speed"
+            />
+          </div>
           <div className={`max-w-4xl ${isMobile ? "mx-auto text-center" : "ml-[300px]"}`}>
             {/* Dialog text */}
             <p
@@ -133,6 +167,8 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
               {displayedText}
               {isTyping && <span className="animate-pulse">|</span>}
             </p>
+
+            {/* (moved speed control to the right side) */}
 
             {/* Radio buttons for pronouns selection */}
             {slide.requiresInput && slide.inputType === "radio" && slide.inputOptions && !isTyping && (
