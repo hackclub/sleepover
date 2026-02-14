@@ -29,19 +29,23 @@ export async function shipProject(formData: FormData, projectId: string) {
   }
 
   // Update project hours in Airtable with fresh data from Hackatime before shipping
-  const userRecord = await getUserFromId(userId);
-  const slackId = userRecord?.slack_id || "";
+  // (only if not a GWC project with manual hours)
+  if (project.hackatime_name) {
+    const userRecord = await getUserFromId(userId);
+    const slackId = userRecord?.slack_id || "";
 
-  if (slackId && project.hackatime_name) {
-    try {
-      const hackatimeProjects = parseHackatimeProjects(project.hackatime_name);
-      const freshHours = await getMultipleProjectHours(slackId, hackatimeProjects);
-      await updateProjectHours(projectId, freshHours);
-    } catch (error) {
-      console.error(`Error updating hours before shipping:`, error);
-      // Continue with shipping even if hours update fails
+    if (slackId) {
+      try {
+        const hackatimeProjects = parseHackatimeProjects(project.hackatime_name);
+        const freshHours = await getMultipleProjectHours(slackId, hackatimeProjects);
+        await updateProjectHours(projectId, freshHours);
+      } catch (error) {
+        console.error(`Error updating hours before shipping:`, error);
+        // Continue with shipping even if hours update fails
+      }
     }
   }
+  // If hackatime_name is empty, this is a GWC project - use the manual hours already stored
 
   // Get user info and primary address
   const accessToken = session.accessToken;

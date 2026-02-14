@@ -49,6 +49,11 @@ export async function GET(request: NextRequest) {
             const found = await getSingularProject(id, project.name);
             if (!found) continue;
 
+            // Skip GWC projects (they have manual hours, not Hackatime)
+            if (!project.hackatime_name) {
+              continue;
+            }
+
             // Parse hackatime_name as JSON array (or single string for backward compat)
             const hackatimeProjects = parseHackatimeProjects(project.hackatime_name);
             const hours = await getMultipleProjectHours(slack_id, hackatimeProjects);

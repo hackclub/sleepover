@@ -98,6 +98,9 @@ export default function ProjectList({ projects: initialProjects }: { projects: a
                   strokeWidth="4px"
                 >
                   {(() => {
+                    if (!p.hackatime_name) {
+                      return "GirlsWhoCode Project";
+                    }
                     try {
                       const projects = JSON.parse(p.hackatime_name);
                       if (Array.isArray(projects) && projects.length > 0) {

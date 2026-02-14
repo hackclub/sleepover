@@ -20,6 +20,10 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
   // State for managing multiple project selections
   const [selectedProjects, setSelectedProjects] = useState<string[]>([""]);
 
+  // State for GirlsWhoCode manual hours entry
+  const [showGWCInput, setShowGWCInput] = useState(false);
+  const [gwcHours, setGwcHours] = useState<string>("");
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -27,6 +31,8 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     setProjectsError(null);
     setHasHackatime(null);
     setSelectedProjects([""]); // Reset selections when modal opens
+    setShowGWCInput(false); // Reset GWC input when modal opens
+    setGwcHours(""); // Reset GWC hours when modal opens
 
     fetch("/api/user/projects")
       .then(async (res) => {
@@ -81,6 +87,12 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     setIsSubmitting(true);
     try {
       const formData = new FormData(e.currentTarget);
+
+      // If using GirlsWhoCode manual hours entry, add gwc_hours to form data
+      if (showGWCInput) {
+        formData.set("gwc_hours", gwcHours);
+      }
+
       await createProject(formData);
       // Force full page reload to show new project
       window.location.href = "/portal";
@@ -198,7 +210,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                   backgroundClip: "text",
                 }}
               >
-                Link Hackatime Projects
+                Link Projects
               </label>
 
               {hasHackatime === false ? (
@@ -243,9 +255,10 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                   </Link>
                 </div>
               ) : (
-                // Has Hackatime - Show dynamic dropdowns
+                // Has Hackatime - Show dynamic dropdowns or GWC input
                 <div className="space-y-3">
-                  {selectedProjects.map((selectedProject, index) => (
+                  {/* Hackatime Dropdowns (only show if not in GWC mode) */}
+                  {!showGWCInput && selectedProjects.map((selectedProject, index) => (
                     <div key={index} className="flex gap-2 items-center">
                       <div
                         className="relative rounded-[16px] isolate flex-1"
@@ -265,7 +278,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
                         <select
                           name="projects[]"
-                          required
+                          required={!showGWCInput}
                           value={selectedProject}
                           onChange={(e) => updateProjectSelection(index, e.target.value)}
                           className="relative z-10 w-full appearance-none bg-transparent px-4 py-3 pr-10 text-[20px] md:text-[24px] font-bold outline-none cursor-pointer"
@@ -329,37 +342,136 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                   ))}
 
                   {/* Add Project button */}
-                  <button
-                    type="button"
-                    onClick={addProjectDropdown}
-                    disabled={loadingProjects || uniqueProjects.length === 0}
-                    className="relative rounded-[16px] w-full px-4 py-2 transition-transform hover:scale-105 disabled:opacity-70"
-                    style={{
-                      background: "linear-gradient(0deg, #C0DEFE 0%, #9AC6F6 100%)",
-                      border: "4px solid white",
-                      boxShadow: "0px 4px 0px #C6C7E4, 0px 6px 8px rgba(116,114,160,0.69)",
-                    }}
-                  >
-                    <div
-                      className="absolute inset-[4px] rounded-[12px] pointer-events-none"
+                  {!showGWCInput && (
+                    <button
+                      type="button"
+                      onClick={addProjectDropdown}
+                      disabled={loadingProjects || uniqueProjects.length === 0}
+                      className="relative rounded-[16px] w-full px-4 py-2 transition-transform hover:scale-105 disabled:opacity-70"
                       style={{
-                        background: "linear-gradient(180deg, #E8F4FF 12%, #C0DEFE 100%)",
-                        boxShadow: "0px 2px 2px rgba(116,114,160,0.33)",
-                      }}
-                    />
-                    <span
-                      className="relative z-10 text-[16px] md:text-[18px] font-bold"
-                      style={{
-                        fontFamily: "'MADE Tommy Soft', sans-serif",
-                        background: "linear-gradient(180deg, #7684C9 0%, #7472A0 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text",
+                        background: "linear-gradient(0deg, #C0DEFE 0%, #9AC6F6 100%)",
+                        border: "4px solid white",
+                        boxShadow: "0px 4px 0px #C6C7E4, 0px 6px 8px rgba(116,114,160,0.69)",
                       }}
                     >
-                      + Add Another Hackatime Project
-                    </span>
-                  </button>
+                      <div
+                        className="absolute inset-[4px] rounded-[12px] pointer-events-none"
+                        style={{
+                          background: "linear-gradient(180deg, #E8F4FF 12%, #C0DEFE 100%)",
+                          boxShadow: "0px 2px 2px rgba(116,114,160,0.33)",
+                        }}
+                      />
+                      <span
+                        className="relative z-10 text-[16px] md:text-[18px] font-bold"
+                        style={{
+                          fontFamily: "'MADE Tommy Soft', sans-serif",
+                          background: "linear-gradient(180deg, #7684C9 0%, #7472A0 100%)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          backgroundClip: "text",
+                        }}
+                      >
+                        + Add Another Hackatime Project
+                      </span>
+                    </button>
+                  )}
+
+                  {/* GirlsWhoCode button */}
+                  {!showGWCInput && (
+                    <button
+                      type="button"
+                      onClick={() => setShowGWCInput(true)}
+                      disabled={loadingProjects}
+                      className="relative rounded-[16px] w-full px-4 py-2 mt-3 transition-transform hover:scale-105 disabled:opacity-70"
+                      style={{
+                        background: "linear-gradient(0deg, #FFD4E5 0%, #FFB3D1 100%)",
+                        border: "4px solid white",
+                        boxShadow: "0px 4px 0px #C6C7E4, 0px 6px 8px rgba(116,114,160,0.69)",
+                      }}
+                    >
+                      <div
+                        className="absolute inset-[4px] rounded-[12px] pointer-events-none"
+                        style={{
+                          background: "linear-gradient(180deg, #FFE8F2 12%, #FFD4E5 100%)",
+                          boxShadow: "0px 2px 2px rgba(116,114,160,0.33)",
+                        }}
+                      />
+                      <span
+                        className="relative z-10 text-[16px] md:text-[18px] font-bold"
+                        style={{
+                          fontFamily: "'MADE Tommy Soft', sans-serif",
+                          background: "linear-gradient(180deg, #D488AD 0%, #B5AAE7 100%)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          backgroundClip: "text",
+                        }}
+                      >
+                        + Add GirlsWhoCode Project
+                      </span>
+                    </button>
+                  )}
+
+                  {/* GirlsWhoCode hours input */}
+                  {showGWCInput && (
+                    <div className="space-y-3">
+                      <label
+                        className="block text-[16px] md:text-[18px] font-bold"
+                        style={{
+                          fontFamily: "'MADE Tommy Soft', sans-serif",
+                          background: "linear-gradient(180deg, #D488AD 0%, #B5AAE7 100%)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          backgroundClip: "text",
+                        }}
+                      >
+                        Insert hours coded
+                      </label>
+                      <div
+                        className="relative rounded-[16px] isolate"
+                        style={{
+                          background: "linear-gradient(180deg, #FFD4E5 0%, #FFB3D1 100%)",
+                          border: "4px solid white",
+                          boxShadow: "0px 4px 0px #C6C7E4, 0px 6px 8px rgba(116,114,160,0.69)",
+                        }}
+                      >
+                        <div
+                          className="absolute inset-[4px] rounded-[12px] pointer-events-none z-0"
+                          style={{
+                            background: "linear-gradient(180deg, #FFE8F2 12%, #FFD4E5 100%)",
+                            boxShadow: "0px 2px 2px rgba(116,114,160,0.33)",
+                          }}
+                        />
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={gwcHours}
+                          onChange={(e) => setGwcHours(e.target.value)}
+                          required={showGWCInput}
+                          placeholder="0.00"
+                          className="relative z-10 w-full appearance-none bg-transparent px-4 py-3 text-[20px] md:text-[24px] font-bold outline-none"
+                          style={{
+                            fontFamily: "'MADE Tommy Soft', sans-serif",
+                            color: "#7472A0",
+                          }}
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowGWCInput(false);
+                          setGwcHours("");
+                        }}
+                        className="text-[14px] font-bold underline"
+                        style={{
+                          fontFamily: "'MADE Tommy Soft', sans-serif",
+                          color: "#B94D6F",
+                        }}
+                      >
+                        Cancel GirlsWhoCode Project
+                      </button>
+                    </div>
+                  )}
 
                   {projectsError && (
                     <div
@@ -380,8 +492,9 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                 disabled={
                   isSubmitting ||
                   loadingProjects ||
-                  (hasHackatime !== false && uniqueProjects.length === 0) ||
-                  (hasHackatime !== false && selectedProjects.every(p => !p))
+                  (hasHackatime !== false && uniqueProjects.length === 0 && !showGWCInput) ||
+                  (hasHackatime !== false && !showGWCInput && selectedProjects.every(p => !p)) ||
+                  (showGWCInput && (!gwcHours || parseFloat(gwcHours) <= 0))
                 }
                 className="relative rounded-[16px] px-8 py-2.5 transition-transform hover:scale-105 disabled:opacity-70"
                 style={{

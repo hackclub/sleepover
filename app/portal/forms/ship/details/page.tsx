@@ -315,6 +315,9 @@ function ShipDetailsContent() {
                     }}
                   >
                     {(() => {
+                      if (!project.hackatime_name) {
+                        return "GirlsWhoCode Project";
+                      }
                       try {
                         const projects = JSON.parse(project.hackatime_name);
                         if (Array.isArray(projects) && projects.length > 0) {
