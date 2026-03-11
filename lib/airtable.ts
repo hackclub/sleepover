@@ -776,28 +776,82 @@ export async function getAllSubmissions() {
     })
     .all();
 
-  return records.map((r) => ({
-    id: r.id,
-    project: r.get("Project") as string,
-    description: r.get("Description") as string,
-    displayname: r.get("displayname") as string,
-    email: r.get("Email") as string,
-    hours: r.get("hours") as number,
-    playableUrl: r.get("Playable URL") as string,
-    codeUrl: r.get("Code URL") as string,
-    screenshot: r.get("Screenshot") as unknown,
-    status: (r.get("Status") as string) || "Pending",
-    ysws: r.get("YSWS") as string,
-    challenge: r.get("Challenge") as string,
-  }));
+  // Collect unique userids to batch-fetch slack_ids
+  const userids = [...new Set(records.map((r) => r.get("userid") as string).filter(Boolean))];
+  const slackIdMap: Record<string, string> = {};
+  const pronounsMap: Record<string, string> = {};
+
+  if (userids.length > 0) {
+    const formula = `OR(${userids.map((id) => `{id} = '${escapeFormulaString(id)}'`).join(",")})`;
+    const users = await getUsersTable().select({ filterByFormula: formula, fields: ["id", "slack_id", "pronouns"] }).all();
+    for (const u of users) {
+      const id = u.get("id") as string;
+      const sid = u.get("slack_id") as string;
+      const pronouns = u.get("pronouns") as string;
+      if (id && sid) slackIdMap[id] = sid;
+      if (id && pronouns) pronounsMap[id] = pronouns;
+    }
+  }
+
+  return records.map((r) => {
+    const userid = r.get("userid") as string;
+    return {
+      id: r.id,
+      project: r.get("Project") as string,
+      description: r.get("Description") as string,
+      displayname: r.get("displayname") as string,
+      email: r.get("Email") as string,
+      hours: r.get("hours") as number,
+      overrideHours: (r.get("Optional - Override Hours Spent") as number) || undefined,
+      playableUrl: r.get("Playable URL") as string,
+      codeUrl: r.get("Code URL") as string,
+      screenshot: r.get("Screenshot") as unknown,
+      status: (() => { const s = r.get("Status") as string; return s === "TBD" || !s ? "Pending" : s; })(),
+      ysws: r.get("YSWS") as string,
+      challenge: r.get("Challenge") as string,
+      slack_id: (userid && slackIdMap[userid]) || undefined,
+      pronouns: (userid && pronounsMap[userid]) || undefined,
+      dm_history: (() => {
+        try { return JSON.parse((r.get("dm_history") as string) || "[]"); } catch { return []; }
+      })(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      createdAt: (r as any)._rawJson?.createdTime as string | undefined,
+    };
+  });
 }
 
 export async function updateSubmissionStatus(
   recordId: string,
-  status: "Approved" | "Rejected" | "Pending"
+  status: "Approved" | "Rejected" | "Pending",
+  shipJustification?: string,
+  overrideHours?: number
 ) {
-  await getReviewTable().update(recordId, { Status: status });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fields: Record<string, any> = { Status: status === "Pending" ? "TBD" : status };
+  if (shipJustification) fields["Optional - Override Hours Spent Justification"] = shipJustification;
+  if (overrideHours !== undefined && overrideHours > 0) fields["Optional - Override Hours Spent"] = overrideHours;
+  await getReviewTable().update(recordId, fields);
   return { success: true };
+}
+
+export type DmEntry = { sender: string; message: string; timestamp: string };
+
+export async function appendSubmissionDm(recordId: string, entry: DmEntry) {
+  const records = await getReviewTable()
+    .select({ filterByFormula: `RECORD_ID() = '${recordId}'`, maxRecords: 1, fields: ["dm_history"] })
+    .firstPage();
+  const record = records[0];
+  if (!record) throw new Error("Submission not found");
+
+  let history: DmEntry[] = [];
+  try {
+    const raw = record.get("dm_history") as string;
+    if (raw) history = JSON.parse(raw);
+  } catch {}
+
+  history.push(entry);
+  await getReviewTable().update(recordId, { dm_history: JSON.stringify(history), "DM Msg": entry.message });
+  return history;
 }
 
 function getCalendarTable() {

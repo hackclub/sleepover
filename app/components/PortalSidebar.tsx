@@ -47,6 +47,7 @@ interface UserData {
   slack_display_name?: string;
   slack_avatar_url?: string;
   slack_id?: string;
+  isAdmin?: boolean;
 }
 
 type PortalSidebarProps = {
@@ -249,6 +250,34 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
               </Link>
             ))}
           </nav>
+
+          {/* Admin Dashboard Link */}
+          {userData?.isAdmin && (
+            <div className={`mt-8 md:mt-10 ${isOpen ? "ml-2 md:ml-4" : "flex justify-center"}`}>
+              <Link
+                href="/portal/admin"
+                onClick={handleNavClick}
+                className="relative flex items-center gap-3 md:gap-4 font-bold leading-[1.1] hover:opacity-90 transition-transform hover:translate-x-[1px]"
+                style={{ fontSize: isMobile ? "28px" : "clamp(30px, 2.3vw, 50px)" }}
+              >
+                <Image
+                  src="/background/faq icon.png"
+                  alt="Admin icon"
+                  width={44}
+                  height={44}
+                  className="w-[32px] h-[32px] md:w-[44px] md:h-[44px]"
+                />
+                <span style={{ display: isOpen ? "inline-block" : "none" }}>
+                  <GradientText
+                    gradient="linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)"
+                    strokeWidth={isMobile ? "5px" : "7px"}
+                  >
+                    Admin
+                  </GradientText>
+                </span>
+              </Link>
+            </div>
+          )}
 
           {/* User Profile Section */}
           {userData && (
