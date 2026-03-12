@@ -65,6 +65,18 @@ const nextConfig: NextConfig = {
           protocol: 'https',
           hostname: 'cdn.hackclub.com',
         },
+        {
+        protocol: 'https',
+        hostname: '**', // Wildcard to allow all hostnames
+        port: '',
+        pathname: '/**', // Wildcard to allow all paths
+      },
+      {
+        protocol: 'http',
+        hostname: '**', // Wildcard to allow all hostnames
+        port: '',
+        pathname: '/**', // Wildcard to allow all paths
+      },
     ],
   },
   poweredByHeader: false,

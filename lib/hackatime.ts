@@ -4,16 +4,20 @@ const start_date = "2026-01-01";
 const end_date = "2026-04-05";
 
 export async function getUsernameFromEmail(email: string) {
+  console.log("looking up hackatime user by email:", email);
+  var my_body = JSON.stringify({ email: email })
+  console.log(my_body)
   const response = await fetch("https://hackatime.hackclub.com/api/admin/v1/user/get_user_by_email", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${process.env.HACKATIME_API_KEY}`
       },
-      body: JSON.stringify({ email: email })
+      body: my_body
     });
 
     if (!response.ok) {
+    console.log("response from hackatime email lookup:", await response.text());
     throw new Error("Failed to get user info");
   }
 
@@ -21,6 +25,7 @@ export async function getUsernameFromEmail(email: string) {
 }
 
 export async function getUserStats(slack_id: string) {
+  console.log("fetching hackatime stats for slack_id:", slack_id);
 
   const response = await fetch(`https://hackatime.hackclub.com/api/v1/users/${slack_id}/stats?features=projects&start_date=${start_date}&end_date=${end_date}`, {
     headers: {
