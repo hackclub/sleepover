@@ -622,7 +622,7 @@ export default function AdminDashboard({ userName }: { userName: string }) {
                                 setRejectFormOpen(false);
                                 setShipJustification("");
                                 setOverrideHours("");
-                                setUserComment("Your project has been approved for Sleepover! Congrats on shipping 🎉 You'll receive your reward once the YSWS system processes your submission.");
+                                setUserComment(`Your project has been approved for Sleepover! ${s.project || "Untitled"} Congrats on shipping 🎉 You'll receive your reward once the YSWS system processes your submission.`);
                               } else if (st === "Rejected") {
                                 setRejectFormOpen((prev) => !prev);
                                 setApproveFormOpen(false);
