@@ -394,7 +394,10 @@ export async function addProduct(userid: string, product: string, address?: stri
       throw new Error("Insufficient balance");
     }
 
-    const updatedOrdered = [...currentOrdered, product];
+    // Airtable linked-record fields reject duplicate record IDs in the same cell.
+    // Keep `ordered` unique while still allowing repeat purchases via fulfillment rows.
+    // fixes the travel grant bug!
+    const updatedOrdered = [...new Set([...currentOrdered, product])];
     const updatedCurrency = currentCurrency - price;
 
     const freshRecord = await getShopTable().find(record.id);
