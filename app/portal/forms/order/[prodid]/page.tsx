@@ -67,6 +67,7 @@ export default function OrderProductPage() {
     fetch(`/api/shop/${prodId}`)
       .then((res) => res.json())
       .then((data) => {
+        console.log(data)
         setProduct(data);
         setLoading(false);
       })
@@ -272,7 +273,7 @@ export default function OrderProductPage() {
                   </>
                 )}
               </div>
-              {/* set quantity */}
+              {(product?.id == 'rec4wZN4c2OdkWMnc') ? <></>:
                  <div className="w-full bg-gradient-to-b flex items-center from-[#c0defe] to-[#9ac6f6] border-4 border-white rounded-2xl px-3 py-2 shadow-[0px_4px_0px_0px_#c6c7e4,0px_6px_8px_0px_rgba(116,114,160,0.69)]">
                 
                 <form className="px-3 md:px-4 py-2">
@@ -311,7 +312,7 @@ export default function OrderProductPage() {
             </div>
             </form>
               </div>
-
+}
               {/* Add New Address Button */}
               <button
                 onClick={handleAddAddress}
@@ -364,6 +365,7 @@ export default function OrderProductPage() {
                   </div>
 
                   {/* Quantity */}
+                  
                   <div className="flex items-center justify-between">
                     <span
                       className="bg-gradient-to-b from-[#7684c9] to-[#7472a0] bg-clip-text text-transparent text-lg md:text-xl font-bold"
