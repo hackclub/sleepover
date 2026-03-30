@@ -21,7 +21,7 @@ function ShipDetailsContent() {
 
   const shouldShowSnoozefestCheckbox = () => {
     const start = new Date("2026-03-28T00:00:00Z"); // 8pm est march 27th in utc
-    const end = new Date("2026-03-30T00:30:00Z") // 8:30pm est march 29th in utc
+    const end = new Date("2026-03-30T04:00:00Z") // 8:30pm est march 29th in utc
     const now = new Date()
     return now >= start && now <= end;
   };
