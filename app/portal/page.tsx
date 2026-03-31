@@ -217,7 +217,7 @@ export default function PortalPage() {
 
             {/* Small box #2 */}
               <SmallBox
-                header="March Challenge"
+                header="April Challenge"
                 body="Build a Printed Circuit Board. Submit it to Sleepover and Stasis to get 2 bonus feathers!!"
                 isMobile={isMobile}
               >

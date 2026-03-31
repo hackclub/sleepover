@@ -33,9 +33,9 @@ const FALLBACK_EVENTS: Event[] = [
   },
   {
     id: "3",
-    title: "March Challenge Deadline",
-    date: "2026-03-31",
-    description: "Last day to submit your March challenge project for feathers!",
+    title: "April Challenge Deadline",
+    date: "2026-04-20",
+    description: "Last day to submit your April challenge project for feathers!",
     type: "deadline",
   },
   {
