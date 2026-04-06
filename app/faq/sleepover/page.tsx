@@ -131,7 +131,7 @@ export default function WhatIsSleepover() {
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
-                Code 30 hours over the next three months (by April 15th) to get invited. That's just ten hours each month!
+                Code 30 hours over the next three months (by April 24th) to get invited. That's just ten hours each month!
               </p>
               <p
                 className="text-[16px] md:text-[20px] leading-relaxed"

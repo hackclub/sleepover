@@ -1,7 +1,7 @@
 import { getSession } from "./session";
 
 const start_date = "2026-01-01";
-const end_date = "2026-04-05";
+const end_date = "2026-06-15";
 
 export async function getUsernameFromEmail(email: string) {
   console.log("looking up hackatime user by email:", email);

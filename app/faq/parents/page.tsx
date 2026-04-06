@@ -96,7 +96,7 @@ export default function ParentsGuide() {
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
-                Sleepover is a slumber-party style hackathon led by teen girls, for teen girls. Code 30 hours from now until April 15th, 2025 and fly out to Chicago, Illinois to make friends, eat amazing food, and code. Along the way, your child can earn prizes such as plushies, Airpods, iPads and more, all for building projects.
+                Sleepover is a slumber-party style hackathon led by teen girls, for teen girls. Code 30 hours from now until April 24th, 2025 and fly out to Chicago, Illinois to make friends, eat amazing food, and code. Along the way, your child can earn prizes such as plushies, Airpods, iPads and more, all for building projects.
               </p>
             </div>
 
