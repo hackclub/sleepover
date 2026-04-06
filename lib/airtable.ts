@@ -532,6 +532,7 @@ export async function getUserOrders(userid: string) {
         product: productDetails,
         productId: productId,
         address,
+        quantity: r.get("quantity") as number
       };
     })
   );

@@ -26,6 +26,7 @@ interface Order {
   status: string;
   product: OrderProduct | null;
   address: any;
+  quantity: number;
 }
 
 export default function OrdersPage() {
@@ -210,6 +211,22 @@ export default function OrdersPage() {
                           </p>
                         </div>
                       </div>
+
+                      <div>
+                          <p
+                            className="text-sm font-bold text-[#8B8DAE] uppercase tracking-wide"
+                            style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+                          >
+                            Total
+                          </p>
+                          <p
+                            className="text-lg font-bold text-[#6c6ea0]"
+                            style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+                          >
+                            {order.product?.price || 0} * {order.quantity || 1} = {(order.product?.price || 0) * (order.quantity || 1)} feathers
+                          </p>
+                        </div>
+                      
 
                       <div>
                         <p
