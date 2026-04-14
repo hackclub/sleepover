@@ -1,6 +1,7 @@
 import Airtable from "airtable";
-import { getUserInfo } from "./auth";
+
 import { projectReviewMessage } from "./bot";
+import type { HackClubAddress } from "@/app/portal/forms/order/[prodid]/page";
 
 function getBase() {
   if (!process.env.AIRTABLE_API_KEY) {
@@ -350,7 +351,7 @@ async function withPurchaseLock<T>(userid: string, fn: () => Promise<T>): Promis
 
 const SINGLE = ["rec4wZN4c2OdkWMnc"]; // Sticker sheet
 
-export async function addProduct(userid: string, product: string, formData: FormData, address?: string, ) {
+export async function addProduct(userid: string, product: string, formData: FormData, address?: HackClubAddress ) {
   return withPurchaseLock(userid, async () => {
     const safeUserId = escapeFormulaString(userid);
 
@@ -443,7 +444,7 @@ export async function hasUserOrderedProduct(userid: string, product: string): Pr
   return currentOrdered.includes(product);
 }
 
-export async function addFulfillment(userid: string, product: string, quantity: number, address?: string) {
+export async function addFulfillment(userid: string, product: string, quantity: number, address?: HackClubAddress) {
   const safeUserId = escapeFormulaString(userid);
   const user = await getUsersTable().select({
     filterByFormula: `{id} = '${safeUserId}'`,
@@ -462,7 +463,12 @@ export async function addFulfillment(userid: string, product: string, quantity: 
   };
 
   if (address) {
-    fields.Address = address;
+    fields.address_line_1 = address.line_1;
+    fields.address_line_2 = address.line_2 || "";
+    fields.city = address.city;
+    fields.state_province = address.state;
+    fields.country = address.country;
+    fields.zip_code = address.postal_code;
   }
 
   const records = await getFulfillmentTable().create([
@@ -588,8 +594,8 @@ export async function getProjectDevlogs(projectId: string) {
 }
 
 export async function shipProjectTable(projectid: string, info: any) {
-  
-  getProjectsTable().update([
+
+  await getProjectsTable().update([
     {
       "id": projectid,
       "fields": {
@@ -607,7 +613,7 @@ export async function shipProjectTable(projectid: string, info: any) {
     
     const project = record[0]
 
-    const userid = await project.get("userid")
+    const userid = project.get("userid")
     var user;
 
     if (userid) {

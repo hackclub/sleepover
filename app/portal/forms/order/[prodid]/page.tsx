@@ -8,7 +8,7 @@ import FeatherBalance from "@/app/components/FeatherBalance";
 import { orderProduct } from "@/app/forms/actions/orderProduct";
 import { ShopItemData } from "@/app/components/ShopItem";
 
-interface HackClubAddress {
+export interface HackClubAddress {
   id: string;
   name: string;
   line_1: string;
@@ -17,7 +17,7 @@ interface HackClubAddress {
   state: string;
   postal_code: string;
   country: string;
-}
+} 
 
 export default function OrderProductPage() {
   const params = useParams();
@@ -107,8 +107,8 @@ export default function OrderProductPage() {
     try {
       const formData = new FormData();
       formData.set("quantity", String(Math.max(1, quantity || 1)));
-      const addressString = selectedAddress ? formatAddress(selectedAddress) : "";
-      await orderProduct(formData, prodId, addressString);
+      // const addressString = selectedAddress ? formatAddress(selectedAddress) : "";
+      await orderProduct(formData, prodId);
       const newBalance = userBalance - product.price * quantity;
       sessionStorage.setItem("userBalance", newBalance.toString());
 
