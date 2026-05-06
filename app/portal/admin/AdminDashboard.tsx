@@ -34,6 +34,7 @@ const REVIEW_GUIDELINES = [
 
 type EventType = "huddle" | "challenge" | "social" | "deadline";
 
+
 interface DmEntry {
   sender: string;
   message: string;
@@ -91,6 +92,7 @@ const STATUS_LABEL: Record<string, string> = {
 
 const FONT = "'MADE Tommy Soft', sans-serif";
 
+
 function parseDate(dateStr: string | undefined | null): Date {
   if (!dateStr) return new Date(NaN);
   const datePart = dateStr.split("T")[0];
@@ -124,7 +126,7 @@ function timeToInput(time: string): string {
   return `${String(h).padStart(2, "0")}:${m}`;
 }
 
-export default function AdminDashboard({ userName }: { userName: string }) {
+export default function AdminDashboard({ userName, isSuperAdmin }: { userName: string; isSuperAdmin: boolean }) {
   const [tab, setTab] = useState<"projects" | "calendar" | "leaderboard">("projects");
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -165,7 +167,7 @@ export default function AdminDashboard({ userName }: { userName: string }) {
 
   useEffect(() => {
     if (tab === "projects" || tab === "leaderboard") fetchSubmissions();
-    else fetchEvents();
+    else if (tab === "calendar") fetchEvents();
   }, [tab, fetchSubmissions, fetchEvents]);
 
   async function updateStatus(recordId: string, status: "Approved" | "Rejected" | "Pending", justification?: string, comment?: string, email?: string, hoursOverride?: number) {
@@ -344,10 +346,7 @@ export default function AdminDashboard({ userName }: { userName: string }) {
               onClick={() => setTab(t)}
               className="px-5 py-2.5 rounded-full font-bold text-base transition-all"
               style={{
-                background:
-                  tab === t
-                    ? "linear-gradient(180deg, #8FB1F0 0%, #6D90E3 100%)"
-                    : "#e8eaf8",
+                background: tab === t ? "linear-gradient(180deg, #8FB1F0 0%, #6D90E3 100%)" : "#e8eaf8",
                 color: tab === t ? "white" : "#5A5C8A",
                 border: `2px solid ${tab === t ? "#6D90E3" : "#c0c2e8"}`,
                 boxShadow: tab === t ? "0 2px 8px rgba(109,144,227,0.4)" : "none",
@@ -356,6 +355,15 @@ export default function AdminDashboard({ userName }: { userName: string }) {
               {t === "projects" ? "Project Review" : t === "calendar" ? "Calendar" : "Leaderboard"}
             </button>
           ))}
+          {isSuperAdmin && (
+            <Link
+              href="/portal/admin/fulfillment"
+              className="px-5 py-2.5 rounded-full font-bold text-base transition-all"
+              style={{ background: "#e8eaf8", color: "#5A5C8A", border: "2px solid #c0c2e8" }}
+            >
+              Fulfillment
+            </Link>
+          )}
         </div>
 
         {/* PROJECT REVIEW TAB */}

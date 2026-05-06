@@ -211,6 +211,7 @@ export interface UserRecord {
 }
 
 function escapeFormulaString(value: string): string {
+  if (!value || typeof value !== "string") throw new Error("Invalid formula input");
   return value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 }
 
@@ -546,6 +547,212 @@ export async function getUserOrders(userid: string) {
   return ordersWithDetails;
 }
 
+export async function getAllFulfillmentOrders() {
+  const records = await getFulfillmentTable()
+    .select({ sort: [{ field: "created_at", direction: "desc" }] })
+    .all();
+
+  const productIdSet = new Set<string>();
+  for (const r of records) {
+    ((r.get("product") as string[]) || []).forEach((id) => productIdSet.add(id));
+  }
+
+  const productMap: Record<string, { name: string; price: number; image?: string; fulfillmentMethod?: string }> = {};
+  await Promise.all(
+    [...productIdSet].map(async (pid) => {
+      try {
+        const p = await getProductsTable().find(pid);
+        const method = p.get("fufillment_method");
+        productMap[pid] = {
+          name: ((p.get("item_friendly_name") as string) || (p.get("item_name") as string) || ""),
+          price: (p.get("price") as number) || 0,
+          image: (p.get("image") as string) || undefined,
+          fulfillmentMethod:
+            typeof method === "object" && method !== null
+              ? (method as { name: string }).name
+              : (method as string | undefined),
+        };
+      } catch {}
+    })
+  );
+
+  const EXCLUDED_PRODUCT_IDS = new Set(SINGLE); // sticker sheet
+
+  const arr = <T>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
+  const mapped = records.map((r) => {
+    const pIds = (r.get("product") as string[]) || [];
+    const productId = pIds[0];
+    return {
+      id: r.id,
+      status: (r.get("status") as string) || "Unfulfilled",
+      date: (r.get("date") as string) || "",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      createdAt: ((r as any)._rawJson?.createdTime as string) || undefined,
+      userName: arr<string>(r.get("name (from user)"))[0] || "",
+      email: arr<string>(r.get("Email (from Hack Clubbers) (from registered_users)"))[0] || "",
+      pronouns: arr<string>(r.get("pronouns"))[0] || "",
+      userid: arr<string>(r.get("userid"))[0] || "",
+      address_line_1: (r.get("address_line_1") as string) || "",
+      address_line_2: (r.get("address_line_2") as string) || "",
+      city: (r.get("city") as string) || "",
+      state_province: (r.get("state_province") as string) || "",
+      country: (r.get("country") as string) || "",
+      zip_code: (r.get("zip_code") as string) || "",
+      quantity: (r.get("quantity") as number) || 1,
+      notes: (r.get("Notes") as string) || "",
+      productId: productId || undefined,
+      product: productId ? (productMap[productId] ?? null) : null,
+      adminOwner: (r.get("admin_owner") as string) || null,
+    };
+  }).filter((o) => {
+    if (o.productId && EXCLUDED_PRODUCT_IDS.has(o.productId)) return false;
+    if (o.product?.name?.toLowerCase().includes("travel")) return false;
+    const p = o.pronouns.toLowerCase();
+    if (p.includes("he/him") || p === "he") return false;
+    return true;
+  });
+
+  // Batch-fetch verification_status from registered_users by userid
+  const userIds = [...new Set(mapped.map((o) => o.userid).filter(Boolean))];
+  const idvMap: Record<string, string> = {};
+  if (userIds.length > 0) {
+    const formula = `OR(${userIds.map((id) => `{id} = '${escapeFormulaString(id)}'`).join(",")})`;
+    const userRecords = await getUsersTable()
+      .select({ filterByFormula: formula, fields: ["id", "verification_status"] })
+      .all();
+    for (const ur of userRecords) {
+      const uid = ur.get("id") as string;
+      const status = ur.get("verification_status") as string;
+      if (uid && status) idvMap[uid] = status;
+    }
+  }
+
+  return mapped.map((o) => ({ ...o, idvStatus: idvMap[o.userid] || null, adminOwner: o.adminOwner ?? null }));
+}
+
+export async function getUserApprovedSubmissions(userid: string) {
+  const safeId = escapeFormulaString(userid);
+  const records = await getReviewTable()
+    .select({
+      filterByFormula: `AND({userid} = '${safeId}', {Status} = 'Approved', NOT({YSWS}))`,
+    })
+    .all();
+
+  return records.map((r) => ({
+    id: r.id,
+    project: (r.get("Project") as string) || "(unnamed)",
+    hoursRaw: (r.get("hours") as number) || 0,
+    feathers: (r.get("Optional - Override Hours Spent") as number) || (r.get("hours") as number) || 0,
+    playableUrl: (r.get("Playable URL") as string) || null,
+    codeUrl: (r.get("Code URL") as string) || null,
+  }));
+}
+
+export async function getFulfillmentOrder(recordId: string) {
+  try {
+    const r = await getFulfillmentTable().find(recordId);
+    const arr = <T>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
+    const pIds = (r.get("product") as string[]) || [];
+    const productId = pIds[0];
+    let product = null;
+    if (productId) {
+      try {
+        const p = await getProductsTable().find(productId);
+        const method = p.get("fufillment_method");
+        product = {
+          name: ((p.get("item_friendly_name") as string) || (p.get("item_name") as string) || ""),
+          price: (p.get("price") as number) || 0,
+          image: (p.get("image") as string) || undefined,
+          fulfillmentMethod:
+            typeof method === "object" && method !== null
+              ? (method as { name: string }).name
+              : (method as string | undefined),
+        };
+      } catch {}
+    }
+    return {
+      id: r.id,
+      status: (r.get("status") as string) || "Unfulfilled",
+      date: (r.get("date") as string) || "",
+      userName: arr<string>(r.get("name (from user)"))[0] || "",
+      email: arr<string>(r.get("Email (from Hack Clubbers) (from registered_users)"))[0] || "",
+      pronouns: arr<string>(r.get("pronouns"))[0] || "",
+      userid: arr<string>(r.get("userid"))[0] || "",
+      address_line_1: (r.get("address_line_1") as string) || "",
+      address_line_2: (r.get("address_line_2") as string) || "",
+      city: (r.get("city") as string) || "",
+      state_province: (r.get("state_province") as string) || "",
+      country: (r.get("country") as string) || "",
+      zip_code: (r.get("zip_code") as string) || "",
+      quantity: (r.get("quantity") as number) || 1,
+      notes: (r.get("Notes") as string) || "",
+      productId: productId || undefined,
+      product,
+      adminOwner: (r.get("admin_owner") as string) || null,
+      dmHistory: (r.get("dm_history") as string) || null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function updateFulfillmentStatus(recordId: string, status: string) {
+  await getFulfillmentTable().update(recordId, { status });
+  return { success: true };
+}
+
+export async function updateFulfillmentOwner(recordId: string, owner: string | null) {
+  await getFulfillmentTable().update(recordId, { admin_owner: owner ?? "" });
+  return { success: true };
+}
+
+function parseFulfillmentDmHistory(raw: string): { ts: string; sender: string; message: string }[] {
+  if (!raw) return [];
+  try { return JSON.parse(raw); } catch { return []; }
+}
+
+export async function appendFulfillmentDmHistory(recordId: string, adminName: string, message: string) {
+  const r = await getFulfillmentTable().find(recordId);
+  const entries = parseFulfillmentDmHistory((r.get("dm_history") as string) || "");
+  const entry = { ts: new Date().toISOString().replace("T", " ").slice(0, 16), sender: adminName, message };
+  entries.push(entry);
+  await getFulfillmentTable().update(recordId, { dm_history: JSON.stringify(entries) });
+  return entry;
+}
+
+export async function appendIncomingDmBySlackId(slackId: string, _fallbackName: string, message: string) {
+  if (!slackId || typeof slackId !== "string") return 0;
+  const userRecords = await getUsersTable()
+    .select({ filterByFormula: `{slack_id} = '${escapeFormulaString(slackId)}'`, maxRecords: 1 })
+    .all();
+  if (!userRecords.length) return 0;
+
+  const displayName =
+    (userRecords[0].get("slack_display_name") as string) ||
+    (userRecords[0].get("name") as string) ||
+    slackId;
+  const userId = userRecords[0].get("id") as string;
+  if (!userId) return 0;
+
+  const orders = await getFulfillmentTable()
+    .select({ filterByFormula: `AND({userid} = '${escapeFormulaString(userId)}', {status} = 'Unfulfilled')` })
+    .all();
+
+  if (!orders.length) return 0;
+
+  const entry = { ts: new Date().toISOString().replace("T", " ").slice(0, 16), sender: displayName, message };
+
+  await Promise.all(
+    orders.map(async (r) => {
+      const entries = parseFulfillmentDmHistory((r.get("dm_history") as string) || "");
+      entries.push(entry);
+      await getFulfillmentTable().update(r.id, { dm_history: JSON.stringify(entries) });
+    })
+  );
+
+  return orders.length;
+}
+
 export async function createDevlogEntry(projectId: string, date: string, text: string) {
   if (typeof text !== "string" || text.length > 10000) {
     throw new Error("Invalid text: must be a string under 10000 characters");
@@ -784,6 +991,18 @@ export async function isAdminUser(userId: string): Promise<boolean> {
   return records[0].get("is_admin") === true;
 }
 
+export async function isSuperAdminUser(userId: string): Promise<boolean> {
+  const safeId = escapeFormulaString(userId);
+  const records = await getUsersTable()
+    .select({
+      filterByFormula: `{id} = '${safeId}'`,
+      maxRecords: 1,
+    })
+    .firstPage();
+  if (!records.length) return false;
+  return records[0].get("is_super_admin") === true;
+}
+
 export async function getAllSubmissions() {
   const records = await getReviewTable()
     .select({
@@ -967,6 +1186,15 @@ export async function getAllUsersWithReferralCode() {
     referral_code: user.get("referral_code") as string,
     verification_status: user.get("verification_status") as string,
   }));
+}
+
+export async function getIDVStatus(email: string): Promise<string | null> {
+  const safeEmail = escapeFormulaString(email);
+  const records = await getPyramidTable()
+    .select({ filterByFormula: `{Email} = '${safeEmail}'`, maxRecords: 1 })
+    .firstPage();
+  if (!records.length) return null;
+  return (records[0].get("IDV Status") as string) || null;
 }
 
 export async function upsertPyramidRecord(data: {

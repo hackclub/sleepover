@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
-import { isAdminUser } from "@/lib/airtable";
+import { isAdminUser, isSuperAdminUser } from "@/lib/airtable";
 import AdminDashboard from "./AdminDashboard";
 
 export default async function AdminPage() {
@@ -10,10 +10,13 @@ export default async function AdminPage() {
     redirect("/?error=auth_required");
   }
 
-  const admin = await isAdminUser(user.userId);
+  const [admin, superAdmin] = await Promise.all([
+    isAdminUser(user.userId),
+    isSuperAdminUser(user.userId),
+  ]);
   if (!admin) {
     redirect("/portal?error=unauthorized");
   }
 
-  return <AdminDashboard userName={user.name} />;
+  return <AdminDashboard userName={user.name} isSuperAdmin={superAdmin} />;
 }
