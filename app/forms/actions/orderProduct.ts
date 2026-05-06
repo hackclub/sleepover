@@ -3,7 +3,7 @@
 import { addProduct } from "@/lib/airtable"
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/session";
-import { HackClubAddress} from "../order/[prodid]/page";
+import { HackClubAddress } from "@/lib/types";
 
 export async function orderProduct(formData: FormData, product: string, address?: HackClubAddress) {
   const session = await requireAuth();

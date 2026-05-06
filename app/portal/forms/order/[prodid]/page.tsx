@@ -7,17 +7,9 @@ import Link from "next/link";
 import FeatherBalance from "@/app/components/FeatherBalance";
 import { orderProduct } from "@/app/forms/actions/orderProduct";
 import { ShopItemData } from "@/app/components/ShopItem";
+import type { HackClubAddress } from "@/lib/types";
 
-export interface HackClubAddress {
-  id: string;
-  name: string;
-  line_1: string;
-  line_2?: string;
-  city: string;
-  state: string;
-  postal_code: string;
-  country: string;
-} 
+export type { HackClubAddress } from "@/lib/types";
 
 export default function OrderProductPage() {
   const params = useParams();

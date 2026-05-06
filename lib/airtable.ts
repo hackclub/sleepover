@@ -1,7 +1,7 @@
 import Airtable from "airtable";
 
 import { projectReviewMessage } from "./bot";
-import type { HackClubAddress } from "@/app/portal/forms/order/[prodid]/page";
+import type { HackClubAddress } from "@/lib/types";
 
 function getBase() {
   if (!process.env.AIRTABLE_API_KEY) {
