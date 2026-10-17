@@ -1,0 +1,15 @@
+.git
+.github
+.vscode
+node_modules
+.next
+out
+build
+coverage
+.vercel
+.env*
+*.pem
+*.tsbuildinfo
+next-env.d.ts
+*-debug.log*
+.DS_Store

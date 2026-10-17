@@ -39,9 +39,15 @@ jobs:
       - name: Typecheck
         run: bun run typecheck
 
-      - name: Build
-        run: bun run build
-        env:
-          # Build-only placeholders also work on Dependabot PRs without secrets.
-          SLACK_BOT_TOKEN: "xoxb-ci-build-placeholder"
-          SESSION_SECRET: "ci-build-only-session-secret-at-least-32-characters"
+      - name: Build deployment image
+        run: docker build --pull --tag sleepover:ci .
+
+      - name: Smoke test deployment image
+        run: |
+          docker run --detach --rm --name sleepover-ci \
+            --publish 127.0.0.1:3000:3000 \
+            --env SESSION_SECRET=ci-runtime-only-secret-at-least-32-characters \
+            --env SLACK_BOT_TOKEN=xoxb-ci-runtime-placeholder \
+            sleepover:ci
+          trap 'docker logs sleepover-ci; docker stop sleepover-ci' EXIT
+          curl --fail --retry 10 --retry-delay 2 --retry-connrefused http://127.0.0.1:3000/

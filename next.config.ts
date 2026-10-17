@@ -43,6 +43,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   turbopack: {},
   webpack(config) {
     config.resolve.modules = [path.resolve(__dirname, "node_modules"), "node_modules"];
