@@ -1,11 +1,16 @@
-import { getProjectById, updateProjectName, getUserFromId, updateProjectHours } from "@/lib/airtable";
+import {
+  getProjectById,
+  updateProjectName,
+  getUserFromId,
+  updateProjectHours,
+} from "@/lib/airtable";
 import { getMultipleProjectHours, parseHackatimeProjects } from "@/lib/hackatime";
 import { requireAuth } from "@/lib/session";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ): Promise<Response> {
   try {
     const session = await requireAuth();
@@ -53,7 +58,7 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ): Promise<Response> {
   try {
     const session = await requireAuth();
@@ -78,7 +83,7 @@ export async function PATCH(
       project: {
         id: updatedProject.id,
         name: updatedProject.get("name"),
-      }
+      },
     });
   } catch (error) {
     if (error instanceof Error && error.message === "Unauthorized") {

@@ -38,7 +38,11 @@ export default function FulfillmentDetailActions({
   type DmEntry = { ts: string; sender: string; message: string }; // matches parseFulfillmentDmHistory shape
   function parseDmHistory(raw: string | null): DmEntry[] {
     if (!raw) return [];
-    try { return JSON.parse(raw) as DmEntry[]; } catch { return []; }
+    try {
+      return JSON.parse(raw) as DmEntry[];
+    } catch {
+      return [];
+    }
   }
   const [dmHistory, setDmHistory] = useState<DmEntry[]>(parseDmHistory(initialDmHistory));
 
@@ -90,7 +94,6 @@ export default function FulfillmentDetailActions({
     setSending(false);
   }
 
-
   return (
     <div className="flex flex-col gap-6">
       {/* Status + Owner */}
@@ -114,7 +117,12 @@ export default function FulfillmentDetailActions({
               onClick={() => patchStatus("Fulfilled")}
               disabled={updating}
               className="px-4 py-2 rounded-full text-sm font-bold transition-all disabled:opacity-40"
-              style={{ background: "#e6f9f0", color: "#1a7a4a", border: "1.5px solid #7dd3aa", fontFamily: FONT }}
+              style={{
+                background: "#e6f9f0",
+                color: "#1a7a4a",
+                border: "1.5px solid #7dd3aa",
+                fontFamily: FONT,
+              }}
             >
               {updating ? "..." : "Mark Fulfilled"}
             </button>
@@ -124,13 +132,21 @@ export default function FulfillmentDetailActions({
               onClick={() => patchStatus("Unfulfilled")}
               disabled={updating}
               className="px-4 py-2 rounded-full text-sm font-bold transition-all disabled:opacity-40"
-              style={{ background: "#fff4e0", color: "#b35c00", border: "1.5px solid #f5c07a", fontFamily: FONT }}
+              style={{
+                background: "#fff4e0",
+                color: "#b35c00",
+                border: "1.5px solid #f5c07a",
+                fontFamily: FONT,
+              }}
             >
               {updating ? "..." : "Mark Unfulfilled"}
             </button>
           )}
         </div>
-        <div className="flex gap-3 flex-wrap items-center pt-3" style={{ borderTop: "1.5px solid #eeeef8" }}>
+        <div
+          className="flex gap-3 flex-wrap items-center pt-3"
+          style={{ borderTop: "1.5px solid #eeeef8" }}
+        >
           <span className="text-sm font-semibold" style={{ color: "#8a8cb0", fontFamily: FONT }}>
             Owner: <span style={{ color: "#4a4c78" }}>{owner || "Unclaimed"}</span>
           </span>
@@ -154,7 +170,12 @@ export default function FulfillmentDetailActions({
               onClick={() => patchOwner(null)}
               disabled={updating}
               className="px-4 py-2 rounded-full text-sm font-bold transition-all disabled:opacity-40"
-              style={{ background: "#f4f5fb", color: "#5A5C8A", border: "1.5px solid #c0c2e8", fontFamily: FONT }}
+              style={{
+                background: "#f4f5fb",
+                color: "#5A5C8A",
+                border: "1.5px solid #c0c2e8",
+                fontFamily: FONT,
+              }}
             >
               {updating ? "..." : "Unclaim"}
             </button>
@@ -189,10 +210,15 @@ export default function FulfillmentDetailActions({
             </p>
             {dmHistory.map((entry, i) => (
               <div key={i} className="flex flex-col gap-0.5">
-                <span className="text-xs font-semibold" style={{ color: "#6D90E3", fontFamily: FONT }}>
+                <span
+                  className="text-xs font-semibold"
+                  style={{ color: "#6D90E3", fontFamily: FONT }}
+                >
                   {entry.sender} · {entry.ts}
                 </span>
-                <span className="text-xs" style={{ color: "#3a3c68", fontFamily: FONT }}>{entry.message}</span>
+                <span className="text-xs" style={{ color: "#3a3c68", fontFamily: FONT }}>
+                  {entry.message}
+                </span>
               </div>
             ))}
           </div>
@@ -205,7 +231,12 @@ export default function FulfillmentDetailActions({
               key={i}
               onClick={() => setDmMessage(t)}
               className="text-left px-3 py-2 rounded-xl text-xs font-semibold transition-all hover:opacity-80"
-              style={{ background: "#e8eaf8", color: "#5A5C8A", border: "1.5px solid #c0c2e8", fontFamily: FONT }}
+              style={{
+                background: "#e8eaf8",
+                color: "#5A5C8A",
+                border: "1.5px solid #c0c2e8",
+                fontFamily: FONT,
+              }}
             >
               {t}
             </button>

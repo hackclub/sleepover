@@ -29,7 +29,7 @@ export default function Sidebar({ onStateChange, initialOpen = true }: SidebarPr
         setIsOpen(false);
       }
     };
-    
+
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
@@ -75,10 +75,7 @@ export default function Sidebar({ onStateChange, initialOpen = true }: SidebarPr
 
       {/* Mobile Overlay */}
       {isMobile && isOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40"
-          onClick={() => setIsOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black/40 z-40" onClick={() => setIsOpen(false)} />
       )}
 
       {/* Desktop Toggle Button */}
@@ -106,9 +103,7 @@ export default function Sidebar({ onStateChange, initialOpen = true }: SidebarPr
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 min-h-screen z-50 ${
-          isMobile ? "w-[280px]" : ""
-        }`}
+        className={`fixed left-0 top-0 min-h-screen z-50 ${isMobile ? "w-[280px]" : ""}`}
         style={{
           width: isMobile ? "280px" : "clamp(320px, 25vw, 520px)",
           transform: isMobile
@@ -116,8 +111,8 @@ export default function Sidebar({ onStateChange, initialOpen = true }: SidebarPr
               ? "translateX(0)"
               : "translateX(-100%)"
             : isOpen
-            ? "translateX(0)"
-            : "translateX(calc(-100% + 96px))",
+              ? "translateX(0)"
+              : "translateX(calc(-100% + 96px))",
           transition: "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
@@ -146,14 +141,19 @@ export default function Sidebar({ onStateChange, initialOpen = true }: SidebarPr
           </Link>
 
           {/* Navigation Links */}
-          <nav className={`flex flex-col gap-8 md:gap-10 mt-12 md:mt-16 ${isOpen ? "ml-2 md:ml-4" : "items-center"}`}>
+          <nav
+            className={`flex flex-col gap-8 md:gap-10 mt-12 md:mt-16 ${isOpen ? "ml-2 md:ml-4" : "items-center"}`}
+          >
             {navItems.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
                 onClick={handleNavClick}
                 className="block font-bold leading-[1.1] hover:opacity-90 transition-transform hover:translate-x-[1px]"
-                style={{ fontSize: isMobile ? "22px" : "clamp(26px, 2vw, 40px)", display: isOpen ? "block" : "none" }}
+                style={{
+                  fontSize: isMobile ? "22px" : "clamp(26px, 2vw, 40px)",
+                  display: isOpen ? "block" : "none",
+                }}
               >
                 <GradientText
                   gradient="linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)"

@@ -1,6 +1,6 @@
 export async function getSlackUserInfo(slackId: string) {
   const token = process.env.SLACK_BOT_TOKEN;
-  
+
   if (!token || !slackId) {
     return null;
   }
@@ -25,6 +25,7 @@ export async function getSlackUserInfo(slackId: string) {
 
   return {
     display_name: data.user.profile.display_name || data.user.profile.real_name || data.user.name,
-    avatar_url: data.user.profile.image_512 || data.user.profile.image_192 || data.user.profile.image_72,
+    avatar_url:
+      data.user.profile.image_512 || data.user.profile.image_192 || data.user.profile.image_72,
   };
 }

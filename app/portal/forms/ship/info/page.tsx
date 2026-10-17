@@ -79,7 +79,9 @@ function ShipInfoContent() {
 
     // Validate that user has an address
     if (!address.address1 || !address.city || !address.state || !address.zip || !address.country) {
-      alert("Please add a primary address on Hack Club Auth before shipping your project. Click 'Manage Addresses' to add one.");
+      alert(
+        "Please add a primary address on Hack Club Auth before shipping your project. Click 'Manage Addresses' to add one.",
+      );
       return;
     }
 
@@ -112,7 +114,7 @@ function ShipInfoContent() {
       // Convert boolean values from shipData to string booleans for Airtable checkbox fields
       formDataToSend.append("ysws", String(shipData.submittedToYSWS));
       formDataToSend.append("challenge", String(shipData.isMonthlyChallenge));
-      formDataToSend.append("isForSnoozefest", String(shipData.isForSnoozefest))
+      formDataToSend.append("isForSnoozefest", String(shipData.isForSnoozefest));
       // Convert base64 screenshot to File if exists
       if (screenshotDataUrl) {
         const [header, base64Data] = screenshotDataUrl.split(",");
@@ -212,168 +214,172 @@ function ShipInfoContent() {
               Loading your info...
             </p>
           ) : (
-          <>
-          {/* Form Fields */}
-          <div className="space-y-4">
-            {/* First Name */}
-            <div>
-              <label
-                className="block text-[24px] md:text-[28px] font-medium mb-2"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  color: "#7472A0",
-                }}
-              >
-                First Name
-              </label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  background: "white",
-                  boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
-                }}
-              />
-            </div>
-
-            {/* Last Name */}
-            <div>
-              <label
-                className="block text-[24px] md:text-[28px] font-medium mb-2"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  color: "#7472A0",
-                }}
-              >
-                Last Name
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  background: "white",
-                  boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
-                }}
-              />
-            </div>
-
-            {/* Email */}
-            <div>
-              <label
-                className="block text-[24px] md:text-[28px] font-medium mb-2"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  color: "#7472A0",
-                }}
-              >
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  background: "white",
-                  boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
-                }}
-              />
-            </div>
-
-            {/* Birthdate */}
-            <div>
-              <label
-                className="block text-[24px] md:text-[28px] font-medium mb-2"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  color: "#7472A0",
-                }}
-              >
-                Birthdate
-              </label>
-              <input
-                type="date"
-                name="birthdate"
-                value={formData.birthdate}
-                onChange={handleChange}
-                className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  background: "white",
-                  boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
-                }}
-              />
-            </div>
-
-            {/* Shipping Address Display */}
-            <div className="mt-6">
-              <label
-                className="block text-[24px] md:text-[28px] font-medium mb-2"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  color: "#7472A0",
-                }}
-              >
-                Shipping Address (Primary on Hack Club Auth)
-              </label>
-              <div
-                className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  background: "#F5F0FF",
-                  border: "2px solid #E8E4F3",
-                }}
-              >
-                {address.address1 || address.city || address.state || address.zip || address.country ? (
-                  <>
-                    {address.address1 && <p>{address.address1}</p>}
-                    {address.address2 && <p>{address.address2}</p>}
-                    <p>
-                      {[address.city, address.state, address.zip].filter(Boolean).join(", ")}
-                    </p>
-                    {address.country && <p>{address.country}</p>}
-                  </>
-                ) : (
-                  <p className="text-[#9B9DB8]">No address on file</p>
-                )}
-              </div>
-              <div className="flex justify-end mt-2">
-                <button
-                  type="button"
-                  onClick={() => window.open("https://auth.hackclub.com/addresses", "_blank")}
-                  className="bg-gradient-to-t from-[#d9daf8] to-[#b5aae7] border-4 border-white rounded-2xl px-6 py-2 shadow-[0px_4px_0px_0px_#c6c7e4,0px_6px_8px_0px_rgba(116,114,160,0.69)] hover:scale-105 transition-transform"
-                >
-                  <span
-                    className="bg-gradient-to-b from-[#7684c9] to-[#7472a0] bg-clip-text text-transparent text-lg font-bold"
-                    style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+            <>
+              {/* Form Fields */}
+              <div className="space-y-4">
+                {/* First Name */}
+                <div>
+                  <label
+                    className="block text-[24px] md:text-[28px] font-medium mb-2"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      color: "#7472A0",
+                    }}
                   >
-                    Manage Addresses ↗
-                  </span>
-                </button>
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      background: "white",
+                      boxShadow:
+                        "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
+                    }}
+                  />
+                </div>
+
+                {/* Last Name */}
+                <div>
+                  <label
+                    className="block text-[24px] md:text-[28px] font-medium mb-2"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      color: "#7472A0",
+                    }}
+                  >
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      background: "white",
+                      boxShadow:
+                        "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
+                    }}
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label
+                    className="block text-[24px] md:text-[28px] font-medium mb-2"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      color: "#7472A0",
+                    }}
+                  >
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      background: "white",
+                      boxShadow:
+                        "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
+                    }}
+                  />
+                </div>
+
+                {/* Birthdate */}
+                <div>
+                  <label
+                    className="block text-[24px] md:text-[28px] font-medium mb-2"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      color: "#7472A0",
+                    }}
+                  >
+                    Birthdate
+                  </label>
+                  <input
+                    type="date"
+                    name="birthdate"
+                    value={formData.birthdate}
+                    onChange={handleChange}
+                    className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg outline-none"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      background: "white",
+                      boxShadow:
+                        "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
+                    }}
+                  />
+                </div>
+
+                {/* Shipping Address Display */}
+                <div className="mt-6">
+                  <label
+                    className="block text-[24px] md:text-[28px] font-medium mb-2"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      color: "#7472A0",
+                    }}
+                  >
+                    Shipping Address (Primary on Hack Club Auth)
+                  </label>
+                  <div
+                    className="w-full rounded-[12px] px-4 py-3 text-[#6C6EA0] text-lg"
+                    style={{
+                      fontFamily: "'MADE Tommy Soft', sans-serif",
+                      background: "#F5F0FF",
+                      border: "2px solid #E8E4F3",
+                    }}
+                  >
+                    {address.address1 ||
+                    address.city ||
+                    address.state ||
+                    address.zip ||
+                    address.country ? (
+                      <>
+                        {address.address1 && <p>{address.address1}</p>}
+                        {address.address2 && <p>{address.address2}</p>}
+                        <p>
+                          {[address.city, address.state, address.zip].filter(Boolean).join(", ")}
+                        </p>
+                        {address.country && <p>{address.country}</p>}
+                      </>
+                    ) : (
+                      <p className="text-[#9B9DB8]">No address on file</p>
+                    )}
+                  </div>
+                  <div className="flex justify-end mt-2">
+                    <button
+                      type="button"
+                      onClick={() => window.open("https://auth.hackclub.com/addresses", "_blank")}
+                      className="bg-gradient-to-t from-[#d9daf8] to-[#b5aae7] border-4 border-white rounded-2xl px-6 py-2 shadow-[0px_4px_0px_0px_#c6c7e4,0px_6px_8px_0px_rgba(116,114,160,0.69)] hover:scale-105 transition-transform"
+                    >
+                      <span
+                        className="bg-gradient-to-b from-[#7684c9] to-[#7472a0] bg-clip-text text-transparent text-lg font-bold"
+                        style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+                      >
+                        Manage Addresses ↗
+                      </span>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          </>
+            </>
           )}
         </div>
 
         {/* Time to Ship!! */}
         <h3 className="text-center text-[36px] md:text-[48px] font-bold mt-8">
-          <GradientText
-            gradient="#7791E6"
-            strokeWidth="6px"
-            className="text-[36px] md:text-[48px]"
-          >
+          <GradientText gradient="#7791E6" strokeWidth="6px" className="text-[36px] md:text-[48px]">
             <u>time to ship!!</u>
           </GradientText>
         </h3>
@@ -447,24 +453,26 @@ function ShipInfoContent() {
 
 export default function ShipInfoPage() {
   return (
-    <Suspense fallback={
-      <div
-        className="min-h-screen relative font-sans pb-12 flex items-center justify-center"
-        style={{
-          background: "#C0DEFE",
-        }}
-      >
-        <p
-          className="text-[24px] font-bold"
+    <Suspense
+      fallback={
+        <div
+          className="min-h-screen relative font-sans pb-12 flex items-center justify-center"
           style={{
-            fontFamily: "'MADE Tommy Soft', sans-serif",
-            color: "#7472A0",
+            background: "#C0DEFE",
           }}
         >
-          Loading...
-        </p>
-      </div>
-    }>
+          <p
+            className="text-[24px] font-bold"
+            style={{
+              fontFamily: "'MADE Tommy Soft', sans-serif",
+              color: "#7472A0",
+            }}
+          >
+            Loading...
+          </p>
+        </div>
+      }
+    >
       <ShipInfoContent />
     </Suspense>
   );

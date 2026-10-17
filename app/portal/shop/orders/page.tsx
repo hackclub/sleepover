@@ -30,7 +30,14 @@ interface Order {
 }
 
 export default function OrdersPage() {
-  const [basicAddress, setBasic] = useState<Address>({line1: "", line2: "", zip: "", state: "", city: "", country:""});
+  const [basicAddress, setBasic] = useState<Address>({
+    line1: "",
+    line2: "",
+    zip: "",
+    state: "",
+    city: "",
+    country: "",
+  });
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -53,7 +60,14 @@ export default function OrdersPage() {
     fetch("/api/user/info")
       .then((res) => res.json())
       .then((data) => {
-        setBasic({line1: data.address1 || "", line2: data.address2 || "", zip: data.zip || "", country: data.country || "", city: data.city || "", state: data.state || ""});
+        setBasic({
+          line1: data.address1 || "",
+          line2: data.address2 || "",
+          zip: data.zip || "",
+          country: data.country || "",
+          city: data.city || "",
+          state: data.state || "",
+        });
         setLoading(false);
       })
       .catch((err) => {
@@ -92,10 +106,7 @@ export default function OrdersPage() {
   };
 
   return (
-    <div
-      className="font-sans min-h-screen relative"
-      style={{ backgroundColor: "#C0DEFE" }}
-    >
+    <div className="font-sans min-h-screen relative" style={{ backgroundColor: "#C0DEFE" }}>
       <div className="z-0">
         <BunnyTile />
       </div>
@@ -213,20 +224,20 @@ export default function OrdersPage() {
                       </div>
 
                       <div>
-                          <p
-                            className="text-sm font-bold text-[#8B8DAE] uppercase tracking-wide"
-                            style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
-                          >
-                            Total
-                          </p>
-                          <p
-                            className="text-lg font-bold text-[#6c6ea0]"
-                            style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
-                          >
-                            {order.product?.price || 0} * {order.quantity || 1} = {(order.product?.price || 0) * (order.quantity || 1)} feathers
-                          </p>
-                        </div>
-                      
+                        <p
+                          className="text-sm font-bold text-[#8B8DAE] uppercase tracking-wide"
+                          style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+                        >
+                          Total
+                        </p>
+                        <p
+                          className="text-lg font-bold text-[#6c6ea0]"
+                          style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+                        >
+                          {order.product?.price || 0} * {order.quantity || 1} ={" "}
+                          {(order.product?.price || 0) * (order.quantity || 1)} feathers
+                        </p>
+                      </div>
 
                       <div>
                         <p
@@ -254,9 +265,10 @@ export default function OrdersPage() {
                           className="inline-block px-4 py-1 rounded-full text-sm font-bold"
                           style={{
                             fontFamily: "'MADE Tommy Soft', sans-serif",
-                            background: order.status === "Fulfilled"
-                              ? "linear-gradient(180deg, #93E8B8 0%, #B5F0CE 100%)"
-                              : "linear-gradient(180deg, #F0D293 0%, #F5E5B5 100%)",
+                            background:
+                              order.status === "Fulfilled"
+                                ? "linear-gradient(180deg, #93E8B8 0%, #B5F0CE 100%)"
+                                : "linear-gradient(180deg, #F0D293 0%, #F5E5B5 100%)",
                             color: order.status === "Fulfilled" ? "#2D6B4A" : "#8A6B2D",
                             border: "2px solid white",
                             boxShadow: "0px 2px 4px rgba(116, 114, 160, 0.3)",

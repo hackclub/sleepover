@@ -66,7 +66,8 @@ function HomeContent() {
         <div
           className="absolute inset-0 w-full h-full"
           style={{
-            background: "linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 70%, #FFFFFF 100%)",
+            background:
+              "linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 70%, #FFFFFF 100%)",
           }}
         />
       </div>
@@ -126,9 +127,7 @@ function HomeContent() {
           className="w-72 sm:w-96 md:w-[550px] min-[1792px]:w-[600px] h-auto animate-wiggle"
         />
 
-        <div
-          className="w-[320px] h-[180px] sm:w-[400px] sm:h-[225px] md:w-[530px] md:h-[298px] min-[1792px]:w-[600px] min-[1792px]:h-[338px] rounded-[8px] overflow-hidden border-4 border-[#919ED5] mt-4"
-        >
+        <div className="w-[320px] h-[180px] sm:w-[400px] sm:h-[225px] md:w-[530px] md:h-[298px] min-[1792px]:w-[600px] min-[1792px]:h-[338px] rounded-[8px] overflow-hidden border-4 border-[#919ED5] mt-4">
           <iframe
             className="w-full h-full"
             src="https://www.youtube.com/embed/FIyDH5dm5eo"
@@ -252,7 +251,7 @@ function HomeContent() {
           Code → Earn Prizes!
         </h2>
       </div>
-<AutoplayCarousel slides={slides} speed={1.3} />
+      <AutoplayCarousel slides={slides} speed={1.3} />
 
       {/* Sticker Sheet Section */}
       <div className="relative w-full mt-8 sm:mt-12 md:mt-16 px-4 sm:px-8 md:px-16 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-20">
@@ -287,34 +286,33 @@ function HomeContent() {
           ready?
         </GradientText>
       </div>
-   <div className="relative w-full mt-4 flex justify-center px-4">
-  {/* Outline */}
-  <h2
-    className="absolute inset-0 flex items-center justify-center text-center font-medium text-[18px] sm:text-[32px] md:text-[48px] lg:text-[64px] leading-[1.2]"
-    style={{
-      fontFamily: "'MADE Tommy Soft', sans-serif",
-      WebkitTextStroke: "6px #FFFFFF",
-      color: "transparent",
-      textShadow: "0px 4px 4px rgba(0,0,0,0.25)",
-    }}
-  >
-    LET&apos;S HAVE AN AWESOME SLEEPOVER!!
-  </h2>
+      <div className="relative w-full mt-4 flex justify-center px-4">
+        {/* Outline */}
+        <h2
+          className="absolute inset-0 flex items-center justify-center text-center font-medium text-[18px] sm:text-[32px] md:text-[48px] lg:text-[64px] leading-[1.2]"
+          style={{
+            fontFamily: "'MADE Tommy Soft', sans-serif",
+            WebkitTextStroke: "6px #FFFFFF",
+            color: "transparent",
+            textShadow: "0px 4px 4px rgba(0,0,0,0.25)",
+          }}
+        >
+          LET&apos;S HAVE AN AWESOME SLEEPOVER!!
+        </h2>
 
-  {/* Fill */}
-  <h2
-    className="relative text-center font-medium text-[18px] sm:text-[32px] md:text-[48px] lg:text-[64px] leading-[1.2]"
-    style={{
-      fontFamily: "'MADE Tommy Soft', sans-serif",
-      background:
-        "linear-gradient(180deg, #6A78B9 40%, #B39AB9 80%)",
-      WebkitBackgroundClip: "text",
-      WebkitTextFillColor: "transparent",
-    }}
-  >
-    LET&apos;S HAVE AN AWESOME SLEEPOVER!!
-  </h2>
-</div>
+        {/* Fill */}
+        <h2
+          className="relative text-center font-medium text-[18px] sm:text-[32px] md:text-[48px] lg:text-[64px] leading-[1.2]"
+          style={{
+            fontFamily: "'MADE Tommy Soft', sans-serif",
+            background: "linear-gradient(180deg, #6A78B9 40%, #B39AB9 80%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          LET&apos;S HAVE AN AWESOME SLEEPOVER!!
+        </h2>
+      </div>
 
       {/* Sign Up & FAQ Buttons */}
       <div className="w-full mt-8 sm:mt-12 flex items-center justify-center gap-4 sm:gap-8 flex-wrap px-4">
@@ -418,13 +416,25 @@ function HomeContent() {
       </div>
       <style jsx global>{`
         @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
         }
         @keyframes wiggle {
-          0%, 100% { transform: rotate(0deg); }
-          25% { transform: rotate(-2deg); }
-          75% { transform: rotate(2deg); }
+          0%,
+          100% {
+            transform: rotate(0deg);
+          }
+          25% {
+            transform: rotate(-2deg);
+          }
+          75% {
+            transform: rotate(2deg);
+          }
         }
         .animate-wiggle {
           animation: wiggle 2s ease-in-out infinite;
@@ -465,7 +475,6 @@ function HomeContent() {
           Hack Club 2026
         </a>
       </div>
-
     </main>
   );
 }

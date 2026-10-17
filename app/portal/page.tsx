@@ -60,16 +60,18 @@ export default function PortalPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ utm_source: utmSource }),
-      }).then(() => {
-        localStorage.removeItem("utm_source");
-      }).catch(() => {});
+      })
+        .then(() => {
+          localStorage.removeItem("utm_source");
+        })
+        .catch(() => {});
     }
 
     // Send stored referral code to server after auth
     const getCookie = (name: string) => {
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop()?.split(';').shift();
+      if (parts.length === 2) return parts.pop()?.split(";").shift();
     };
     const referralCode = getCookie("referral_code");
     if (referralCode) {
@@ -77,10 +79,12 @@ export default function PortalPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ referral_code: decodeURIComponent(referralCode) }),
-      }).then(() => {
-        // Delete cookie after successful save
-        document.cookie = "referral_code=; path=/; max-age=0";
-      }).catch(() => {});
+      })
+        .then(() => {
+          // Delete cookie after successful save
+          document.cookie = "referral_code=; path=/; max-age=0";
+        })
+        .catch(() => {});
     }
   }, []);
 
@@ -97,14 +101,11 @@ export default function PortalPage() {
       }
     }
   };
-  
+
   const contentOffset = isMobile ? "0px" : isSidebarOpen ? "clamp(360px, 28vw, 600px)" : "140px";
 
   return (
-    <div
-      className="font-sans min-h-screen relative"
-      style={{ backgroundColor: "#C0DEFE" }}
-    >
+    <div className="font-sans min-h-screen relative" style={{ backgroundColor: "#C0DEFE" }}>
       {/* Load Fillout SDK */}
       <Script
         src="https://server.fillout.com/embed/v1/"
@@ -123,16 +124,13 @@ export default function PortalPage() {
         <OnboardingNovel onComplete={handleOnboardingComplete} userName={userName} />
       )}
 
-      <NewProjectModal
-        isOpen={showNewProjectModal}
-        onClose={() => setShowNewProjectModal(false)}
-      />
+      <NewProjectModal isOpen={showNewProjectModal} onClose={() => setShowNewProjectModal(false)} />
 
       <main
         className={`relative z-10 transition-[margin-left] duration-300 p-4 md:p-8 lg:p-12 pt-16 md:pt-8 flex flex-col items-center ${showOnboarding ? "pointer-events-none" : ""}`}
-        style={{ 
-          marginLeft: contentOffset, 
-          marginRight: isMobile ? "0px" : "32px" 
+        style={{
+          marginLeft: contentOffset,
+          marginRight: isMobile ? "0px" : "32px",
         }}
       >
         {/* Create Heading */}
@@ -166,33 +164,35 @@ export default function PortalPage() {
               {/* Small box #1 */}
               <SmallBox
                 header="HackDash"
-                
+
                 body=""
                 isMobile={isMobile}
                 childrenPosition="above"
               >
-              
-                <img src="/background/more_bunny.png" alt="bunny" className="w-12 h-12 md:w-20 md:h-20 mx-auto" />
-                          <span className="text-sm md:text-lg block">
-                            <GradientText
-                              gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
-                              strokeWidth={isMobile ? "4px" : "6px"}
-                            >
-                              Hacking with friends?
-                            </GradientText>
-                          </span>
-                          <div className="mt-3 md:mt-4" />
-                          <Link
-                          href="https://forms.hackclub.com/t/pZsjjXn4yAus"
-                          target="_blank"
+                <img
+                  src="/background/more_bunny.png"
+                  alt="bunny"
+                  className="w-12 h-12 md:w-20 md:h-20 mx-auto"
+                />
+                <span className="text-sm md:text-lg block">
+                  <GradientText
+                    gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
+                    strokeWidth={isMobile ? "4px" : "6px"}
+                  >
+                    Hacking with friends?
+                  </GradientText>
+                </span>
+                <div className="mt-3 md:mt-4" />
+                <Link
+                  href="https://forms.hackclub.com/t/pZsjjXn4yAus"
+                  target="_blank"
                   className="relative flex items-center justify-center rounded-2xl transition-transform hover:scale-105 cursor-pointer mx-auto"
                   style={{
                     width: isMobile ? "140px" : "160px",
                     height: isMobile ? "44px" : "50px",
                     background: "linear-gradient(180deg, #FFF6E0 0%, #FFE8B2 100%)",
                     border: "4px solid white",
-                    boxShadow:
-                      "0px 4px 0px 0px #C6C7E4, 0px 6px 8px 0px rgba(116,114,160,0.69)",
+                    boxShadow: "0px 4px 0px 0px #C6C7E4, 0px 6px 8px 0px rgba(116,114,160,0.69)",
                     borderRadius: "16px",
                   }}
                 >
@@ -215,7 +215,7 @@ export default function PortalPage() {
                 </Link>
               </SmallBox>
 
-            {/* Small box #2 */}
+              {/* Small box #2 */}
               <SmallBox
                 header="April Challenge"
                 body="Build a Printed Circuit Board. Submit it to Sleepover and Stasis to get 2 bonus feathers!!"
@@ -229,8 +229,7 @@ export default function PortalPage() {
                     height: isMobile ? "44px" : "50px",
                     background: "linear-gradient(180deg, #FFF6E0 0%, #FFE8B2 100%)",
                     border: "4px solid white",
-                    boxShadow:
-                      "0px 4px 0px 0px #C6C7E4, 0px 6px 8px 0px rgba(116,114,160,0.69)",
+                    boxShadow: "0px 4px 0px 0px #C6C7E4, 0px 6px 8px 0px rgba(116,114,160,0.69)",
                     borderRadius: "16px",
                   }}
                 >
@@ -317,22 +316,26 @@ export default function PortalPage() {
                     </span>
                   </button>
                 </div>
-                <div className="overflow-y-auto" style={{ maxHeight: isMobile ? "calc(100% - 70px)" : "calc(100% - 96px)" }}>
+                <div
+                  className="overflow-y-auto"
+                  style={{ maxHeight: isMobile ? "calc(100% - 70px)" : "calc(100% - 96px)" }}
+                >
                   {userProjects === null ? (
                     <div className="flex items-center justify-center py-8">
-                      <span style={{ fontFamily: "'MADE Tommy Soft', sans-serif", color: "#6C6EA0" }}>
+                      <span
+                        style={{ fontFamily: "'MADE Tommy Soft', sans-serif", color: "#6C6EA0" }}
+                      >
                         Loading...
                       </span>
                     </div>
                   ) : (
-                    <ProjectList projects={userProjects}/>
+                    <ProjectList projects={userProjects} />
                   )}
                 </div>
               </div>
             </div>
           </div>
         </section>
-
       </main>
     </div>
   );

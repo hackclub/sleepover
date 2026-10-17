@@ -18,9 +18,7 @@ function ShipChecklistContent() {
   const searchParams = useSearchParams();
   const projectId = searchParams.get("projectId");
 
-  const [checked, setChecked] = useState<boolean[]>(
-    new Array(checklistItems.length).fill(false)
-  );
+  const [checked, setChecked] = useState<boolean[]>(new Array(checklistItems.length).fill(false));
 
   useEffect(() => {
     if (!projectId) {
@@ -169,9 +167,7 @@ function ShipChecklistContent() {
             onClick={handleYeah}
             disabled={!allChecked}
             className={`relative rounded-[16px] px-8 py-3 transition-transform ${
-              allChecked
-                ? "hover:scale-105 cursor-pointer"
-                : "opacity-50 cursor-not-allowed"
+              allChecked ? "hover:scale-105 cursor-pointer" : "opacity-50 cursor-not-allowed"
             }`}
             style={{
               background: "linear-gradient(180deg, #869BE7 0%, #B2BDF1 100%)",
@@ -233,24 +229,26 @@ function ShipChecklistContent() {
 
 export default function ShipChecklistPage() {
   return (
-    <Suspense fallback={
-      <div
-        className="min-h-screen relative font-sans pb-12 flex items-center justify-center"
-        style={{
-          background: "#C0DEFE",
-        }}
-      >
-        <p
-          className="text-[24px] font-bold"
+    <Suspense
+      fallback={
+        <div
+          className="min-h-screen relative font-sans pb-12 flex items-center justify-center"
           style={{
-            fontFamily: "'MADE Tommy Soft', sans-serif",
-            color: "#7472A0",
+            background: "#C0DEFE",
           }}
         >
-          Loading...
-        </p>
-      </div>
-    }>
+          <p
+            className="text-[24px] font-bold"
+            style={{
+              fontFamily: "'MADE Tommy Soft', sans-serif",
+              color: "#7472A0",
+            }}
+          >
+            Loading...
+          </p>
+        </div>
+      }
+    >
       <ShipChecklistContent />
     </Suspense>
   );

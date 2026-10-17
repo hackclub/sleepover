@@ -11,10 +11,7 @@ export async function GET(request: NextRequest) {
   });
 
   if (!rateLimitResult.success) {
-    return NextResponse.json(
-      { error: "Too many requests" },
-      { status: 429 }
-    );
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
   const cookieStore = await cookies();

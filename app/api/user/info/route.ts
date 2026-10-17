@@ -23,7 +23,7 @@ export async function GET(request: Request) {
     // Get user info and primary address
     const [userInfo, primaryAddress] = await Promise.all([
       getUserInfo(accessToken),
-      getPrimaryAddress(accessToken)
+      getPrimaryAddress(accessToken),
     ]);
 
     const identity = userInfo.identity || userInfo;

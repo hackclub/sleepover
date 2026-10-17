@@ -1,35 +1,40 @@
-"use server"
+"use server";
 
-import { getProjectById, shipProjectTable, updateProjectHours, getUserFromId } from "@/lib/airtable"
+import {
+  getProjectById,
+  shipProjectTable,
+  updateProjectHours,
+  getUserFromId,
+} from "@/lib/airtable";
 import { getMultipleProjectHours, parseHackatimeProjects } from "@/lib/hackatime";
 import { getSession } from "@/lib/session";
 import { triggerPyramidSync } from "@/lib/pyramidSync";
 import { getUserInfo, getPrimaryAddress } from "@/lib/auth";
 
 export async function shipProject(formData: FormData, projectId: string) {
-  const session = await getSession()
+  const session = await getSession();
 
   if (!session.isLoggedIn || !session.userId) {
     throw new Error("Unauthorized");
   }
 
-  const userId = session.userId
+  const userId = session.userId;
 
   if (!projectId) {
-    throw new Error("Project ID is required")
+    throw new Error("Project ID is required");
   }
 
-  const project = await getProjectById(projectId)
+  const project = await getProjectById(projectId);
   if (!project) {
-    throw new Error("Project not found")
+    throw new Error("Project not found");
   }
 
   if (project.userid !== userId) {
-    throw new Error("Not authorized to ship this project")
+    throw new Error("Not authorized to ship this project");
   }
 
   if (!project.desc?.trim()) {
-    throw new Error("Project description is required before shipping")
+    throw new Error("Project description is required before shipping");
   }
 
   // Update project hours in Airtable with fresh data from Hackatime before shipping
@@ -54,12 +59,12 @@ export async function shipProject(formData: FormData, projectId: string) {
   // Get user info and primary address
   const accessToken = session.accessToken;
   if (!accessToken) {
-    throw new Error("No access token available")
+    throw new Error("No access token available");
   }
 
   const [userInfo, primaryAddress] = await Promise.all([
     getUserInfo(accessToken),
-    getPrimaryAddress(accessToken)
+    getPrimaryAddress(accessToken),
   ]);
 
   const identity = userInfo.identity || userInfo;
@@ -84,27 +89,27 @@ export async function shipProject(formData: FormData, projectId: string) {
     country: primaryAddress?.country || "",
     ysws: formData.get("ysws") === "true",
     challenge: formData.get("challenge") === "true",
-    isForSnoozefest: formData.get("isForSnoozefest") === "true"
-  }
+    isForSnoozefest: formData.get("isForSnoozefest") === "true",
+  };
 
   // Input validation
   if (info.playable_url.length > 2048) {
-    throw new Error("Playable URL too long (max 2048 characters)")
+    throw new Error("Playable URL too long (max 2048 characters)");
   }
   if (info.code_url.length > 2048) {
-    throw new Error("Code URL too long (max 2048 characters)")
+    throw new Error("Code URL too long (max 2048 characters)");
   }
   if (info.github.length > 100) {
-    throw new Error("GitHub username too long (max 100 characters)")
+    throw new Error("GitHub username too long (max 100 characters)");
   }
   if (info.firstName.length > 100 || info.lastName.length > 100) {
-    throw new Error("Name fields too long (max 100 characters)")
+    throw new Error("Name fields too long (max 100 characters)");
   }
 
-  await shipProjectTable(projectId, info)
+  await shipProjectTable(projectId, info);
 
   // Trigger pyramid sync in background (non-blocking)
-  triggerPyramidSync(userId)
+  triggerPyramidSync(userId);
 
-  return { success: true }
+  return { success: true };
 }

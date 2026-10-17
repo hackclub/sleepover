@@ -21,8 +21,8 @@ function ShipDetailsContent() {
 
   const shouldShowSnoozefestCheckbox = () => {
     const start = new Date("2026-03-28T00:00:00Z"); // 8pm est march 27th in utc
-    const end = new Date("2026-03-30T04:00:00Z") // 8:30pm est march 29th in utc
-    const now = new Date()
+    const end = new Date("2026-03-30T04:00:00Z"); // 8:30pm est march 29th in utc
+    const now = new Date();
     return now >= start && now <= end;
   };
 
@@ -97,7 +97,7 @@ function ShipDetailsContent() {
     try {
       const parsed = new URL(url);
       // Only allow http/https protocols
-      return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+      return parsed.protocol === "http:" || parsed.protocol === "https:";
     } catch {
       return false;
     }
@@ -124,7 +124,7 @@ function ShipDetailsContent() {
     // Validate both URLs concurrently
     const [isRepoValid, isPlayableValid] = await Promise.all([
       checkUrlValidity(repoUrl),
-      checkUrlValidity(playableUrl)
+      checkUrlValidity(playableUrl),
     ]);
 
     if (!isRepoValid) {
@@ -143,15 +143,18 @@ function ShipDetailsContent() {
       return;
     }
 
-    sessionStorage.setItem("shipData", JSON.stringify({
-      githubUsername,
-      repoUrl,
-      playableUrl,
-      screenshot: screenshot ? screenshot.name : null,
-      submittedToYSWS,
-      isMonthlyChallenge,
-      isForSnoozefest
-    }));
+    sessionStorage.setItem(
+      "shipData",
+      JSON.stringify({
+        githubUsername,
+        repoUrl,
+        playableUrl,
+        screenshot: screenshot ? screenshot.name : null,
+        submittedToYSWS,
+        isMonthlyChallenge,
+        isForSnoozefest,
+      }),
+    );
 
     if (screenshot) {
       const reader = new FileReader();
@@ -289,22 +292,17 @@ function ShipDetailsContent() {
                 </div>
 
                 <label
-                className="block text-[24px] md:text-[28px] font-medium mb-2"
-                style={{
-                  fontFamily: "'MADE Tommy Soft', sans-serif",
-                  color: "#7472A0",
-                }}
-              >
-                Hackatime Data:
-              </label>
+                  className="block text-[24px] md:text-[28px] font-medium mb-2"
+                  style={{
+                    fontFamily: "'MADE Tommy Soft', sans-serif",
+                    color: "#7472A0",
+                  }}
+                >
+                  Hackatime Data:
+                </label>
                 {/* Hours */}
                 <div className="flex items-center gap-2 mt-2">
-                  <Image
-                    src="/icons/star.svg"
-                    alt="star"
-                    width={28}
-                    height={25}
-                  />
+                  <Image src="/icons/star.svg" alt="star" width={28} height={25} />
                   <span
                     className="text-[20px] md:text-[24px] font-bold underline"
                     style={{
@@ -320,12 +318,7 @@ function ShipDetailsContent() {
 
                 {/* Hackatime */}
                 <div className="flex items-center gap-2 mt-2">
-                  <Image
-                    src="/icons/star.svg"
-                    alt="star"
-                    width={28}
-                    height={25}
-                  />
+                  <Image src="/icons/star.svg" alt="star" width={28} height={25} />
                   <span
                     className="text-[20px] md:text-[24px] font-bold underline"
                     style={{
@@ -529,7 +522,8 @@ function ShipDetailsContent() {
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
                   background: "white",
-                  boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
+                  boxShadow:
+                    "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
                 }}
               />
             </div>
@@ -555,7 +549,8 @@ function ShipDetailsContent() {
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
                   background: "white",
-                  boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
+                  boxShadow:
+                    "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
                 }}
               />
               {repoUrlError && (
@@ -591,7 +586,8 @@ function ShipDetailsContent() {
                 style={{
                   fontFamily: "'MADE Tommy Soft', sans-serif",
                   background: "white",
-                  boxShadow: "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
+                  boxShadow:
+                    "0px 4px 4px rgba(116,114,160,0.62), inset 2px 4px 8px rgba(116,114,160,0.29)",
                 }}
               />
               {playableUrlError && (
@@ -651,7 +647,7 @@ function ShipDetailsContent() {
                 </GradientText>
               </label>
             </div>
-            
+
             {shouldShowSnoozefestCheckbox() && (
               <div className="mt-4 mb-4">
                 <label className="flex items-center gap-4 cursor-pointer">
@@ -676,7 +672,6 @@ function ShipDetailsContent() {
               </div>
             )}
           </div>
-
 
           {/* NEXT buttons */}
           <div className="flex justify-center gap-4">
@@ -743,24 +738,26 @@ function ShipDetailsContent() {
 
 export default function ShipDetailsPage() {
   return (
-    <Suspense fallback={
-      <div
-        className="min-h-screen relative font-sans pb-12 flex items-center justify-center"
-        style={{
-          background: "#C0DEFE",
-        }}
-      >
-        <p
-          className="text-[24px] font-bold"
+    <Suspense
+      fallback={
+        <div
+          className="min-h-screen relative font-sans pb-12 flex items-center justify-center"
           style={{
-            fontFamily: "'MADE Tommy Soft', sans-serif",
-            color: "#7472A0",
+            background: "#C0DEFE",
           }}
         >
-          Loading...
-        </p>
-      </div>
-    }>
+          <p
+            className="text-[24px] font-bold"
+            style={{
+              fontFamily: "'MADE Tommy Soft', sans-serif",
+              color: "#7472A0",
+            }}
+          >
+            Loading...
+          </p>
+        </div>
+      }
+    >
       <ShipDetailsContent />
     </Suspense>
   );

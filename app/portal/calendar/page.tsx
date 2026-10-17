@@ -51,7 +51,8 @@ const FALLBACK_EVENTS: Event[] = [
     title: "Show & Tell",
     date: "2026-03-28",
     time: "7:00 PM ET",
-    description: "Share what you've been building! Show off your project to the Sleepover community.",
+    description:
+      "Share what you've been building! Show off your project to the Sleepover community.",
     type: "social",
   },
   {
@@ -79,7 +80,10 @@ const FALLBACK_EVENTS: Event[] = [
   },
 ];
 
-const TYPE_STYLES: Record<Event["type"], { bg: string; border: string; label: string; dot: string }> = {
+const TYPE_STYLES: Record<
+  Event["type"],
+  { bg: string; border: string; label: string; dot: string }
+> = {
   huddle: {
     bg: "#ddeeff",
     border: "#9AC6F6",
@@ -106,7 +110,6 @@ const TYPE_STYLES: Record<Event["type"], { bg: string; border: string; label: st
   },
 };
 
-
 function parseDate(dateStr: string): Date {
   const datePart = dateStr?.split("T")[0] ?? "";
   return new Date(datePart + "T00:00:00");
@@ -118,7 +121,9 @@ function isUpcoming(dateStr: string) {
   return parseDate(dateStr) >= today;
 }
 
-function groupByMonth(events: Event[]): { monthLabel: string; monthKey: string; events: Event[] }[] {
+function groupByMonth(
+  events: Event[],
+): { monthLabel: string; monthKey: string; events: Event[] }[] {
   const map = new Map<string, Event[]>();
   for (const e of events) {
     const d = parseDate(e.date);
@@ -130,7 +135,10 @@ function groupByMonth(events: Event[]): { monthLabel: string; monthKey: string; 
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, evts]) => ({
       monthKey: key,
-      monthLabel: new Date(key + "-01T00:00:00").toLocaleDateString("en-US", { month: "long", year: "numeric" }),
+      monthLabel: new Date(key + "-01T00:00:00").toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      }),
       events: evts.sort((a, b) => a.date.localeCompare(b.date)),
     }));
 }
@@ -171,9 +179,8 @@ export default function CalendarPage() {
     });
   };
 
-  const filteredEvents = activeFilters.size === 0
-    ? events
-    : events.filter((e: Event) => activeFilters.has(e.type));
+  const filteredEvents =
+    activeFilters.size === 0 ? events : events.filter((e: Event) => activeFilters.has(e.type));
 
   const months = groupByMonth(filteredEvents);
 
@@ -226,7 +233,9 @@ export default function CalendarPage() {
 
         {/* Legend / filters */}
         <div className="flex flex-wrap gap-3 justify-center mb-12">
-          {(Object.entries(TYPE_STYLES) as [Event["type"], typeof TYPE_STYLES[Event["type"]]][]).map(([type, style]) => {
+          {(
+            Object.entries(TYPE_STYLES) as [Event["type"], (typeof TYPE_STYLES)[Event["type"]]][]
+          ).map(([type, style]) => {
             const active = activeFilters.has(type);
             const dimmed = activeFilters.size > 0 && !active;
             return (
@@ -243,7 +252,10 @@ export default function CalendarPage() {
                   cursor: "pointer",
                 }}
               >
-                <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: active ? "white" : style.dot }} />
+                <span
+                  className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                  style={{ background: active ? "white" : style.dot }}
+                />
                 {style.label}
               </button>
             );
@@ -267,11 +279,17 @@ export default function CalendarPage() {
 
         {/* Month sections */}
         {loading ? (
-          <p className="text-center py-16" style={{ fontFamily: "'MADE Tommy Soft', sans-serif", color: "#9a9cca" }}>
+          <p
+            className="text-center py-16"
+            style={{ fontFamily: "'MADE Tommy Soft', sans-serif", color: "#9a9cca" }}
+          >
             Loading events...
           </p>
         ) : months.length === 0 ? (
-          <p className="text-center py-16" style={{ fontFamily: "'MADE Tommy Soft', sans-serif", color: "#9a9cca" }}>
+          <p
+            className="text-center py-16"
+            style={{ fontFamily: "'MADE Tommy Soft', sans-serif", color: "#9a9cca" }}
+          >
             No events yet — check back soon!
           </p>
         ) : null}
@@ -322,7 +340,9 @@ export default function CalendarPage() {
                                 color: past ? "#aaaacc" : style.dot,
                               }}
                             >
-                              {parseDate(event.date).toLocaleDateString("en-US", { weekday: "short" })}
+                              {parseDate(event.date).toLocaleDateString("en-US", {
+                                weekday: "short",
+                              })}
                             </p>
                             <p
                               className="text-2xl font-bold leading-tight"

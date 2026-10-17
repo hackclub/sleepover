@@ -28,7 +28,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
-, "lib/bot.js"  ],
+    "**/*.mts",
+    "lib/bot.js"
+  ],
   "exclude": ["node_modules"]
 }

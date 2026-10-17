@@ -9,8 +9,5 @@ export async function POST() {
 }
 
 export async function GET() {
-  return NextResponse.json(
-    { error: "Use POST method for logout" },
-    { status: 405 }
-  );
+  return NextResponse.json({ error: "Use POST method for logout" }, { status: 405 });
 }

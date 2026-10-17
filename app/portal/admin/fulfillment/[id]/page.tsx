@@ -16,15 +16,15 @@ import ProjectsList from "./ProjectsList";
 const FONT = "'MADE Tommy Soft', sans-serif";
 
 const IDV_STYLES: Record<string, React.CSSProperties> = {
-  verified:         { background: "#e6f9f0", color: "#1a7a4a", border: "1.5px solid #7dd3aa" },
-  ineligible:       { background: "#fde8e8", color: "#c03535", border: "1.5px solid #f0a0a0" },
-  pending:          { background: "#fff4e0", color: "#b35c00", border: "1.5px solid #f5c07a" },
+  verified: { background: "#e6f9f0", color: "#1a7a4a", border: "1.5px solid #7dd3aa" },
+  ineligible: { background: "#fde8e8", color: "#c03535", border: "1.5px solid #f0a0a0" },
+  pending: { background: "#fff4e0", color: "#b35c00", border: "1.5px solid #f5c07a" },
   needs_submission: { background: "#e8eaf8", color: "#5A5C8A", border: "1.5px solid #c0c2e8" },
 };
 const IDV_LABELS: Record<string, string> = {
-  verified:         "Verified",
-  ineligible:       "Ineligible",
-  pending:          "Pending",
+  verified: "Verified",
+  ineligible: "Ineligible",
+  pending: "Pending",
   needs_submission: "Needs Submission",
 };
 
@@ -33,7 +33,6 @@ const STATUS_STYLES: Record<string, { bg: string; text: string; border: string }
   Fulfilled: { bg: "#e6f9f0", text: "#1a7a4a", border: "#7dd3aa" },
   Refunded: { bg: "#fde8e8", text: "#c03535", border: "#f0a0a0" },
 };
-
 
 export default async function FulfillmentDetailPage({
   params,
@@ -58,10 +57,15 @@ export default async function FulfillmentDetailPage({
     getUserFromId(user.userId),
   ]);
   const idvStatus = userInfo?.verification_status || null;
-  const adminSlackHandle = adminInfo?.slack_id ? `<@${adminInfo.slack_id}>` : `@${adminInfo?.slack_display_name || user.name || "admin"}`;
+  const adminSlackHandle = adminInfo?.slack_id
+    ? `<@${adminInfo.slack_id}>`
+    : `@${adminInfo?.slack_display_name || user.name || "admin"}`;
 
-  const statusStyle =
-    STATUS_STYLES[order.status] ?? { bg: "#e8eaf8", text: "#5A5C8A", border: "#c0c2e8" };
+  const statusStyle = STATUS_STYLES[order.status] ?? {
+    bg: "#e8eaf8",
+    text: "#5A5C8A",
+    border: "#c0c2e8",
+  };
   const addressParts = [
     order.address_line_1,
     order.address_line_2,
@@ -102,7 +106,11 @@ export default async function FulfillmentDetailPage({
         </h1>
         <span
           className="text-xs font-semibold px-2.5 py-1 rounded-full ml-auto"
-          style={{ background: statusStyle.bg, color: statusStyle.text, border: `1.5px solid ${statusStyle.border}` }}
+          style={{
+            background: statusStyle.bg,
+            color: statusStyle.text,
+            border: `1.5px solid ${statusStyle.border}`,
+          }}
         >
           {order.status.toUpperCase()}
         </span>
@@ -127,11 +135,7 @@ export default async function FulfillmentDetailPage({
               <Row label="Quantity" value={String(order.quantity)} />
               <Row
                 label="Price"
-                value={
-                  order.product
-                    ? `${order.product.price * order.quantity} feathers`
-                    : "—"
-                }
+                value={order.product ? `${order.product.price * order.quantity} feathers` : "—"}
               />
               <Row label="Date" value={order.date || "—"} />
               {addressParts.length > 0 && (
@@ -235,7 +239,9 @@ export default async function FulfillmentDetailPage({
                         {IDV_LABELS[idvStatus] ?? idvStatus}
                       </span>
                     ) : (
-                      <span className="text-sm" style={{ color: "#8a8cb0" }}>—</span>
+                      <span className="text-sm" style={{ color: "#8a8cb0" }}>
+                        —
+                      </span>
                     )}
                   </div>
                 </div>
@@ -261,7 +267,10 @@ export default async function FulfillmentDetailPage({
             <h2 className="text-lg font-bold mb-3" style={{ color: "#4a4c78", fontFamily: FONT }}>
               Fulfillment Instructions
             </h2>
-            <p className="text-sm whitespace-pre-wrap" style={{ color: "#5a5c8a", fontFamily: FONT }}>
+            <p
+              className="text-sm whitespace-pre-wrap"
+              style={{ color: "#5a5c8a", fontFamily: FONT }}
+            >
               {linkifyText(order.product.fulfillmentMethod)}
             </p>
           </div>
@@ -303,7 +312,7 @@ function linkifyText(text: string): React.ReactNode {
       </a>
     ) : (
       part
-    )
+    ),
   );
 }
 

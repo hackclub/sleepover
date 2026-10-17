@@ -30,11 +30,11 @@ export default function ShopOnboardingNovel({ onComplete }: ShopOnboardingNovelP
 
   useEffect(() => {
     if (!hasStarted) return;
-    
+
     setDisplayedText("");
     setIsTyping(true);
     let index = 0;
-    
+
     const audio = new Audio("/sounds/animal-talking.mp3");
     audio.volume = 0.3;
     audio.loop = true;
@@ -76,16 +76,13 @@ export default function ShopOnboardingNovel({ onComplete }: ShopOnboardingNovelP
   };
 
   return (
-    <div
-      className="fixed inset-0 z-[100] cursor-pointer"
-      onClick={handleClick}
-    >
+    <div className="fixed inset-0 z-[100] cursor-pointer" onClick={handleClick}>
       <div className="absolute inset-0 bg-black/20" />
 
-      <div 
+      <div
         className={`absolute z-10 ${
-          isMobile 
-            ? "bottom-[180px] left-1/2 -translate-x-1/2 w-[140px] h-[180px]" 
+          isMobile
+            ? "bottom-[180px] left-1/2 -translate-x-1/2 w-[140px] h-[180px]"
             : "bottom-[10px] left-[30px] w-[220px] h-[280px]"
         }`}
       >

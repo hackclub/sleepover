@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: "Too many requests. This job can only run once per 10 minutes." },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -60,7 +60,9 @@ export async function POST(request: NextRequest) {
           referral_code,
         });
 
-        console.log(`Synced pyramid data for user ${email}: ${totalHours} hours, ${shippedProjects} shipped`);
+        console.log(
+          `Synced pyramid data for user ${email}: ${totalHours} hours, ${shippedProjects} shipped`,
+        );
         successCount++;
       } catch (userError) {
         console.error(`Error processing user ${user.email}:`, userError);

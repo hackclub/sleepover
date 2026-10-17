@@ -67,11 +67,7 @@ export async function proxy(request: NextRequest) {
   if (pathname.startsWith("/portal")) {
     const response = NextResponse.next();
 
-    const session = await getIronSession<SessionData>(
-      request,
-      response,
-      sessionOptions
-    );
+    const session = await getIronSession<SessionData>(request, response, sessionOptions);
 
     if (!session.isLoggedIn) {
       const url = request.nextUrl.clone();

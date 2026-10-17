@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/session";
-import { isAdminUser, getAllSubmissions, updateSubmissionStatus, appendSubmissionDm } from "@/lib/airtable";
+import {
+  isAdminUser,
+  getAllSubmissions,
+  updateSubmissionStatus,
+  appendSubmissionDm,
+} from "@/lib/airtable";
 import { projectReviewMessage } from "@/lib/bot";
 
 async function requireAdmin() {
@@ -33,7 +38,12 @@ export async function PATCH(request: NextRequest) {
     if (!recordId || !["Approved", "Rejected", "Pending"].includes(status)) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
-    await updateSubmissionStatus(recordId, status, shipJustification, overrideHours ? Number(overrideHours) : undefined);
+    await updateSubmissionStatus(
+      recordId,
+      status,
+      shipJustification,
+      overrideHours ? Number(overrideHours) : undefined,
+    );
     return NextResponse.json({ success: true });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);

@@ -24,21 +24,14 @@ export default function PortalLayout({
   }, []);
 
   return (
-    <div
-      className="font-sans min-h-screen relative"
-      style={{ backgroundColor: "#C0DEFE" }}
-    >
+    <div className="font-sans min-h-screen relative" style={{ backgroundColor: "#C0DEFE" }}>
       <BunnyTile />
       <PortalSidebar onStateChange={setSidebarOpen} />
 
       <main
         className="min-h-screen py-6 md:py-8 px-4 md:px-8 transition-all duration-300 pt-16 md:pt-8"
         style={{
-          marginLeft: isMobile
-            ? "0px"
-            : sidebarOpen
-              ? "clamp(320px, 25vw, 520px)"
-              : "96px",
+          marginLeft: isMobile ? "0px" : sidebarOpen ? "clamp(320px, 25vw, 520px)" : "96px",
           marginRight: isMobile ? "0px" : "32px",
         }}
       >

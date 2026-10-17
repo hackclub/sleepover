@@ -4,7 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { appendIncomingDmBySlackId } from "@/lib/airtable";
 
-function verifySlackSignature(signingSecret: string, body: string, timestamp: string, signature: string): boolean {
+function verifySlackSignature(
+  signingSecret: string,
+  body: string,
+  timestamp: string,
+  signature: string,
+): boolean {
   try {
     if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) return false;
     const hmac = `v0=${crypto.createHmac("sha256", signingSecret).update(`v0:${timestamp}:${body}`).digest("hex")}`;
@@ -56,12 +61,7 @@ export async function POST(request: NextRequest) {
   const event = payload.event as Record<string, unknown>;
 
   // Only handle DMs, skip bot messages, edits, deletes
-  if (
-    event.type !== "message" ||
-    event.channel_type !== "im" ||
-    event.bot_id ||
-    event.subtype
-  ) {
+  if (event.type !== "message" || event.channel_type !== "im" || event.bot_id || event.subtype) {
     return NextResponse.json({ ok: true });
   }
 

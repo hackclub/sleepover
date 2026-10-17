@@ -38,10 +38,10 @@ export default function ExplorePage() {
     fetch("/api/gallery")
       .then((res) => res.json())
       .then((data) => {
-        SetProjects(data.data)
+        SetProjects(data.data);
       })
       .catch(console.error);
-    }, []);
+  }, []);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -94,30 +94,21 @@ export default function ExplorePage() {
         </h1>
 
         <p className="text-base md:text-lg lg:text-2xl text-center mb-8 md:mb-12 px-2">
-          <GradientText
-            gradient="#6c6ea0"
-            strokeWidth={isMobile ? "2px" : "4px"}
-          >
-            need inspiration? check out awesome projects below - or learn to make some awesome projects through
-          </GradientText>
-          {" "}
-          <a 
-            href="https://guides.hackclub.com" 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <GradientText gradient="#6c6ea0" strokeWidth={isMobile ? "2px" : "4px"}>
+            need inspiration? check out awesome projects below - or learn to make some awesome
+            projects through
+          </GradientText>{" "}
+          <a
+            href="https://guides.hackclub.com"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-block transition-all duration-200 hover:scale-110 hover:drop-shadow-[0_4px_8px_rgba(108,110,160,0.5)]"
           >
-            <GradientText
-              gradient="#6c6ea0"
-              strokeWidth={isMobile ? "2px" : "4px"}
-            >
+            <GradientText gradient="#6c6ea0" strokeWidth={isMobile ? "2px" : "4px"}>
               guides
             </GradientText>
           </a>
-          <GradientText
-            gradient="#6c6ea0"
-            strokeWidth={isMobile ? "2px" : "4px"}
-          >
+          <GradientText gradient="#6c6ea0" strokeWidth={isMobile ? "2px" : "4px"}>
             !
           </GradientText>
         </p>

@@ -16,10 +16,7 @@ export default function FAQPage() {
   }, []);
 
   return (
-    <div
-      className="font-sans min-h-screen relative"
-      style={{ backgroundColor: "#C0DEFE" }}
-    >
+    <div className="font-sans min-h-screen relative" style={{ backgroundColor: "#C0DEFE" }}>
       <Suspense fallback={null}>
         <ReferralCapture />
       </Suspense>
@@ -61,9 +58,8 @@ export default function FAQPage() {
           className="relative z-10 mt-3 md:mt-4 text-[#7472A0] text-base md:text-lg"
           style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
         >
-          Please note: day-of logistics, such as schedules or suggested packing
-          lists, are subject to change. We will provide more info closer to the
-          event.
+          Please note: day-of logistics, such as schedules or suggested packing lists, are subject
+          to change. We will provide more info closer to the event.
         </p>
       </main>
     </div>

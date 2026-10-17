@@ -5,10 +5,7 @@ import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 const INTERNAL_DM_TOKEN = process.env.INTERNAL_DM_TOKEN;
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const authHeader = request.headers.get("authorization");
     if (!INTERNAL_DM_TOKEN || authHeader !== `Bearer ${INTERNAL_DM_TOKEN}`) {
@@ -37,7 +34,7 @@ export async function POST(
     if (dmMsg.length > 2000) {
       return NextResponse.json(
         { error: "dmMsg exceeds maximum length of 2000 characters" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 

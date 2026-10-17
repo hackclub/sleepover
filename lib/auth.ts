@@ -4,12 +4,10 @@ function getRedirectUri(): string {
   // If explicitly set in env, use that
   if (process.env.HACKCLUB_REDIRECT_URI) {
     return process.env.HACKCLUB_REDIRECT_URI;
-  }
-  else {
+  } else {
     return "";
   }
 }
-
 
 export const HACKCLUB_AUTH_CONFIG = {
   clientId: process.env.HACKCLUB_CLIENT_ID!,

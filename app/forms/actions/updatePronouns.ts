@@ -1,6 +1,6 @@
-"use server"
+"use server";
 
-import { updateUserPronouns } from "@/lib/airtable"
+import { updateUserPronouns } from "@/lib/airtable";
 import { requireAuth } from "@/lib/session";
 
 export async function updatePronouns(pronouns: string) {
@@ -8,7 +8,7 @@ export async function updatePronouns(pronouns: string) {
   const userId = session.userId;
 
   if (!pronouns) {
-    throw new Error("Pronouns are required")
+    throw new Error("Pronouns are required");
   }
 
   await updateUserPronouns(userId, pronouns);

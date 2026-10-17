@@ -20,13 +20,7 @@ function CloudCard({ slide }: { slide: Slide }) {
   return (
     <div className="relative w-[260px] sm:w-[300px] lg:w-[320px]">
       {/* Cloud background image */}
-      <Image
-        src={slide.cloudBg}
-        alt=""
-        width={320}
-        height={280}
-        className="w-full h-auto"
-      />
+      <Image src={slide.cloudBg} alt="" width={320} height={280} className="w-full h-auto" />
 
       {/* Content overlay */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -39,7 +33,6 @@ function CloudCard({ slide }: { slide: Slide }) {
             sizes={`(min-width: 1024px) ${imageWidth}px, ${imageWidth}px`}
           />
         </div>
-
       </div>
 
       {/* Curved text label */}
@@ -113,7 +106,7 @@ export default function AutoplayCarousel({
       stopOnInteraction: false,
       stopOnMouseEnter: true,
       startDelay: 0,
-    })
+    }),
   );
 
   const [emblaRef] = useEmblaCarousel(
@@ -123,7 +116,7 @@ export default function AutoplayCarousel({
       containScroll: false,
       dragFree: true,
     },
-    [autoScroll.current]
+    [autoScroll.current],
   );
 
   return (

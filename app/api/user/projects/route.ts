@@ -16,7 +16,7 @@ export async function GET() {
 
     return NextResponse.json({
       projects: projects ?? [],
-      hasHackatime
+      hasHackatime,
     });
   } catch (error) {
     return NextResponse.json({ projects: [], hasHackatime: false });

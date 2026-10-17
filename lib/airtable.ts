@@ -10,9 +10,7 @@ function getBase() {
   if (!process.env.AIRTABLE_BASE_ID) {
     throw new Error("AIRTABLE_BASE_ID is required");
   }
-  return new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
-    process.env.AIRTABLE_BASE_ID
-  );
+  return new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
 }
 
 function getUsersTable() {
@@ -21,15 +19,16 @@ function getUsersTable() {
 
 export async function getUserFromId(userid: string) {
   const safeId = escapeFormulaString(userid);
-  const records = await getUsersTable().select({
-    filterByFormula: `{id} = '${safeId}'`,
-    maxRecords: 1,
-  })
-  .firstPage();
-  
+  const records = await getUsersTable()
+    .select({
+      filterByFormula: `{id} = '${safeId}'`,
+      maxRecords: 1,
+    })
+    .firstPage();
+
   const user = records[0];
   if (!user) return null;
-  
+
   const getField = (field: unknown): string => {
     if (Array.isArray(field)) return String(field[0] || "");
     return String(field || "");
@@ -52,7 +51,7 @@ export async function getUserFromId(userid: string) {
 export async function getAllUsers() {
   const users = await getUsersTable()
     .select({
-      view: "Grid view"
+      view: "Grid view",
     })
     .all();
 
@@ -65,7 +64,6 @@ export async function getAllUsers() {
 function getFulfillmentTable() {
   return getBase()("FULFILLMENT");
 }
-
 
 export function getProjectsTable() {
   return getBase()("projects");
@@ -104,7 +102,7 @@ export async function getSingularProject(userid: string, name: string) {
 
   const project = records[0];
   if (!project) return null;
-  
+
   return {
     id: project.id,
     name: project.get("name") as string,
@@ -131,11 +129,12 @@ export async function getProjectById(projectId: string) {
 export async function updateProjectHours(projectid: string, hours: number) {
   return await getProjectsTable().update([
     {
-      "id": projectid,
-      "fields": {
-        "hours": hours
-      }
-    }])
+      id: projectid,
+      fields: {
+        hours: hours,
+      },
+    },
+  ]);
 }
 
 export async function updateProjectName(projectid: string, name: string) {
@@ -144,11 +143,12 @@ export async function updateProjectName(projectid: string, name: string) {
   }
   const record = await getProjectsTable().update([
     {
-      "id": projectid,
-      "fields": {
-        "name": name
-      }
-    }])
+      id: projectid,
+      fields: {
+        name: name,
+      },
+    },
+  ]);
   return record[0];
 }
 
@@ -158,32 +158,35 @@ export async function updateProjectDesc(projectid: string, desc: string) {
   }
   const record = await getProjectsTable().update([
     {
-      "id": projectid,
-      "fields": {
-        "desc": desc
-      }
-    }])
+      id: projectid,
+      fields: {
+        desc: desc,
+      },
+    },
+  ]);
   return record[0];
 }
 
 export async function updateProjectHackatime(projectid: string, hackatime_name: string) {
   const record = await getProjectsTable().update([
     {
-      "id": projectid,
-      "fields": {
-        "hackatime_name": hackatime_name
-      }
-    }])
+      id: projectid,
+      fields: {
+        hackatime_name: hackatime_name,
+      },
+    },
+  ]);
   return record[0];
 }
 
 export async function getUsersProjects(userid: string) {
   const safeId = escapeFormulaString(userid);
   const records = await getProjectsTable()
-  .select({
-    filterByFormula: `{userid} = '${safeId}'`,
-    view: "Grid view"
-}).all()
+    .select({
+      filterByFormula: `{userid} = '${safeId}'`,
+      view: "Grid view",
+    })
+    .all();
 
   const projects = records.map((r) => ({
     id: r.id,
@@ -226,7 +229,7 @@ export async function findUserByEmail(email: string) {
 
   const user = records[0];
   if (!user) return null;
-  
+
   return {
     recordId: user.id,
     id: user.get("id") as string,
@@ -262,10 +265,7 @@ export async function createUser(user: Omit<UserRecord, "created_at">) {
   };
 }
 
-export async function updateUser(
-  recordId: string,
-  updates: Partial<UserRecord>
-) {
+export async function updateUser(recordId: string, updates: Partial<UserRecord>) {
   const record = await getUsersTable().update(recordId, updates);
   return {
     recordId: record.id,
@@ -289,13 +289,13 @@ export async function updateUserPronouns(userId: string, pronouns: string) {
 
   const record = records[0];
   await getUsersTable().update([
-      {
-        id: record.id,
-        fields: {
-          pronouns: pronouns
-        },
+    {
+      id: record.id,
+      fields: {
+        pronouns: pronouns,
       },
-    ]);
+    },
+  ]);
 
   return { success: true };
 }
@@ -326,22 +326,24 @@ export async function getCurrency(userid: string) {
     })
     .firstPage();
 
-    return records[0]?.get("currency") ?? 0
+  return records[0]?.get("currency") ?? 0;
 }
 
 const locks = new Map<string, Promise<void>>();
 
 async function withPurchaseLock<T>(userid: string, fn: () => Promise<T>): Promise<T> {
   const key = `purchase:${userid}`;
-  
+
   while (locks.has(key)) {
     await locks.get(key);
   }
-  
+
   let resolve: () => void;
-  const lockPromise = new Promise<void>((r) => { resolve = r; });
+  const lockPromise = new Promise<void>((r) => {
+    resolve = r;
+  });
   locks.set(key, lockPromise);
-  
+
   try {
     return await fn();
   } finally {
@@ -352,7 +354,12 @@ async function withPurchaseLock<T>(userid: string, fn: () => Promise<T>): Promis
 
 const SINGLE = ["rec4wZN4c2OdkWMnc"]; // Sticker sheet
 
-export async function addProduct(userid: string, product: string, formData: FormData, address?: HackClubAddress ) {
+export async function addProduct(
+  userid: string,
+  product: string,
+  formData: FormData,
+  address?: HackClubAddress,
+) {
   return withPurchaseLock(userid, async () => {
     const safeUserId = escapeFormulaString(userid);
 
@@ -367,7 +374,9 @@ export async function addProduct(userid: string, product: string, formData: Form
           maxRecords: 1,
         })
         .firstPage(),
-      getProductsTable().find(product).catch(() => null),
+      getProductsTable()
+        .find(product)
+        .catch(() => null),
     ]);
 
     if (!product_record) {
@@ -431,7 +440,7 @@ export async function addProduct(userid: string, product: string, formData: Form
 
 export async function hasUserOrderedProduct(userid: string, product: string): Promise<boolean> {
   const safeUserId = escapeFormulaString(userid);
-  
+
   const records = await getShopTable()
     .select({
       filterByFormula: `{id} = '${safeUserId}'`,
@@ -445,13 +454,19 @@ export async function hasUserOrderedProduct(userid: string, product: string): Pr
   return currentOrdered.includes(product);
 }
 
-export async function addFulfillment(userid: string, product: string, quantity: number, address?: HackClubAddress) {
+export async function addFulfillment(
+  userid: string,
+  product: string,
+  quantity: number,
+  address?: HackClubAddress,
+) {
   const safeUserId = escapeFormulaString(userid);
-  const user = await getUsersTable().select({
-    filterByFormula: `{id} = '${safeUserId}'`,
-    maxRecords: 1,
-  })
-  .firstPage();
+  const user = await getUsersTable()
+    .select({
+      filterByFormula: `{id} = '${safeUserId}'`,
+      maxRecords: 1,
+    })
+    .firstPage();
 
   const date = new Date().toISOString().slice(0, 10);
 
@@ -460,7 +475,7 @@ export async function addFulfillment(userid: string, product: string, quantity: 
     product: [product],
     date: date,
     status: "Unfulfilled",
-    quantity: quantity
+    quantity: quantity,
   };
 
   if (address) {
@@ -483,11 +498,12 @@ export async function addFulfillment(userid: string, product: string, quantity: 
 
 export async function getUserOrders(userid: string) {
   const safeUserId = escapeFormulaString(userid);
-  const users = await getUsersTable().select({
-    filterByFormula: `{id} = '${safeUserId}'`,
-    maxRecords: 1,
-  })
-  .firstPage();
+  const users = await getUsersTable()
+    .select({
+      filterByFormula: `{id} = '${safeUserId}'`,
+      maxRecords: 1,
+    })
+    .firstPage();
 
   if (!users.length) return [];
 
@@ -502,7 +518,7 @@ export async function getUserOrders(userid: string) {
     .all();
 
   // Filter records where the user field array contains the userRecordId
-  const records = allRecords.filter(r => {
+  const records = allRecords.filter((r) => {
     const userField = r.get("user") as string[];
     if (Array.isArray(userField)) {
       return userField.includes(userRecordId);
@@ -539,9 +555,9 @@ export async function getUserOrders(userid: string) {
         product: productDetails,
         productId: productId,
         address,
-        quantity: r.get("quantity") as number
+        quantity: r.get("quantity") as number,
       };
-    })
+    }),
   );
 
   return ordersWithDetails;
@@ -557,14 +573,17 @@ export async function getAllFulfillmentOrders() {
     ((r.get("product") as string[]) || []).forEach((id) => productIdSet.add(id));
   }
 
-  const productMap: Record<string, { name: string; price: number; image?: string; fulfillmentMethod?: string }> = {};
+  const productMap: Record<
+    string,
+    { name: string; price: number; image?: string; fulfillmentMethod?: string }
+  > = {};
   await Promise.all(
     [...productIdSet].map(async (pid) => {
       try {
         const p = await getProductsTable().find(pid);
         const method = p.get("fufillment_method");
         productMap[pid] = {
-          name: ((p.get("item_friendly_name") as string) || (p.get("item_name") as string) || ""),
+          name: (p.get("item_friendly_name") as string) || (p.get("item_name") as string) || "",
           price: (p.get("price") as number) || 0,
           image: (p.get("image") as string) || undefined,
           fulfillmentMethod:
@@ -573,44 +592,46 @@ export async function getAllFulfillmentOrders() {
               : (method as string | undefined),
         };
       } catch {}
-    })
+    }),
   );
 
   const EXCLUDED_PRODUCT_IDS = new Set(SINGLE); // sticker sheet
 
   const arr = <T>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
-  const mapped = records.map((r) => {
-    const pIds = (r.get("product") as string[]) || [];
-    const productId = pIds[0];
-    return {
-      id: r.id,
-      status: (r.get("status") as string) || "Unfulfilled",
-      date: (r.get("date") as string) || "",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      createdAt: ((r as any)._rawJson?.createdTime as string) || undefined,
-      userName: arr<string>(r.get("name (from user)"))[0] || "",
-      email: arr<string>(r.get("Email (from Hack Clubbers) (from registered_users)"))[0] || "",
-      pronouns: arr<string>(r.get("pronouns"))[0] || "",
-      userid: arr<string>(r.get("userid"))[0] || "",
-      address_line_1: (r.get("address_line_1") as string) || "",
-      address_line_2: (r.get("address_line_2") as string) || "",
-      city: (r.get("city") as string) || "",
-      state_province: (r.get("state_province") as string) || "",
-      country: (r.get("country") as string) || "",
-      zip_code: (r.get("zip_code") as string) || "",
-      quantity: (r.get("quantity") as number) || 1,
-      notes: (r.get("Notes") as string) || "",
-      productId: productId || undefined,
-      product: productId ? (productMap[productId] ?? null) : null,
-      adminOwner: (r.get("admin_owner") as string) || null,
-    };
-  }).filter((o) => {
-    if (o.productId && EXCLUDED_PRODUCT_IDS.has(o.productId)) return false;
-    if (o.product?.name?.toLowerCase().includes("travel")) return false;
-    const p = o.pronouns.toLowerCase();
-    if (p.includes("he/him") || p === "he") return false;
-    return true;
-  });
+  const mapped = records
+    .map((r) => {
+      const pIds = (r.get("product") as string[]) || [];
+      const productId = pIds[0];
+      return {
+        id: r.id,
+        status: (r.get("status") as string) || "Unfulfilled",
+        date: (r.get("date") as string) || "",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        createdAt: ((r as any)._rawJson?.createdTime as string) || undefined,
+        userName: arr<string>(r.get("name (from user)"))[0] || "",
+        email: arr<string>(r.get("Email (from Hack Clubbers) (from registered_users)"))[0] || "",
+        pronouns: arr<string>(r.get("pronouns"))[0] || "",
+        userid: arr<string>(r.get("userid"))[0] || "",
+        address_line_1: (r.get("address_line_1") as string) || "",
+        address_line_2: (r.get("address_line_2") as string) || "",
+        city: (r.get("city") as string) || "",
+        state_province: (r.get("state_province") as string) || "",
+        country: (r.get("country") as string) || "",
+        zip_code: (r.get("zip_code") as string) || "",
+        quantity: (r.get("quantity") as number) || 1,
+        notes: (r.get("Notes") as string) || "",
+        productId: productId || undefined,
+        product: productId ? (productMap[productId] ?? null) : null,
+        adminOwner: (r.get("admin_owner") as string) || null,
+      };
+    })
+    .filter((o) => {
+      if (o.productId && EXCLUDED_PRODUCT_IDS.has(o.productId)) return false;
+      if (o.product?.name?.toLowerCase().includes("travel")) return false;
+      const p = o.pronouns.toLowerCase();
+      if (p.includes("he/him") || p === "he") return false;
+      return true;
+    });
 
   // Batch-fetch verification_status from registered_users by userid
   const userIds = [...new Set(mapped.map((o) => o.userid).filter(Boolean))];
@@ -627,7 +648,11 @@ export async function getAllFulfillmentOrders() {
     }
   }
 
-  return mapped.map((o) => ({ ...o, idvStatus: idvMap[o.userid] || null, adminOwner: o.adminOwner ?? null }));
+  return mapped.map((o) => ({
+    ...o,
+    idvStatus: idvMap[o.userid] || null,
+    adminOwner: o.adminOwner ?? null,
+  }));
 }
 
 export async function getUserApprovedSubmissions(userid: string) {
@@ -642,7 +667,8 @@ export async function getUserApprovedSubmissions(userid: string) {
     id: r.id,
     project: (r.get("Project") as string) || "(unnamed)",
     hoursRaw: (r.get("hours") as number) || 0,
-    feathers: (r.get("Optional - Override Hours Spent") as number) || (r.get("hours") as number) || 0,
+    feathers:
+      (r.get("Optional - Override Hours Spent") as number) || (r.get("hours") as number) || 0,
     playableUrl: (r.get("Playable URL") as string) || null,
     codeUrl: (r.get("Code URL") as string) || null,
   }));
@@ -660,7 +686,7 @@ export async function getFulfillmentOrder(recordId: string) {
         const p = await getProductsTable().find(productId);
         const method = p.get("fufillment_method");
         product = {
-          name: ((p.get("item_friendly_name") as string) || (p.get("item_name") as string) || ""),
+          name: (p.get("item_friendly_name") as string) || (p.get("item_name") as string) || "",
           price: (p.get("price") as number) || 0,
           image: (p.get("image") as string) || undefined,
           fulfillmentMethod:
@@ -708,19 +734,35 @@ export async function updateFulfillmentOwner(recordId: string, owner: string | n
 
 function parseFulfillmentDmHistory(raw: string): { ts: string; sender: string; message: string }[] {
   if (!raw) return [];
-  try { return JSON.parse(raw); } catch { return []; }
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
 }
 
-export async function appendFulfillmentDmHistory(recordId: string, adminName: string, message: string) {
+export async function appendFulfillmentDmHistory(
+  recordId: string,
+  adminName: string,
+  message: string,
+) {
   const r = await getFulfillmentTable().find(recordId);
   const entries = parseFulfillmentDmHistory((r.get("dm_history") as string) || "");
-  const entry = { ts: new Date().toISOString().replace("T", " ").slice(0, 16), sender: adminName, message };
+  const entry = {
+    ts: new Date().toISOString().replace("T", " ").slice(0, 16),
+    sender: adminName,
+    message,
+  };
   entries.push(entry);
   await getFulfillmentTable().update(recordId, { dm_history: JSON.stringify(entries) });
   return entry;
 }
 
-export async function appendIncomingDmBySlackId(slackId: string, _fallbackName: string, message: string) {
+export async function appendIncomingDmBySlackId(
+  slackId: string,
+  _fallbackName: string,
+  message: string,
+) {
   if (!slackId || typeof slackId !== "string") return 0;
   const userRecords = await getUsersTable()
     .select({ filterByFormula: `{slack_id} = '${escapeFormulaString(slackId)}'`, maxRecords: 1 })
@@ -735,19 +777,25 @@ export async function appendIncomingDmBySlackId(slackId: string, _fallbackName: 
   if (!userId) return 0;
 
   const orders = await getFulfillmentTable()
-    .select({ filterByFormula: `AND({userid} = '${escapeFormulaString(userId)}', {status} = 'Unfulfilled')` })
+    .select({
+      filterByFormula: `AND({userid} = '${escapeFormulaString(userId)}', {status} = 'Unfulfilled')`,
+    })
     .all();
 
   if (!orders.length) return 0;
 
-  const entry = { ts: new Date().toISOString().replace("T", " ").slice(0, 16), sender: displayName, message };
+  const entry = {
+    ts: new Date().toISOString().replace("T", " ").slice(0, 16),
+    sender: displayName,
+    message,
+  };
 
   await Promise.all(
     orders.map(async (r) => {
       const entries = parseFulfillmentDmHistory((r.get("dm_history") as string) || "");
       entries.push(entry);
       await getFulfillmentTable().update(r.id, { dm_history: JSON.stringify(entries) });
-    })
+    }),
   );
 
   return orders.length;
@@ -785,7 +833,7 @@ export async function getProjectDevlogs(projectId: string) {
     .all();
 
   // Filter manually in JavaScript
-  const filtered = records.filter(r => {
+  const filtered = records.filter((r) => {
     const projField = r.get("project");
     if (Array.isArray(projField)) {
       return projField.includes(projectId);
@@ -801,99 +849,105 @@ export async function getProjectDevlogs(projectId: string) {
 }
 
 export async function shipProjectTable(projectid: string, info: any) {
-
   await getProjectsTable().update([
     {
-      "id": projectid,
-      "fields": {
-        "status": "Shipped"
-      }
-    }])
+      id: projectid,
+      fields: {
+        status: "Shipped",
+      },
+    },
+  ]);
 
-    const safeProjectId = escapeFormulaString(projectid);
-    const record = await getProjectsTable()
+  const safeProjectId = escapeFormulaString(projectid);
+  const record = await getProjectsTable()
     .select({
       filterByFormula: `{id} = '${safeProjectId}'`,
       maxRecords: 1,
     })
     .firstPage();
-    
-    const project = record[0]
 
-    const userid = project.get("userid")
-    var user;
+  const project = record[0];
 
-    if (userid) {
-      const safeUserId = escapeFormulaString(String(userid));
-      user = (await getUsersTable()
-      .select({
-        filterByFormula: `{id} = '${safeUserId}'`,
-        maxRecords: 1,
-      })
-      .firstPage())[0]
-    }
+  const userid = project.get("userid");
+  var user;
 
-    if (user) {
-      //fields
+  if (userid) {
+    const safeUserId = escapeFormulaString(String(userid));
+    user = (
+      await getUsersTable()
+        .select({
+          filterByFormula: `{id} = '${safeUserId}'`,
+          maxRecords: 1,
+        })
+        .firstPage()
+    )[0];
+  }
+
+  if (user) {
+    //fields
     const fields: Record<any, any> = {
       "First Name": info.firstName || String(user.get("First Name")),
       "Last Name": info.lastName || String(user.get("Last Name")),
-      "Email": info.email || user.get("email"),
-      "Description": project.get("desc"),
+      Email: info.email || user.get("email"),
+      Description: project.get("desc"),
       "GitHub Username": info.github,
       "Address (Line 1)": info.address1,
       "Address (Line 2)": info.address2,
-      "City": info.city,
+      City: info.city,
       "State / Province": info.state,
-      "Country": info.country,
+      Country: info.country,
       "ZIP / Postal Code": info.zip,
-      "Birthday": new Date(info.birthdate),
+      Birthday: new Date(info.birthdate),
       "Playable URL": info.playable_url,
       "Code URL": info.code_url,
-      "userid": user.get("id"),
-      "displayname": user.get("slack_display_name"),
-      "Project": project.get("name"),
-      "YSWS": info.ysws,
-      "Challenge": info.challenge,
-      "hours": project.get("hours"),
-      "isForSnoozefest": info.isForSnoozefest
+      userid: user.get("id"),
+      displayname: user.get("slack_display_name"),
+      Project: project.get("name"),
+      YSWS: info.ysws,
+      Challenge: info.challenge,
+      hours: project.get("hours"),
+      isForSnoozefest: info.isForSnoozefest,
     };
-  
+
     const review = await getReviewTable().create(fields);
 
     if (info.screenshot instanceof File) {
       await uploadAttachment({
         baseId: process.env.AIRTABLE_BASE_ID!,
-        recordId: review.getId(),       // IMPORTANT
-        fieldNameOrId: "Screenshot",        // exact field name
+        recordId: review.getId(), // IMPORTANT
+        fieldNameOrId: "Screenshot", // exact field name
         file: info.screenshot,
-      })
+      });
     }
 
     //send dm
-    projectReviewMessage(user.get("email"), "Congrats on shipping your project for Sleepover! Your project will be reviewed soon, and any status updates will be sent here.")
-    
+    projectReviewMessage(
+      user.get("email"),
+      "Congrats on shipping your project for Sleepover! Your project will be reviewed soon, and any status updates will be sent here.",
+    );
+
     return {
       id: review.id,
       project: review.get("Project") as string,
       status: "Pending",
     };
-    }
+  }
 }
 
 export async function getProgressHours(userid: string) {
   const safeId = escapeFormulaString(userid);
-  const user = await getShopTable().select({
-    filterByFormula: `{id} = '${safeId}'`,
-    maxRecords: 1,
-  })
-  .firstPage();
+  const user = await getShopTable()
+    .select({
+      filterByFormula: `{id} = '${safeId}'`,
+      maxRecords: 1,
+    })
+    .firstPage();
 
-  return user[0]?.get("hours_shipped") ?? 0
+  return user[0]?.get("hours_shipped") ?? 0;
 }
 
 const MAX_UPLOAD_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
 async function uploadAttachment({
   baseId,
@@ -901,26 +955,26 @@ async function uploadAttachment({
   fieldNameOrId, // "screenshot" or "fldXXXXXXXX"
   file,
 }: {
-  baseId: string
-  recordId: string
-  fieldNameOrId: string
-  file: File
+  baseId: string;
+  recordId: string;
+  fieldNameOrId: string;
+  file: File;
 }) {
   // Validate file size
   if (file.size > MAX_UPLOAD_SIZE) {
-    throw new Error("File exceeds maximum size of 5MB")
+    throw new Error("File exceeds maximum size of 5MB");
   }
 
   // Validate file type
   if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-    throw new Error("Invalid file type. Only images (JPEG, PNG, GIF, WebP) are allowed.")
+    throw new Error("Invalid file type. Only images (JPEG, PNG, GIF, WebP) are allowed.");
   }
 
   // Convert File -> base64
-  const arrayBuffer = await file.arrayBuffer()
-  const base64 = Buffer.from(arrayBuffer).toString("base64")
+  const arrayBuffer = await file.arrayBuffer();
+  const base64 = Buffer.from(arrayBuffer).toString("base64");
 
-  const url = `https://content.airtable.com/v0/${baseId}/${recordId}/${fieldNameOrId}/uploadAttachment`
+  const url = `https://content.airtable.com/v0/${baseId}/${recordId}/${fieldNameOrId}/uploadAttachment`;
 
   const res = await fetch(url, {
     method: "POST",
@@ -933,13 +987,13 @@ async function uploadAttachment({
       filename: file.name || "upload",
       file: base64,
     }),
-  })
+  });
 
-  const text = await res.text()
+  const text = await res.text();
   if (!res.ok) {
-    throw new Error(`Airtable upload failed (${res.status}): ${text}`)
+    throw new Error(`Airtable upload failed (${res.status}): ${text}`);
   }
-  return JSON.parse(text)
+  return JSON.parse(text);
 }
 
 //CACHING STUFF
@@ -949,13 +1003,13 @@ import { unstable_cache } from "next/cache";
 export const getProjectsCached = unstable_cache(
   async (userId: string) => getUsersProjects(userId),
   ["projects-by-user"],
-  { revalidate: 60, tags: ["projects"] }
+  { revalidate: 60, tags: ["projects"] },
 );
 
 export const getUserHoursCached = unstable_cache(
   async (userId: string) => getProgressHours(userId),
   ["user-hours-by-user"],
-  { revalidate: 60, tags: ["user-hours"] }
+  { revalidate: 60, tags: ["user-hours"] },
 );
 
 export async function getGallery() {
@@ -1017,7 +1071,9 @@ export async function getAllSubmissions() {
 
   if (userids.length > 0) {
     const formula = `OR(${userids.map((id) => `{id} = '${escapeFormulaString(id)}'`).join(",")})`;
-    const users = await getUsersTable().select({ filterByFormula: formula, fields: ["id", "slack_id", "pronouns"] }).all();
+    const users = await getUsersTable()
+      .select({ filterByFormula: formula, fields: ["id", "slack_id", "pronouns"] })
+      .all();
     for (const u of users) {
       const id = u.get("id") as string;
       const sid = u.get("slack_id") as string;
@@ -1040,13 +1096,20 @@ export async function getAllSubmissions() {
       playableUrl: r.get("Playable URL") as string,
       codeUrl: r.get("Code URL") as string,
       screenshot: r.get("Screenshot") as unknown,
-      status: (() => { const s = r.get("Status") as string; return s === "TBD" || !s ? "Pending" : s; })(),
+      status: (() => {
+        const s = r.get("Status") as string;
+        return s === "TBD" || !s ? "Pending" : s;
+      })(),
       ysws: r.get("YSWS") as string,
       challenge: r.get("Challenge") as string,
       slack_id: (userid && slackIdMap[userid]) || undefined,
       pronouns: (userid && pronounsMap[userid]) || undefined,
       dm_history: (() => {
-        try { return JSON.parse((r.get("dm_history") as string) || "[]"); } catch { return []; }
+        try {
+          return JSON.parse((r.get("dm_history") as string) || "[]");
+        } catch {
+          return [];
+        }
       })(),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       createdAt: (r as any)._rawJson?.createdTime as string | undefined,
@@ -1058,12 +1121,14 @@ export async function updateSubmissionStatus(
   recordId: string,
   status: "Approved" | "Rejected" | "Pending",
   shipJustification?: string,
-  overrideHours?: number
+  overrideHours?: number,
 ) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fields: Record<string, any> = { Status: status === "Pending" ? "TBD" : status };
-  if (shipJustification) fields["Optional - Override Hours Spent Justification"] = shipJustification;
-  if (overrideHours !== undefined && overrideHours > 0) fields["Optional - Override Hours Spent"] = overrideHours;
+  if (shipJustification)
+    fields["Optional - Override Hours Spent Justification"] = shipJustification;
+  if (overrideHours !== undefined && overrideHours > 0)
+    fields["Optional - Override Hours Spent"] = overrideHours;
   await getReviewTable().update(recordId, fields);
   return { success: true };
 }
@@ -1072,7 +1137,11 @@ export type DmEntry = { sender: string; message: string; timestamp: string };
 
 export async function appendSubmissionDm(recordId: string, entry: DmEntry) {
   const records = await getReviewTable()
-    .select({ filterByFormula: `RECORD_ID() = '${recordId}'`, maxRecords: 1, fields: ["dm_history"] })
+    .select({
+      filterByFormula: `RECORD_ID() = '${recordId}'`,
+      maxRecords: 1,
+      fields: ["dm_history"],
+    })
     .firstPage();
   const record = records[0];
   if (!record) throw new Error("Submission not found");
@@ -1084,7 +1153,10 @@ export async function appendSubmissionDm(recordId: string, entry: DmEntry) {
   } catch {}
 
   history.push(entry);
-  await getReviewTable().update(recordId, { dm_history: JSON.stringify(history), "DM Msg": entry.message });
+  await getReviewTable().update(recordId, {
+    dm_history: JSON.stringify(history),
+    "DM Msg": entry.message,
+  });
   return history;
 }
 
@@ -1093,9 +1165,7 @@ function getCalendarTable() {
 }
 
 export async function getCalendarEvents() {
-  const records = await getCalendarTable()
-    .select()
-    .all();
+  const records = await getCalendarTable().select().all();
 
   return records
     .map((r) => ({
@@ -1139,14 +1209,17 @@ export async function createCalendarEvent(event: {
   };
 }
 
-export async function updateCalendarEvent(eventId: string, event: {
-  title?: string;
-  date?: string;
-  time?: string | null;
-  description?: string;
-  type?: "huddle" | "challenge" | "social" | "deadline";
-  joinUrl?: string | null;
-}) {
+export async function updateCalendarEvent(
+  eventId: string,
+  event: {
+    title?: string;
+    date?: string;
+    time?: string | null;
+    description?: string;
+    type?: "huddle" | "challenge" | "social" | "deadline";
+    joinUrl?: string | null;
+  },
+) {
   const fields: Record<string, unknown> = {};
   if (event.title !== undefined) fields.title = event.title;
   if (event.date !== undefined) fields.date = event.date;
@@ -1175,7 +1248,7 @@ export async function getAllUsersWithReferralCode() {
   const users = await getUsersTable()
     .select({
       filterByFormula: `AND({referral_code} != '', {referral_code} != BLANK())`,
-      view: "Grid view"
+      view: "Grid view",
     })
     .all();
 

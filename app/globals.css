@@ -15,7 +15,7 @@
 }
 
 :root {
-  --background: #D9DAF8;
+  --background: #d9daf8;
   --foreground: #171717;
 }
 
@@ -28,7 +28,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #D9DAF8;
+    --background: #d9daf8;
     --foreground: #171717;
   }
 }
@@ -68,7 +68,8 @@ body::after {
 }
 
 @keyframes wobble {
-  0%, 100% {
+  0%,
+  100% {
     transform: rotate(0deg);
   }
   25% {

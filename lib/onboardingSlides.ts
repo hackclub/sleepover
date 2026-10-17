@@ -30,7 +30,8 @@ export const onboardingSlides: OnboardingSlide[] = [
   {
     id: 3,
     characterName: "Pancake",
-    dialogText: "Welcome to Hack Club's Sleepover, {your name}! I'm Pancake, I'm here to guide you around the platform :D",
+    dialogText:
+      "Welcome to Hack Club's Sleepover, {your name}! I'm Pancake, I'm here to guide you around the platform :D",
     subText: "click to continue!",
     characterImage: "/background/bunny-happy.png",
     characterPosition: "left",
@@ -38,7 +39,8 @@ export const onboardingSlides: OnboardingSlide[] = [
   {
     id: 4,
     characterName: "Pancake",
-    dialogText: "Sleepover is a Hack Club event by teen girls, for teen girls. It is part of the Athena Initiative at Hack Club!",
+    dialogText:
+      "Sleepover is a Hack Club event by teen girls, for teen girls. It is part of the Athena Initiative at Hack Club!",
     subText: "click to continue!",
     characterImage: "/background/bunny-talking.png",
     characterPosition: "left",
@@ -46,7 +48,8 @@ export const onboardingSlides: OnboardingSlide[] = [
   {
     id: 5,
     characterName: "Pancake",
-    dialogText: "Code 30 hours (just ten hours a month!) from now until April 20th and come to a sleepover-themed hackathon in Chicago :3",
+    dialogText:
+      "Code 30 hours (just ten hours a month!) from now until April 20th and come to a sleepover-themed hackathon in Chicago :3",
     subText: "click to continue!",
     characterImage: "/background/bunny-talking-turned.png",
     characterPosition: "left",
@@ -54,7 +57,8 @@ export const onboardingSlides: OnboardingSlide[] = [
   {
     id: 6,
     characterName: "Pancake",
-    dialogText: "Sleepover is for girls, but no matter your gender, feel free to look at the platform! What pronouns do you use?",
+    dialogText:
+      "Sleepover is for girls, but no matter your gender, feel free to look at the platform! What pronouns do you use?",
     characterImage: "/background/bunny-talking.png",
     characterPosition: "left",
     requiresInput: true,

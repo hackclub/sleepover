@@ -33,7 +33,12 @@ export async function getSession(): Promise<IronSession<SessionData>> {
 
 export async function getCurrentUser(): Promise<SessionData | null> {
   const session = await getSession();
-  if (!session.isLoggedIn) {
+  if (
+    !session.isLoggedIn ||
+    !session.userId ||
+    typeof session.email !== "string" ||
+    typeof session.name !== "string"
+  ) {
     return null;
   }
   return {
@@ -46,7 +51,12 @@ export async function getCurrentUser(): Promise<SessionData | null> {
 
 export async function requireAuth(): Promise<SessionData> {
   const session = await getSession();
-  if (!session.isLoggedIn || !session.userId) {
+  if (
+    !session.isLoggedIn ||
+    !session.userId ||
+    typeof session.email !== "string" ||
+    typeof session.name !== "string"
+  ) {
     throw new Error("Unauthorized");
   }
   return {

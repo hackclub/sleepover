@@ -23,8 +23,7 @@ export default function GradientText({
           left: 0,
           color: "#FFFFFF",
           WebkitTextStroke: strokeWidth,
-          filter:
-            "drop-shadow(0px 1px 0px #C6C7E4) drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.1))",
+          filter: "drop-shadow(0px 1px 0px #C6C7E4) drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.1))",
         }}
       >
         {children}

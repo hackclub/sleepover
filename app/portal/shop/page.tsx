@@ -62,9 +62,7 @@ export default function ShopPage() {
       .then((data) => {
         const orders = data.orders || [];
         const productIds = new Set<string>(
-          orders
-            .map((order: any) => order.productId)
-            .filter((id: string) => id)
+          orders.map((order: any) => order.productId).filter((id: string) => id),
         );
         setPurchasedItemIds(productIds);
       })
@@ -95,13 +93,8 @@ export default function ShopPage() {
   }, []);
 
   return (
-    <div
-      className="font-sans min-h-screen relative"
-      style={{ backgroundColor: "#C0DEFE" }}
-    >
-      {showOnboarding && (
-        <ShopOnboardingNovel onComplete={handleOnboardingComplete} />
-      )}
+    <div className="font-sans min-h-screen relative" style={{ backgroundColor: "#C0DEFE" }}>
+      {showOnboarding && <ShopOnboardingNovel onComplete={handleOnboardingComplete} />}
       <BunnyTile />
       <PortalSidebar onStateChange={setSidebarOpen} />
 
@@ -181,11 +174,12 @@ export default function ShopPage() {
             className={`
               grid gap-3 md:gap-6 transition-all duration-300
               grid-cols-2 overflow-hidden
-              ${isMobile 
-                ? "grid-cols-2" 
-                : sidebarOpen 
-                  ? "sm:grid-cols-2 lg:grid-cols-3" 
-                  : "sm:grid-cols-3 lg:grid-cols-4"
+              ${
+                isMobile
+                  ? "grid-cols-2"
+                  : sidebarOpen
+                    ? "sm:grid-cols-2 lg:grid-cols-3"
+                    : "sm:grid-cols-3 lg:grid-cols-4"
               }
             `}
           >

@@ -71,10 +71,7 @@ export default function SettingsPage() {
   const contentOffset = isMobile ? "0px" : isSidebarOpen ? "clamp(360px, 28vw, 600px)" : "140px";
 
   return (
-    <div
-      className="font-sans min-h-screen relative"
-      style={{ backgroundColor: "#C0DEFE" }}
-    >
+    <div className="font-sans min-h-screen relative" style={{ backgroundColor: "#C0DEFE" }}>
       <div>
         <BunnyTile />
         <PortalSidebar onStateChange={setIsSidebarOpen} />
@@ -84,7 +81,7 @@ export default function SettingsPage() {
         className={`relative z-10 transition-[margin-left] duration-300 p-4 md:p-8 lg:p-12 pt-16 md:pt-8`}
         style={{
           marginLeft: contentOffset,
-          marginRight: isMobile ? "0px" : "32px"
+          marginRight: isMobile ? "0px" : "32px",
         }}
       >
         <div className="max-w-4xl mx-auto">
@@ -249,9 +246,7 @@ export default function SettingsPage() {
                       {hackatimeData.projects.length > 0 ? (
                         <div className="space-y-3">
                           {hackatimeData.projects.map((project, index) => (
-                            <div
-                              key={index}
-                            >
+                            <div key={index}>
                               <GradientText
                                 gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
                                 strokeWidth="4px"
@@ -297,7 +292,9 @@ export default function SettingsPage() {
                               gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
                               strokeWidth="3px"
                             >
-                              Hackatime is a free tool from Hack Club that shows you how much time you spend coding. You can see what other Hack Clubbers are building too!
+                              Hackatime is a free tool from Hack Club that shows you how much time
+                              you spend coding. You can see what other Hack Clubbers are building
+                              too!
                             </GradientText>
                           </p>
                         </div>
@@ -339,7 +336,9 @@ export default function SettingsPage() {
                                   gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
                                   strokeWidth="3px"
                                 >
-                                  and create a Hackatime account using <strong>Hack Club Auth</strong>, or the <strong>same email</strong> used by your Hack Club Slack account.
+                                  and create a Hackatime account using{" "}
+                                  <strong>Hack Club Auth</strong>, or the{" "}
+                                  <strong>same email</strong> used by your Hack Club Slack account.
                                 </GradientText>
                               </p>
                             </div>
@@ -370,7 +369,8 @@ export default function SettingsPage() {
                                   gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
                                   strokeWidth="3px"
                                 >
-                                  to install the Wakatime extension in your code editor to track your coding time.
+                                  to install the Wakatime extension in your code editor to track
+                                  your coding time.
                                 </GradientText>
                               </p>
                             </div>
@@ -401,7 +401,8 @@ export default function SettingsPage() {
                                   gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
                                   strokeWidth="3px"
                                 >
-                                  and log in. Come back to Sleepover, and see if your account is shown.
+                                  and log in. Come back to Sleepover, and see if your account is
+                                  shown.
                                 </GradientText>
                               </p>
                             </div>
@@ -420,7 +421,8 @@ export default function SettingsPage() {
                                   gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
                                   strokeWidth="3px"
                                 >
-                                  After you install Wakatime in your code editor, start coding, and see the projects pop up!
+                                  After you install Wakatime in your code editor, start coding, and
+                                  see the projects pop up!
                                 </GradientText>
                               </p>
                             </div>

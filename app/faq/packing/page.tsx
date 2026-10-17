@@ -20,10 +20,7 @@ export default function PackingList() {
   const contentOffset = isMobile ? "0px" : isSidebarOpen ? "clamp(360px, 28vw, 600px)" : "140px";
 
   return (
-    <div
-      className="font-sans min-h-screen relative"
-      style={{ backgroundColor: "#C0DEFE" }}
-    >
+    <div className="font-sans min-h-screen relative" style={{ backgroundColor: "#C0DEFE" }}>
       <Suspense fallback={null}>
         <ReferralCapture />
       </Suspense>
@@ -33,9 +30,9 @@ export default function PackingList() {
       {/* Main Content */}
       <main
         className="relative z-10 transition-[margin-left] duration-300 p-4 md:p-8 lg:p-12 pt-16 md:pt-8 flex flex-col items-center"
-        style={{ 
-          marginLeft: contentOffset, 
-          marginRight: isMobile ? "0px" : "32px" 
+        style={{
+          marginLeft: contentOffset,
+          marginRight: isMobile ? "0px" : "32px",
         }}
       >
         <div
@@ -52,23 +49,57 @@ export default function PackingList() {
           </h1>
         </div>
 
-        <div className="w-full text-left space-y-6" style={{ maxWidth: isSidebarOpen ? "960px" : "1120px" }}>
-          <p className="text-[16px] md:text-[20px] leading-relaxed" style={{ fontFamily: "'MADE Tommy Soft', sans-serif", fontWeight: "bold", color: "#6C6EA0", textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)" }}>
-            Please see our Suggested Packing List for an idea of what to bring. Remember that we will be in Chicago (the windy city!) in April and will be subject to the elements. Make sure to check the weather forecast leading up to the event!
+        <div
+          className="w-full text-left space-y-6"
+          style={{ maxWidth: isSidebarOpen ? "960px" : "1120px" }}
+        >
+          <p
+            className="text-[16px] md:text-[20px] leading-relaxed"
+            style={{
+              fontFamily: "'MADE Tommy Soft', sans-serif",
+              fontWeight: "bold",
+              color: "#6C6EA0",
+              textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
+            }}
+          >
+            Please see our Suggested Packing List for an idea of what to bring. Remember that we
+            will be in Chicago (the windy city!) in April and will be subject to the elements. Make
+            sure to check the weather forecast leading up to the event!
           </p>
-          <p className="text-[16px] md:text-[20px] leading-relaxed" style={{ fontFamily: "'MADE Tommy Soft', sans-serif", fontWeight: "bold", color: "#6C6EA0", textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)" }}>
-            We would advise bringing one suitcase carry on and one backpack for carry on. Travel grants do not cover any form of luggage fees you may incur.
+          <p
+            className="text-[16px] md:text-[20px] leading-relaxed"
+            style={{
+              fontFamily: "'MADE Tommy Soft', sans-serif",
+              fontWeight: "bold",
+              color: "#6C6EA0",
+              textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
+            }}
+          >
+            We would advise bringing one suitcase carry on and one backpack for carry on. Travel
+            grants do not cover any form of luggage fees you may incur.
           </p>
 
           <div>
             <h2 className="text-[24px] md:text-[36px] mb-3">
-              <GradientText gradient="linear-gradient(180deg, #B7C1F2 0%, #89A8EF 100%)" strokeWidth="6px">
+              <GradientText
+                gradient="linear-gradient(180deg, #B7C1F2 0%, #89A8EF 100%)"
+                strokeWidth="6px"
+              >
                 Carry On (Suitcase)
               </GradientText>
             </h2>
-            <ul className="list-disc list-inside space-y-2 text-[16px] md:text-[20px]" style={{ fontFamily: "'MADE Tommy Soft', sans-serif", fontWeight: "bold", color: "#6C6EA0", textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)" }}>
+            <ul
+              className="list-disc list-inside space-y-2 text-[16px] md:text-[20px]"
+              style={{
+                fontFamily: "'MADE Tommy Soft', sans-serif",
+                fontWeight: "bold",
+                color: "#6C6EA0",
+                textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
+              }}
+            >
               <li>Sleeping bag + pillow</li>
-              <li>Toiletries
+              <li>
+                Toiletries
                 <ul className="list-disc list-inside ml-6 space-y-2 mt-2">
                   <li>Deodorant (there&apos;s no shower at the venue - please bring!)</li>
                   <li>Toothbrush and toothpaste (airplane-size approved)</li>
@@ -89,12 +120,24 @@ export default function PackingList() {
 
           <div>
             <h2 className="text-[24px] md:text-[36px] mb-3">
-              <GradientText gradient="linear-gradient(180deg, #B7C1F2 0%, #89A8EF 100%)" strokeWidth="6px">
+              <GradientText
+                gradient="linear-gradient(180deg, #B7C1F2 0%, #89A8EF 100%)"
+                strokeWidth="6px"
+              >
                 Backpack
               </GradientText>
             </h2>
-            <ul className="list-disc list-inside space-y-2 text-[16px] md:text-[20px]" style={{ fontFamily: "'MADE Tommy Soft', sans-serif", fontWeight: "bold", color: "#6C6EA0", textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)" }}>
-              <li>Tech:
+            <ul
+              className="list-disc list-inside space-y-2 text-[16px] md:text-[20px]"
+              style={{
+                fontFamily: "'MADE Tommy Soft', sans-serif",
+                fontWeight: "bold",
+                color: "#6C6EA0",
+                textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
+              }}
+            >
+              <li>
+                Tech:
                 <ul className="list-disc list-inside ml-6 space-y-2 mt-2">
                   <li>Laptop</li>
                   <li>Laptop Charger</li>

@@ -28,14 +28,14 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
-  
+
   const dialogText = slide.dialogText.replace("{your name}", userName);
 
   useEffect(() => {
     setDisplayedText("");
     setIsTyping(true);
     let index = 0;
-    
+
     // Create audio for typing sound
     const audio = new Audio("/sounds/animal-talking.mp3");
     audio.volume = 0.3;
@@ -89,9 +89,9 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
       <div className="absolute inset-0 bg-black/20" />
 
       {/* Character image - positioned differently on mobile */}
-      <div 
+      <div
         className={`absolute z-10 ${
-          isMobile 
+          isMobile
             ? `${slide.requiresInput ? "bottom-[280px]" : "bottom-[140px]"} left-[10px] w-[80px] h-[100px]`
             : "bottom-[10px] left-[30px] w-[220px] h-[280px]"
         }`}
@@ -171,36 +171,39 @@ export default function OnboardingNovel({ onComplete, userName = "friend" }: Onb
             {/* (moved speed control to the right side) */}
 
             {/* Radio buttons for pronouns selection */}
-            {slide.requiresInput && slide.inputType === "radio" && slide.inputOptions && !isTyping && (
-              <div className="flex flex-wrap gap-2 md:gap-4 my-3 md:my-4 items-center justify-center md:justify-start">
-                {slide.inputOptions.map((option) => (
-                  <label
-                    key={option}
-                    className={`cursor-pointer flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-xl transition-all ${
-                      selectedPronouns === option
-                        ? "bg-[#7684c9] text-white"
-                        : "bg-white/60 text-[#6c6ea0] hover:bg-white/80"
-                    }`}
-                    style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedPronouns(option);
-                    }}
-                  >
-                    <input
-                      type="radio"
-                      name="pronouns"
-                      value={option}
-                      checked={selectedPronouns === option}
-                      onChange={() => setSelectedPronouns(option)}
-                      className="w-4 h-4"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                    <span className="text-sm md:text-lg font-bold">{option}</span>
-                  </label>
-                ))}
-              </div>
-            )}
+            {slide.requiresInput &&
+              slide.inputType === "radio" &&
+              slide.inputOptions &&
+              !isTyping && (
+                <div className="flex flex-wrap gap-2 md:gap-4 my-3 md:my-4 items-center justify-center md:justify-start">
+                  {slide.inputOptions.map((option) => (
+                    <label
+                      key={option}
+                      className={`cursor-pointer flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-xl transition-all ${
+                        selectedPronouns === option
+                          ? "bg-[#7684c9] text-white"
+                          : "bg-white/60 text-[#6c6ea0] hover:bg-white/80"
+                      }`}
+                      style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedPronouns(option);
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="pronouns"
+                        value={option}
+                        checked={selectedPronouns === option}
+                        onChange={() => setSelectedPronouns(option)}
+                        className="w-4 h-4"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <span className="text-sm md:text-lg font-bold">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
 
             {/* Click to continue */}
             {slide.subText && !slide.requiresInput && (

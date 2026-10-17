@@ -5,18 +5,21 @@ const end_date = "2026-06-15";
 
 export async function getUsernameFromEmail(email: string) {
   console.log("looking up hackatime user by email:", email);
-  var my_body = JSON.stringify({ email: email })
-  console.log(my_body)
-  const response = await fetch("https://hackatime.hackclub.com/api/admin/v1/user/get_user_by_email", {
-      method: 'POST',
+  var my_body = JSON.stringify({ email: email });
+  console.log(my_body);
+  const response = await fetch(
+    "https://hackatime.hackclub.com/api/admin/v1/user/get_user_by_email",
+    {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.HACKATIME_API_KEY}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.HACKATIME_API_KEY}`,
       },
-      body: my_body
-    });
+      body: my_body,
+    },
+  );
 
-    if (!response.ok) {
+  if (!response.ok) {
     console.log("response from hackatime email lookup:", await response.text());
     throw new Error("Failed to get user info");
   }
@@ -27,45 +30,53 @@ export async function getUsernameFromEmail(email: string) {
 export async function getUserStats(slack_id: string) {
   console.log("fetching hackatime stats for slack_id:", slack_id);
 
-  const response = await fetch(`https://hackatime.hackclub.com/api/v1/users/${slack_id}/stats?features=projects&start_date=${start_date}&end_date=${end_date}`, {
-    headers: {
-      Authorization: `Bearer ${process.env.HACKATIME_API}`,
+  const response = await fetch(
+    `https://hackatime.hackclub.com/api/v1/users/${slack_id}/stats?features=projects&start_date=${start_date}&end_date=${end_date}`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.HACKATIME_API}`,
+      },
     },
-  });
+  );
 
   if (!response.ok) {
-    console.log("not working with slack, trying with email")
+    console.log("not working with slack, trying with email");
 
-    const session = await getSession()
-    const email = session.email
-    const userid = (await getUsernameFromEmail(email)).user_id
+    const session = await getSession();
+    const email = session.email;
+    if (!email) {
+      throw new Error("Authentication required to look up Hackatime user by email");
+    }
+    const userid = (await getUsernameFromEmail(email)).user_id;
 
-    const response2 = await fetch(`https://hackatime.hackclub.com/api/v1/users/${userid}/stats?features=projects&start_date=${start_date}&end_date=${end_date}`, {
-    headers: {
-      Authorization: `Bearer ${process.env.HACKATIME_API}`,
-    },
-  });
+    const response2 = await fetch(
+      `https://hackatime.hackclub.com/api/v1/users/${userid}/stats?features=projects&start_date=${start_date}&end_date=${end_date}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.HACKATIME_API}`,
+        },
+      },
+    );
 
     if (!response2.ok) {
       throw new Error("Failed to get user info.");
     }
 
-    return response2.json()
-
+    return response2.json();
   }
 
   return response.json();
 }
 
 export async function getHackProjects(slack_id: string) {
-    const data = await getUserStats(slack_id);
-    const projects = data.data.projects;
-    return projects.map((p: any) => p.name);
-  }
+  const data = await getUserStats(slack_id);
+  const projects = data.data.projects;
+  return projects.map((p: any) => p.name);
+}
 
 export async function isHackatime(slack_id: string) {
   const data = await getUserStats(slack_id);
-  const error = data.data.error
+  const error = data.data.error;
   if (error) {
     return false;
   } else {
@@ -74,20 +85,23 @@ export async function isHackatime(slack_id: string) {
 }
 
 export async function getProjectHours(slack_id: string, name: string) {
-    const data = await getUserStats(slack_id);
-    const projects = data.data.projects;
+  const data = await getUserStats(slack_id);
+  const projects = data.data.projects;
 
-    for (const project of projects) {
-      if (project.name === name) {
-        const hours = project.hours;
-        const minutes = project.minutes;
-        return hours + minutes / 60;
-      }
+  for (const project of projects) {
+    if (project.name === name) {
+      const hours = project.hours;
+      const minutes = project.minutes;
+      return hours + minutes / 60;
     }
-    return 0;
   }
+  return 0;
+}
 
-export async function getMultipleProjectHours(slack_id: string, projectNames: string[]): Promise<number> {
+export async function getMultipleProjectHours(
+  slack_id: string,
+  projectNames: string[],
+): Promise<number> {
   const data = await getUserStats(slack_id);
   const projects = data.data.projects;
 

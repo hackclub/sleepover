@@ -3,7 +3,7 @@ import { getProductsTable } from "@/lib/airtable";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ prodid: string }> }
+  { params }: { params: Promise<{ prodid: string }> },
 ) {
   try {
     const { prodid } = await params;

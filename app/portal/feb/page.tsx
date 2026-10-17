@@ -15,11 +15,7 @@ export default function FebChallengePage() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const contentOffset = isMobile
-    ? "0px"
-    : sidebarOpen
-      ? "clamp(320px, 25vw, 520px)"
-      : "96px";
+  const contentOffset = isMobile ? "0px" : sidebarOpen ? "clamp(320px, 25vw, 520px)" : "96px";
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#C0DEFE" }}>

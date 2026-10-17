@@ -12,10 +12,10 @@ interface ButtonProps {
   // Size configuration (supports responsive breakpoints)
   size?: {
     width?: {
-      base?: string;    // Default width
-      sm?: string;      // Small breakpoint (640px+)
-      md?: string;      // Medium breakpoint (768px+)
-      lg?: string;      // Large breakpoint (1024px+)
+      base?: string; // Default width
+      sm?: string; // Small breakpoint (640px+)
+      md?: string; // Medium breakpoint (768px+)
+      lg?: string; // Large breakpoint (1024px+)
     };
     height?: {
       base?: string;
@@ -27,11 +27,11 @@ interface ButtonProps {
 
   // Color configuration
   colors?: {
-    outerBorder?: string;           // White border color
-    innerGradient?: string;         // Middle layer gradient
-    buttonGradient?: string;        // Inner button gradient
-    shadow?: string;                // Box shadow color
-    innerShadow?: string;           // Inner layer shadow
+    outerBorder?: string; // White border color
+    innerGradient?: string; // Middle layer gradient
+    buttonGradient?: string; // Inner button gradient
+    shadow?: string; // Box shadow color
+    innerShadow?: string; // Inner layer shadow
   };
 
   // Content styling (applies to the inner content area)
@@ -81,7 +81,9 @@ export default function Button({
     finalSize.width.sm && `sm:w-[${finalSize.width.sm}]`,
     finalSize.width.md && `md:w-[${finalSize.width.md}]`,
     finalSize.width.lg && `lg:w-[${finalSize.width.lg}]`,
-  ].filter(Boolean).join(" ");
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   // Build responsive height classes
   const heightClasses = [
@@ -89,7 +91,9 @@ export default function Button({
     finalSize.height.sm && `sm:h-[${finalSize.height.sm}]`,
     finalSize.height.md && `md:h-[${finalSize.height.md}]`,
     finalSize.height.lg && `lg:h-[${finalSize.height.lg}]`,
-  ].filter(Boolean).join(" ");
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const buttonContent = (
     <>
@@ -132,12 +136,7 @@ export default function Button({
   }
 
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={baseClasses}
-      style={baseStyle}
-    >
+    <button onClick={onClick} disabled={disabled} className={baseClasses} style={baseStyle}>
       {buttonContent}
     </button>
   );

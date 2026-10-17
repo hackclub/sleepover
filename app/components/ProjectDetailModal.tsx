@@ -20,7 +20,11 @@ interface Project {
   userid: string;
 }
 
-export default function ProjectDetailModal({ isOpen, onClose, projectId }: ProjectDetailModalProps) {
+export default function ProjectDetailModal({
+  isOpen,
+  onClose,
+  projectId,
+}: ProjectDetailModalProps) {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [projectName, setProjectName] = useState<string>("");
@@ -119,7 +123,7 @@ export default function ProjectDetailModal({ isOpen, onClose, projectId }: Proje
       <div
         className="fixed inset-0 bg-black/40 z-[100]"
         onClick={onClose}
-        style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+        style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}
       />
 
       {/* Modal */}

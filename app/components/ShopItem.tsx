@@ -17,20 +17,21 @@ interface ShopItemProps {
   alreadyPurchased?: boolean;
 }
 
-export default function ShopItem({ item, canBuy, variant, alreadyPurchased = false }: ShopItemProps) {
+export default function ShopItem({
+  item,
+  canBuy,
+  variant,
+  alreadyPurchased = false,
+}: ShopItemProps) {
   const isPink = variant === "pink";
 
   // Check if this is the sticker sheet and user has already purchased it
   const isStickerSheet = item.id === "rec4wZN4c2OdkWMnc";
   const isLocked = !canBuy || (isStickerSheet && alreadyPurchased);
 
-  const cardGradient = isPink
-    ? "from-[#ebc0cc] to-[#dfa2ad]"
-    : "from-[#e7e3fa] to-[#b3b3ed]";
+  const cardGradient = isPink ? "from-[#ebc0cc] to-[#dfa2ad]" : "from-[#e7e3fa] to-[#b3b3ed]";
 
-  const innerGradient = isPink
-    ? "from-[#dfa2ad] to-[#ebc0cc]"
-    : "from-[#a8aaeb] to-[#ebe4fa]";
+  const innerGradient = isPink ? "from-[#dfa2ad] to-[#ebc0cc]" : "from-[#a8aaeb] to-[#ebe4fa]";
 
   const cardContent = (
     <div
@@ -43,9 +44,10 @@ export default function ShopItem({ item, canBuy, variant, alreadyPurchased = fal
         w-full min-w-0 overflow-hidden
         p-2 pb-3 md:p-3 md:pb-4
         transition-all duration-200
-        ${!isLocked
-          ? "hover:scale-105 hover:shadow-[6px_12px_12px_0px_rgba(108,110,160,0.7)] cursor-pointer"
-          : "opacity-50 grayscale cursor-not-allowed"
+        ${
+          !isLocked
+            ? "hover:scale-105 hover:shadow-[6px_12px_12px_0px_rgba(108,110,160,0.7)] cursor-pointer"
+            : "opacity-50 grayscale cursor-not-allowed"
         }
       `}
     >
@@ -105,7 +107,7 @@ export default function ShopItem({ item, canBuy, variant, alreadyPurchased = fal
       {item.availability && (
         <p
           className="text-[#6C6EA0] text-sm md:text-lg font-bold text-center mt-0.5 md:mt-1"
-          style={{ 
+          style={{
             fontFamily: "'MADE Tommy Soft', sans-serif",
           }}
         >
@@ -115,12 +117,11 @@ export default function ShopItem({ item, canBuy, variant, alreadyPurchased = fal
 
       {isLocked && (
         <div className="absolute inset-0 flex items-center justify-center rounded-[20px] md:rounded-[32px] p-2">
-          <div className="bg-[#6c6ea0]/80 text-white px-2 py-1 md:px-3 rounded-full text-xs md:text-sm font-bold text-center"
-            style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}>
-            {isStickerSheet && alreadyPurchased
-              ? "🔒 Purchased!"
-              : "🔒 Not enough feathers"
-            }
+          <div
+            className="bg-[#6c6ea0]/80 text-white px-2 py-1 md:px-3 rounded-full text-xs md:text-sm font-bold text-center"
+            style={{ fontFamily: "'MADE Tommy Soft', sans-serif" }}
+          >
+            {isStickerSheet && alreadyPurchased ? "🔒 Purchased!" : "🔒 Not enough feathers"}
           </div>
         </div>
       )}
@@ -128,11 +129,7 @@ export default function ShopItem({ item, canBuy, variant, alreadyPurchased = fal
   );
 
   if (!isLocked) {
-    return (
-      <Link href={`/portal/forms/order/${item.id}`}>
-        {cardContent}
-      </Link>
-    );
+    return <Link href={`/portal/forms/order/${item.id}`}>{cardContent}</Link>;
   }
 
   return cardContent;

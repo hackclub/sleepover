@@ -16,10 +16,7 @@ export default function Invitation() {
   }, []);
 
   return (
-    <div
-      className="font-sans min-h-screen relative"
-      style={{ backgroundColor: "#C0DEFE" }}
-    >
+    <div className="font-sans min-h-screen relative" style={{ backgroundColor: "#C0DEFE" }}>
       <Suspense fallback={null}>
         <ReferralCapture />
       </Suspense>

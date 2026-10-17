@@ -36,8 +36,8 @@ function SignupContent() {
         {registered
           ? "Thanks for signing up for Sleepover!"
           : email
-          ? `You signed up with: ${email}`
-          : "Sign in to continue"}
+            ? `You signed up with: ${email}`
+            : "Sign in to continue"}
       </p>
       {!registered && (
         <a

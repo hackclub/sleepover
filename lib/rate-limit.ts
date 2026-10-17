@@ -12,7 +12,7 @@ interface RateLimitOptions {
 
 export function rateLimit(
   identifier: string,
-  options: RateLimitOptions = { windowMs: 60000, maxRequests: 10 }
+  options: RateLimitOptions = { windowMs: 60000, maxRequests: 10 },
 ): { success: boolean; remaining: number; resetIn: number } {
   const now = Date.now();
   const entry = rateLimitStore.get(identifier);
@@ -47,7 +47,7 @@ export function rateLimit(
 
 export function getClientIp(request: Request & { ip?: string }): string {
   // Prefer platform-provided IP (Vercel, Next.js, etc.)
-  if ('ip' in request && request.ip) {
+  if ("ip" in request && request.ip) {
     return request.ip;
   }
 

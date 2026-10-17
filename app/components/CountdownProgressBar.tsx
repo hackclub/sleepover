@@ -10,32 +10,32 @@ export default function CountdownProgressBar({ isSidebarOpen = true }: Countdown
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-      fetch("/api/user/hours")
-        .then((res) => res.json())
-        .then((data) => {
-          setHours(data.hours ?? 0);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error(err);
-          setHours(0);
-          setLoading(false);
-        });
-    }, []);
+    fetch("/api/user/hours")
+      .then((res) => res.json())
+      .then((data) => {
+        setHours(data.hours ?? 0);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setHours(0);
+        setLoading(false);
+      });
+  }, []);
 
-  var timeLeft = ""
-  var progress = 0
+  var timeLeft = "";
+  var progress = 0;
 
   if (loading || hours === null) {
-    timeLeft = "Loading your progress..."
-    progress = 0
+    timeLeft = "Loading your progress...";
+    progress = 0;
   } else if (hours >= 30) {
-    timeLeft = "Congrats! You have earned enough hours for Sleepover!"
-    progress = 100
+    timeLeft = "Congrats! You have earned enough hours for Sleepover!";
+    progress = 100;
   } else {
-    const hoursLeft = (30 - hours)
-    progress = 100*(hours/30)
-    timeLeft = `You have ${hoursLeft} hours left to qualify for Sleepover!`
+    const hoursLeft = 30 - hours;
+    progress = 100 * (hours / 30);
+    timeLeft = `You have ${hoursLeft} hours left to qualify for Sleepover!`;
   }
 
   return (
@@ -77,8 +77,7 @@ export default function CountdownProgressBar({ isSidebarOpen = true }: Countdown
               height: "100%",
               minHeight: "26px",
               background: "linear-gradient(180deg, #FFE5E8 0%, #EDB5BC 100%)",
-              boxShadow:
-                "0px 4px 0px #E6A4AB, 2px 6px 4px rgba(116, 114, 160, 0.86)",
+              boxShadow: "0px 4px 0px #E6A4AB, 2px 6px 4px rgba(116, 114, 160, 0.86)",
               borderRadius: "50px",
             }}
           />

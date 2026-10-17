@@ -8,7 +8,7 @@ export async function GET() {
     const balance = await getCurrency(session.userId);
 
     return NextResponse.json({
-      balance: balance ?? 0
+      balance: balance ?? 0,
     });
   } catch (error) {
     return NextResponse.json({ balance: 0 }, { status: 401 });

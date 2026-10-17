@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function SpotifyPlayer() {
   const pathname = usePathname();
   const [isExpanded, setIsExpanded] = useState(true);
 
   // Don't show on home page
-  if (pathname === '/') {
+  if (pathname === "/") {
     return null;
   }
 
@@ -16,10 +16,10 @@ export default function SpotifyPlayer() {
     <div
       className="fixed z-50 transition-all duration-300 ease-in-out"
       style={{
-        bottom: '20px',
-        right: '20px',
-        width: isExpanded ? '400px' : '48px',
-        maxWidth: 'calc(100vw - 40px)',
+        bottom: "20px",
+        right: "20px",
+        width: isExpanded ? "400px" : "48px",
+        maxWidth: "calc(100vw - 40px)",
       }}
     >
       {/* Spotify Embed - Always rendered, hidden when collapsed */}
@@ -27,9 +27,9 @@ export default function SpotifyPlayer() {
         className="relative bg-white rounded-xl shadow-2xl overflow-hidden"
         style={{
           opacity: isExpanded ? 1 : 0,
-          pointerEvents: isExpanded ? 'auto' : 'none',
-          position: isExpanded ? 'relative' : 'absolute',
-          visibility: isExpanded ? 'visible' : 'hidden',
+          pointerEvents: isExpanded ? "auto" : "none",
+          position: isExpanded ? "relative" : "absolute",
+          visibility: isExpanded ? "visible" : "hidden",
         }}
       >
         {/* Close/Minimize Button */}
@@ -56,7 +56,7 @@ export default function SpotifyPlayer() {
         {/* Spotify Embed */}
         <iframe
           data-testid="embed-iframe"
-          style={{ borderRadius: '12px' }}
+          style={{ borderRadius: "12px" }}
           src="https://open.spotify.com/embed/playlist/5HMx9trItBDgFAh3Xb2DtR?utm_source=generator&autoplay=1"
           width="100%"
           height="152"
@@ -74,9 +74,9 @@ export default function SpotifyPlayer() {
         aria-label="Open Spotify player"
         style={{
           opacity: isExpanded ? 0 : 1,
-          pointerEvents: isExpanded ? 'none' : 'auto',
-          position: isExpanded ? 'absolute' : 'relative',
-          background: 'linear-gradient(to bottom, #fee1e5, #eeb6bd)',
+          pointerEvents: isExpanded ? "none" : "auto",
+          position: isExpanded ? "absolute" : "relative",
+          background: "linear-gradient(to bottom, #fee1e5, #eeb6bd)",
         }}
       >
         <svg

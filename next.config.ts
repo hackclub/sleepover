@@ -28,7 +28,7 @@ const securityHeaders = [
   },
   {
     key: "Content-Security-Policy",
-      value: [
+    value: [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://open.spotify.com https://www.youtube.com https://server.fillout.com",
       "style-src 'self' 'unsafe-inline'",
@@ -45,46 +45,43 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   turbopack: {},
   webpack(config) {
-    config.resolve.modules = [
-      path.resolve(__dirname, "node_modules"),
-      "node_modules",
-    ];
+    config.resolve.modules = [path.resolve(__dirname, "node_modules"), "node_modules"];
     return config;
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: '10mb',
+      bodySizeLimit: "10mb",
     },
   },
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'avatars.slack-edge.com',
+        protocol: "https",
+        hostname: "avatars.slack-edge.com",
       },
       {
-        protocol: 'https',
-        hostname: '*.airtableusercontent.com',
-      },
-        {
-          protocol: 'https',
-          hostname: 'user-cdn.hackclub-assets.com',
-        },
-        {
-          protocol: 'https',
-          hostname: 'cdn.hackclub.com',
-        },
-        {
-        protocol: 'https',
-        hostname: '**', // Wildcard to allow all hostnames
-        port: '',
-        pathname: '/**', // Wildcard to allow all paths
+        protocol: "https",
+        hostname: "*.airtableusercontent.com",
       },
       {
-        protocol: 'http',
-        hostname: '**', // Wildcard to allow all hostnames
-        port: '',
-        pathname: '/**', // Wildcard to allow all paths
+        protocol: "https",
+        hostname: "user-cdn.hackclub-assets.com",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.hackclub.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**", // Wildcard to allow all hostnames
+        port: "",
+        pathname: "/**", // Wildcard to allow all paths
+      },
+      {
+        protocol: "http",
+        hostname: "**", // Wildcard to allow all hostnames
+        port: "",
+        pathname: "/**", // Wildcard to allow all paths
       },
     ],
   },

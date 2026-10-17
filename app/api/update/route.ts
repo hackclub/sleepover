@@ -1,4 +1,9 @@
-import { getSingularProject, getUsersProjects, updateProjectHours, getAllUsers } from "@/lib/airtable";
+import {
+  getSingularProject,
+  getUsersProjects,
+  updateProjectHours,
+  getAllUsers,
+} from "@/lib/airtable";
 import { getMultipleProjectHours, parseHackatimeProjects } from "@/lib/hackatime";
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
@@ -22,7 +27,7 @@ export async function GET(request: NextRequest) {
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: "Too many requests. This job can only run once per 10 minutes." },
-        { status: 429 }
+        { status: 429 },
       );
     }
 

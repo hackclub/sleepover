@@ -20,10 +20,7 @@ export default function WhatIsSleepover() {
   const contentOffset = isMobile ? "0px" : isSidebarOpen ? "clamp(360px, 28vw, 600px)" : "140px";
 
   return (
-    <div
-      className="font-sans min-h-screen relative"
-      style={{ backgroundColor: "#C0DEFE" }}
-    >
+    <div className="font-sans min-h-screen relative" style={{ backgroundColor: "#C0DEFE" }}>
       <Suspense fallback={null}>
         <ReferralCapture />
       </Suspense>
@@ -33,9 +30,9 @@ export default function WhatIsSleepover() {
       {/* Main Content */}
       <main
         className="relative z-10 transition-[margin-left] duration-300 p-4 md:p-8 lg:p-12 pt-16 md:pt-8 flex flex-col items-center"
-        style={{ 
-          marginLeft: contentOffset, 
-          marginRight: isMobile ? "0px" : "32px" 
+        style={{
+          marginLeft: contentOffset,
+          marginRight: isMobile ? "0px" : "32px",
         }}
       >
         <div
@@ -57,13 +54,15 @@ export default function WhatIsSleepover() {
             <p
               className="text-[16px] md:text-[20px] leading-relaxed"
               style={{
-                                fontFamily: "'MADE Tommy Soft', sans-serif",
-                                fontWeight: "bold",
-                                color: "#6C6EA0",
-                                textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
-                              }}
-                            >
-                              Sleepover is a cozy, slumber party style hackathon for teen girls. Sleepover is a part of Hack Club's Athena Initiative, designed to encourage girls to code and 'ship' technical projects.
+                fontFamily: "'MADE Tommy Soft', sans-serif",
+                fontWeight: "bold",
+                color: "#6C6EA0",
+                textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
+              }}
+            >
+              Sleepover is a cozy, slumber party style hackathon for teen girls. Sleepover is a part
+              of Hack Club's Athena Initiative, designed to encourage girls to code and 'ship'
+              technical projects.
             </p>
 
             {/* When and Where */}
@@ -85,7 +84,9 @@ export default function WhatIsSleepover() {
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
-                On April 24th, 2026 - April 26th, 2026, you will fly out to Chicago, Illinois for the coziest sleepover of your life - building projects, making friends, and snacking all night.
+                On April 24th, 2026 - April 26th, 2026, you will fly out to Chicago, Illinois for
+                the coziest sleepover of your life - building projects, making friends, and snacking
+                all night.
               </p>
             </div>
 
@@ -108,7 +109,8 @@ export default function WhatIsSleepover() {
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
-                Anyone aged 13-18 can participate and get invited after completing the required hours!
+                Anyone aged 13-18 can participate and get invited after completing the required
+                hours!
               </p>
             </div>
 
@@ -131,7 +133,8 @@ export default function WhatIsSleepover() {
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
-                Code 30 hours over the next three months (by April 24th) to get invited. That's just ten hours each month!
+                Code 30 hours over the next three months (by April 24th) to get invited. That's just
+                ten hours each month!
               </p>
               <p
                 className="text-[16px] md:text-[20px] leading-relaxed"
@@ -142,7 +145,8 @@ export default function WhatIsSleepover() {
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
-                Along the way, you can earn prizes by coding. For each hour you code, you'll earn feathers, which can be used to buy prizes in the shop.
+                Along the way, you can earn prizes by coding. For each hour you code, you'll earn
+                feathers, which can be used to buy prizes in the shop.
               </p>
             </div>
 
@@ -176,7 +180,8 @@ export default function WhatIsSleepover() {
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
-                You can also track art hours using Lapse! Art cannot be more than 30% of your project.
+                You can also track art hours using Lapse! Art cannot be more than 30% of your
+                project.
               </p>
             </div>
 
@@ -199,7 +204,8 @@ export default function WhatIsSleepover() {
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
-                Yes - but only for hours - not for feathers. You must submit it to the other program first and get it approved before submitting to Sleepover.
+                Yes - but only for hours - not for feathers. You must submit it to the other program
+                first and get it approved before submitting to Sleepover.
               </p>
             </div>
 
@@ -245,7 +251,9 @@ export default function WhatIsSleepover() {
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
-                Each month, we'll release a challenge to help you level up your technical skills. Build projects based on the challenge prompt, work on it for at least 10 hours, and we'll give you three extra artifacts!
+                Each month, we'll release a challenge to help you level up your technical skills.
+                Build projects based on the challenge prompt, work on it for at least 10 hours, and
+                we'll give you three extra artifacts!
               </p>
             </div>
 
@@ -268,7 +276,8 @@ export default function WhatIsSleepover() {
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
-                No worries! We'll have monthly challenges, guided live workshops, and coding lock in sessions for you to get started on!
+                No worries! We'll have monthly challenges, guided live workshops, and coding lock in
+                sessions for you to get started on!
               </p>
             </div>
 

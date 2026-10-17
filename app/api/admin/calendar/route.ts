@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/session";
-import { isAdminUser, getCalendarEvents, createCalendarEvent, updateCalendarEvent, deleteCalendarEvent } from "@/lib/airtable";
+import {
+  isAdminUser,
+  getCalendarEvents,
+  createCalendarEvent,
+  updateCalendarEvent,
+  deleteCalendarEvent,
+} from "@/lib/airtable";
 
 async function requireAdmin() {
   const user = await getCurrentUser();
@@ -39,15 +45,22 @@ function validateEventFields(fields: {
     if (!title?.trim()) return "Title is required";
     if (!date) return "Date is required";
     if (!description?.trim()) return "Description is required";
-    if (!type || !VALID_TYPES.includes(type as typeof VALID_TYPES[number])) return "Invalid type";
+    if (!type || !VALID_TYPES.includes(type as (typeof VALID_TYPES)[number])) return "Invalid type";
   }
-  if (title !== undefined && (typeof title !== "string" || title.trim().length > 200)) return "Title must be under 200 characters";
+  if (title !== undefined && (typeof title !== "string" || title.trim().length > 200))
+    return "Title must be under 200 characters";
   if (date !== undefined && !DATE_RE.test(date)) return "Date must be YYYY-MM-DD";
-  if (description !== undefined && (typeof description !== "string" || description.length > 2000)) return "Description must be under 2000 characters";
-  if (type !== undefined && type && !VALID_TYPES.includes(type as typeof VALID_TYPES[number])) return "Invalid type";
+  if (description !== undefined && (typeof description !== "string" || description.length > 2000))
+    return "Description must be under 2000 characters";
+  if (type !== undefined && type && !VALID_TYPES.includes(type as (typeof VALID_TYPES)[number]))
+    return "Invalid type";
   if (joinUrl) {
-    try { const u = new URL(joinUrl); if (!["http:", "https:"].includes(u.protocol)) return "Join URL must be http or https"; }
-    catch { return "Invalid join URL"; }
+    try {
+      const u = new URL(joinUrl);
+      if (!["http:", "https:"].includes(u.protocol)) return "Join URL must be http or https";
+    } catch {
+      return "Invalid join URL";
+    }
   }
   return null;
 }
@@ -63,7 +76,14 @@ export async function POST(request: NextRequest) {
     const err = validateEventFields({ title, date, description, type, joinUrl, requireAll: true });
     if (err) return NextResponse.json({ error: err }, { status: 400 });
 
-    const event = await createCalendarEvent({ title: title.trim(), date, time: time || undefined, description: description.trim(), type, joinUrl: joinUrl || undefined });
+    const event = await createCalendarEvent({
+      title: title.trim(),
+      date,
+      time: time || undefined,
+      description: description.trim(),
+      type,
+      joinUrl: joinUrl || undefined,
+    });
     return NextResponse.json(event);
   } catch (err) {
     console.error("Failed to create calendar event");
@@ -78,7 +98,8 @@ export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
     const { eventId, title, date, time, description, type, joinUrl } = body;
-    if (!eventId || typeof eventId !== "string") return NextResponse.json({ error: "Missing eventId" }, { status: 400 });
+    if (!eventId || typeof eventId !== "string")
+      return NextResponse.json({ error: "Missing eventId" }, { status: 400 });
 
     const err = validateEventFields({ title, date, description, type, joinUrl });
     if (err) return NextResponse.json({ error: err }, { status: 400 });

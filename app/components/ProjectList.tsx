@@ -9,9 +9,7 @@ import DeleteConfirmModal from "./DeleteConfirmModal";
 import ProjectDetailModal from "./ProjectDetailModal";
 
 function TrashIcon() {
-  return (
-    <Image src="/icons/trashcan.png" alt="trash" width={16} height={18} />
-  );
+  return <Image src="/icons/trashcan.png" alt="trash" width={16} height={18} />;
 }
 
 export default function ProjectList({ projects: initialProjects }: { projects: any[] }) {
@@ -26,7 +24,7 @@ export default function ProjectList({ projects: initialProjects }: { projects: a
 
   const handleConfirmDelete = async () => {
     if (!projectToDelete) return;
-    
+
     setDeletingId(projectToDelete.id);
     try {
       await deleteProject(projectToDelete.id);
@@ -62,10 +60,7 @@ export default function ProjectList({ projects: initialProjects }: { projects: a
   return (
     <div className="w-full px-4 md:px-6 py-4 space-y-6">
       {projects.map((p: any) => (
-        <div
-          key={p.id}
-          className="flex items-center justify-between gap-4"
-        >
+        <div key={p.id} className="flex items-center justify-between gap-4">
           <div className="flex-1 min-w-0">
             {/* Project Name */}
             <button onClick={() => handleProjectClick(p.id)} className="text-left">

@@ -19,17 +19,12 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, variant }: ProjectCardProps) {
-
   const cardVariant = variant ?? project.variant;
   const isBlue = cardVariant === "blue";
 
-  const cardGradient = isBlue
-    ? "from-[#c0defe] to-[#9ac6f6]"
-    : "from-[#fff3d7] to-[#ffe8b2]";
+  const cardGradient = isBlue ? "from-[#c0defe] to-[#9ac6f6]" : "from-[#fff3d7] to-[#ffe8b2]";
 
-  const innerGradient = isBlue
-    ? "from-[#93b4f2] to-[#c0defe]"
-    : "from-[#ffe8b2] to-[#fffcf4]";
+  const innerGradient = isBlue ? "from-[#93b4f2] to-[#c0defe]" : "from-[#ffe8b2] to-[#fffcf4]";
 
   return (
     <Link
@@ -67,9 +62,7 @@ export default function ProjectCard({ project, variant }: ProjectCardProps) {
           overflow-hidden
         `}
       >
-        <div
-          className="relative bg-[red] rounded-[24px] w-[90%] h-[90%] flex items-center justify-center overflow-hidden"
-        >
+        <div className="relative bg-[red] rounded-[24px] w-[90%] h-[90%] flex items-center justify-center overflow-hidden">
           {project.screenshot ? (
             <Image
               src={project.screenshot[0].url}

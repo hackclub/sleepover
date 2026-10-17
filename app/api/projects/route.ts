@@ -33,7 +33,7 @@ export async function GET(): Promise<Response> {
         }
       }
       return project;
-    })
+    }),
   );
 
   return NextResponse.json({ projects: projectsWithFreshHours });

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import GradientText from "./GradientText";
 
-const iconSize=44
+const iconSize = 44;
 
 const navItems = [
   {
@@ -149,10 +149,7 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
 
       {/* Mobile Overlay */}
       {isMobile && isOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40"
-          onClick={() => setIsOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black/40 z-40" onClick={() => setIsOpen(false)} />
       )}
 
       {/* Desktop Toggle Button */}
@@ -180,9 +177,7 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 min-h-screen z-50 ${
-          isMobile ? "w-[280px]" : ""
-        }`}
+        className={`fixed left-0 top-0 min-h-screen z-50 ${isMobile ? "w-[280px]" : ""}`}
         style={{
           width: isMobile ? "280px" : "clamp(320px, 25vw, 520px)",
           transform: isMobile
@@ -190,8 +185,8 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
               ? "translateX(0)"
               : "translateX(-100%)"
             : isOpen
-            ? "translateX(0)"
-            : "translateX(calc(-100% + 96px))",
+              ? "translateX(0)"
+              : "translateX(calc(-100% + 96px))",
           transition: "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
@@ -207,7 +202,9 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
         />
 
         {/* Content overlay */}
-        <div className={`relative z-10 p-6 md:p-8 flex flex-col min-h-screen ${isMobile ? "pt-16" : ""}`}>
+        <div
+          className={`relative z-10 p-6 md:p-8 flex flex-col min-h-screen ${isMobile ? "pt-16" : ""}`}
+        >
           {/* Logo */}
           <Link href="/portal" className="mt-8 ml-2 md:ml-4 block">
             <Image
@@ -221,82 +218,157 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
 
           {/* Navigation Links */}
           <div className="flex flex-col flex-1">
-          <nav className={`flex flex-col gap-8 md:gap-10 mt-12 md:mt-16 ${isOpen ? "ml-2 md:ml-4" : "items-center"}`}>
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                onClick={handleNavClick}
-                className="relative flex items-center gap-3 md:gap-4 font-bold leading-[1.1] hover:opacity-90 transition-transform hover:translate-x-[1px]"
-                style={{ fontSize: isMobile ? "28px" : "clamp(30px, 2.3vw, 50px)" }}
-              >
-                {/* Icon */}
-                <Image
-                  src={item.icon}
-                  alt={`${item.label} icon`}
-                  width={44}
-                  height={44}
-                  className="w-[32px] h-[32px] md:w-[44px] md:h-[44px]"
-                />
-                {/* Text container */}
-                <span style={{ display: isOpen ? "inline-block" : "none" }}>
-                  <GradientText
-                    gradient="linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)"
-                    strokeWidth={isMobile ? "5px" : "7px"}
-                  >
-                    {item.label}
-                  </GradientText>
-                </span>
-              </Link>
-            ))}
-          </nav>
+            <nav
+              className={`flex flex-col gap-8 md:gap-10 mt-12 md:mt-16 ${isOpen ? "ml-2 md:ml-4" : "items-center"}`}
+            >
+              {navItems.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={handleNavClick}
+                  className="relative flex items-center gap-3 md:gap-4 font-bold leading-[1.1] hover:opacity-90 transition-transform hover:translate-x-[1px]"
+                  style={{ fontSize: isMobile ? "28px" : "clamp(30px, 2.3vw, 50px)" }}
+                >
+                  {/* Icon */}
+                  <Image
+                    src={item.icon}
+                    alt={`${item.label} icon`}
+                    width={44}
+                    height={44}
+                    className="w-[32px] h-[32px] md:w-[44px] md:h-[44px]"
+                  />
+                  {/* Text container */}
+                  <span style={{ display: isOpen ? "inline-block" : "none" }}>
+                    <GradientText
+                      gradient="linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)"
+                      strokeWidth={isMobile ? "5px" : "7px"}
+                    >
+                      {item.label}
+                    </GradientText>
+                  </span>
+                </Link>
+              ))}
+            </nav>
 
-          {/* Admin Dashboard Link */}
-          {userData?.isAdmin && (
-            <div className={`mt-8 md:mt-10 ${isOpen ? "ml-2 md:ml-4" : "flex justify-center"}`}>
-              <Link
-                href="/portal/admin"
-                onClick={handleNavClick}
-                className="relative flex items-center gap-3 md:gap-4 font-bold leading-[1.1] hover:opacity-90 transition-transform hover:translate-x-[1px]"
-                style={{ fontSize: isMobile ? "28px" : "clamp(30px, 2.3vw, 50px)" }}
-              >
-                <Image
-                  src="/background/faq icon.png"
-                  alt="Admin icon"
-                  width={44}
-                  height={44}
-                  className="w-[32px] h-[32px] md:w-[44px] md:h-[44px]"
-                />
-                <span style={{ display: isOpen ? "inline-block" : "none" }}>
-                  <GradientText
-                    gradient="linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)"
-                    strokeWidth={isMobile ? "5px" : "7px"}
-                  >
-                    Admin
-                  </GradientText>
-                </span>
-              </Link>
-            </div>
-          )}
+            {/* Admin Dashboard Link */}
+            {userData?.isAdmin && (
+              <div className={`mt-8 md:mt-10 ${isOpen ? "ml-2 md:ml-4" : "flex justify-center"}`}>
+                <Link
+                  href="/portal/admin"
+                  onClick={handleNavClick}
+                  className="relative flex items-center gap-3 md:gap-4 font-bold leading-[1.1] hover:opacity-90 transition-transform hover:translate-x-[1px]"
+                  style={{ fontSize: isMobile ? "28px" : "clamp(30px, 2.3vw, 50px)" }}
+                >
+                  <Image
+                    src="/background/faq icon.png"
+                    alt="Admin icon"
+                    width={44}
+                    height={44}
+                    className="w-[32px] h-[32px] md:w-[44px] md:h-[44px]"
+                  />
+                  <span style={{ display: isOpen ? "inline-block" : "none" }}>
+                    <GradientText
+                      gradient="linear-gradient(180deg, #8FB1F0 0%, #7EA0EA 45%, #6D90E3 100%)"
+                      strokeWidth={isMobile ? "5px" : "7px"}
+                    >
+                      Admin
+                    </GradientText>
+                  </span>
+                </Link>
+              </div>
+            )}
 
-          {/* User Profile Section */}
-          {userData && (
-            <div className={`mt-auto mb-8 ${isOpen ? "ml-2 md:ml-4" : "flex justify-center"}`}>
-              {isOpen ? (
-                <div className="flex items-center gap-3">
-                  {/* User Avatar */}
-                  <div className="flex-shrink-0">
+            {/* User Profile Section */}
+            {userData && (
+              <div className={`mt-auto mb-8 ${isOpen ? "ml-2 md:ml-4" : "flex justify-center"}`}>
+                {isOpen ? (
+                  <div className="flex items-center gap-3">
+                    {/* User Avatar */}
+                    <div className="flex-shrink-0">
+                      {userData.slack_avatar_url ? (
+                        <Image
+                          src={userData.slack_avatar_url}
+                          alt="User avatar"
+                          width={60}
+                          height={60}
+                          className="rounded-full w-[50px] h-[50px] md:w-[60px] md:h-[60px]"
+                        />
+                      ) : (
+                        <div
+                          className="rounded-full w-[50px] h-[50px] md:w-[60px] md:h-[60px] flex items-center justify-center text-white font-bold text-xl"
+                          style={{
+                            background: "linear-gradient(135deg, #8FB1F0 0%, #7EA0EA 100%)",
+                          }}
+                        >
+                          {(userData.slack_display_name || userData.name || "U")[0].toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* User Info and Buttons */}
+                    <div className="flex-1 min-w-0">
+                      {/* Username */}
+                      <p
+                        className="text-[16px] md:text-[18px] font-bold truncate"
+                        style={{
+                          fontFamily: "'MADE Tommy Soft', sans-serif",
+                          color: "#5A5C8A",
+                        }}
+                      >
+                        {userData.slack_display_name || userData.name}
+                      </p>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 mt-1">
+                        <Link
+                          href="https://app.slack.com/client/E09V59WQY1E/C06T17NQB0B"
+                          onClick={handleNavClick}
+                        >
+                          <Image
+                            src="/icons/slack2.png"
+                            alt="slack"
+                            width={iconSize}
+                            height={iconSize}
+                          />
+                        </Link>
+                        <Link href="/" onClick={handleLogout}>
+                          <Image
+                            src="/icons/logout2.png"
+                            alt="logout"
+                            width={iconSize + 5}
+                            style={{ paddingTop: 5, paddingLeft: 5 }}
+                            height={iconSize + 5}
+                          />
+                        </Link>
+                        <Link href="/portal/settings" onClick={handleNavClick}>
+                          <Image
+                            src="/icons/setting2.png"
+                            alt="settings"
+                            width={iconSize - 6}
+                            style={{ paddingTop: 2 }}
+                            height={iconSize - 6}
+                          />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* Collapsed view - just avatar */
+                  <div
+                    className="flex-shrink-0 cursor-pointer hover:scale-110 transition-transform"
+                    onClick={handleToggle}
+                  >
                     {userData.slack_avatar_url ? (
                       <Image
                         src={userData.slack_avatar_url}
                         alt="User avatar"
-                        width={60}
-                        height={60}
-                        className="rounded-full w-[50px] h-[50px] md:w-[60px] md:h-[60px]"
+                        width={44}
+                        height={44}
+                        className="rounded-full w-[44px] h-[44px]"
                       />
                     ) : (
                       <div
-                        className="rounded-full w-[50px] h-[50px] md:w-[60px] md:h-[60px] flex items-center justify-center text-white font-bold text-xl"
+                        className="rounded-full w-[44px] h-[44px] flex items-center justify-center text-white font-bold text-lg"
                         style={{
                           background: "linear-gradient(135deg, #8FB1F0 0%, #7EA0EA 100%)",
                         }}
@@ -305,59 +377,9 @@ export default function PortalSidebar({ onStateChange, initialOpen = true }: Por
                       </div>
                     )}
                   </div>
-
-                  {/* User Info and Buttons */}
-                  <div className="flex-1 min-w-0">
-                    {/* Username */}
-                    <p
-                      className="text-[16px] md:text-[18px] font-bold truncate"
-                      style={{
-                        fontFamily: "'MADE Tommy Soft', sans-serif",
-                        color: "#5A5C8A",
-                      }}
-                    >
-                      {userData.slack_display_name || userData.name}
-                    </p>
-
-                    {/* Action Buttons */}
-                    <div className="flex gap-2 mt-1">
-                      <Link href="https://app.slack.com/client/E09V59WQY1E/C06T17NQB0B" onClick={handleNavClick}>
-                        <Image src="/icons/slack2.png" alt="slack" width={iconSize} height={iconSize}/>
-                      </Link>
-                      <Link href="/" onClick={handleLogout}>
-                        <Image src="/icons/logout2.png" alt="logout" width={iconSize+5} style={{paddingTop: 5, paddingLeft: 5}} height={iconSize+5}/>
-                      </Link>
-                      <Link href="/portal/settings" onClick={handleNavClick}>
-                        <Image src="/icons/setting2.png" alt="settings" width={iconSize-6} style={{paddingTop: 2}} height={iconSize-6}/>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* Collapsed view - just avatar */
-                <div className="flex-shrink-0 cursor-pointer hover:scale-110 transition-transform" onClick={handleToggle}>
-                  {userData.slack_avatar_url ? (
-                    <Image
-                      src={userData.slack_avatar_url}
-                      alt="User avatar"
-                      width={44}
-                      height={44}
-                      className="rounded-full w-[44px] h-[44px]"
-                    />
-                  ) : (
-                    <div
-                      className="rounded-full w-[44px] h-[44px] flex items-center justify-center text-white font-bold text-lg"
-                      style={{
-                        background: "linear-gradient(135deg, #8FB1F0 0%, #7EA0EA 100%)",
-                      }}
-                    >
-                      {(userData.slack_display_name || userData.name || "U")[0].toUpperCase()}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
           </div>
         </div>
       </aside>

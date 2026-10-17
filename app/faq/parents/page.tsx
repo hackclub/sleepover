@@ -20,10 +20,7 @@ export default function ParentsGuide() {
   const contentOffset = isMobile ? "0px" : isSidebarOpen ? "clamp(360px, 28vw, 600px)" : "140px";
 
   return (
-    <div
-      className="font-sans min-h-screen relative"
-      style={{ backgroundColor: "#C0DEFE" }}
-    >
+    <div className="font-sans min-h-screen relative" style={{ backgroundColor: "#C0DEFE" }}>
       <Suspense fallback={null}>
         <ReferralCapture />
       </Suspense>
@@ -33,9 +30,9 @@ export default function ParentsGuide() {
       {/* Main Content */}
       <main
         className="relative z-10 transition-[margin-left] duration-300 p-4 md:p-8 lg:p-12 pt-16 md:pt-8 flex flex-col items-center"
-        style={{ 
-          marginLeft: contentOffset, 
-          marginRight: isMobile ? "0px" : "32px" 
+        style={{
+          marginLeft: contentOffset,
+          marginRight: isMobile ? "0px" : "32px",
         }}
       >
         <div
@@ -73,7 +70,15 @@ export default function ParentsGuide() {
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
-                Hack Club is a 501(c)(3) nonprofit organization whose mission is to foster a wholesome generation of coders, makers, founders, and builders. Hack Club is a network of hundreds of student-led computer science clubs and an online community of over 50,000 high school makers from around the world. Hack Club programs are free and accessible to all high school students. We support teenagers in making real projects in the real world. Hack Club is supported by notable figures in the tech industry, including GitHub founder Tom Preston-Werner, Dell Founder Michael Dell and executives at Apple, Facebook, Microsoft, and GitHub, as well as many up-and-coming tech startups.
+                Hack Club is a 501(c)(3) nonprofit organization whose mission is to foster a
+                wholesome generation of coders, makers, founders, and builders. Hack Club is a
+                network of hundreds of student-led computer science clubs and an online community of
+                over 50,000 high school makers from around the world. Hack Club programs are free
+                and accessible to all high school students. We support teenagers in making real
+                projects in the real world. Hack Club is supported by notable figures in the tech
+                industry, including GitHub founder Tom Preston-Werner, Dell Founder Michael Dell and
+                executives at Apple, Facebook, Microsoft, and GitHub, as well as many up-and-coming
+                tech startups.
               </p>
             </div>
 
@@ -96,7 +101,10 @@ export default function ParentsGuide() {
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
-                Sleepover is a slumber-party style hackathon led by teen girls, for teen girls. Code 30 hours from now until April 24th, 2025 and fly out to Chicago, Illinois to make friends, eat amazing food, and code. Along the way, your child can earn prizes such as plushies, Airpods, iPads and more, all for building projects.
+                Sleepover is a slumber-party style hackathon led by teen girls, for teen girls. Code
+                30 hours from now until April 24th, 2025 and fly out to Chicago, Illinois to make
+                friends, eat amazing food, and code. Along the way, your child can earn prizes such
+                as plushies, Airpods, iPads and more, all for building projects.
               </p>
             </div>
 
@@ -119,7 +127,12 @@ export default function ParentsGuide() {
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
-                Participation in the event is entirely free, but there are requirements for entry that your child must meet. Without completing the coding requirements for the event, your child will not get an invite to Sleepover. We will cover expenses at the event for the entire three-day experience, including meals and activities. Participants are generally responsible for their own travel to Chicago, but we are able to offer travel grants.
+                Participation in the event is entirely free, but there are requirements for entry
+                that your child must meet. Without completing the coding requirements for the event,
+                your child will not get an invite to Sleepover. We will cover expenses at the event
+                for the entire three-day experience, including meals and activities. Participants
+                are generally responsible for their own travel to Chicago, but we are able to offer
+                travel grants.
               </p>
             </div>
 
@@ -142,12 +155,17 @@ export default function ParentsGuide() {
                   textShadow: "0px 2px 4px rgba(108, 110, 160, 0.3)",
                 }}
               >
-                Hack Club is committed to creating a safe and comfortable environment for students at our events. As with previous Hack Club events Hack Club staff have undergone background checks (both at the state and federal level). Adult team members are on-site with attendees throughout the event. We will have support available and a way for you and your child to contact us if needed. During the event, a toll-free staff helpline (+1 855-625-HACK) will be available if you have any questions.
+                Hack Club is committed to creating a safe and comfortable environment for students
+                at our events. As with previous Hack Club events Hack Club staff have undergone
+                background checks (both at the state and federal level). Adult team members are
+                on-site with attendees throughout the event. We will have support available and a
+                way for you and your child to contact us if needed. During the event, a toll-free
+                staff helpline (+1 855-625-HACK) will be available if you have any questions.
               </p>
             </div>
           </div>
         </div>
-    </main>
+      </main>
     </div>
   );
 }

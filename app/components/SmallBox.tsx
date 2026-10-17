@@ -9,7 +9,14 @@ interface SmallBoxProps {
   childrenPosition?: "above" | "below";
 }
 
-export default function SmallBox({ header, body, children, height, isMobile = false, childrenPosition = "below" }: SmallBoxProps) {
+export default function SmallBox({
+  header,
+  body,
+  children,
+  height,
+  isMobile = false,
+  childrenPosition = "below",
+}: SmallBoxProps) {
   const headerHeight = isMobile ? "44px" : "66px";
 
   return (
@@ -40,16 +47,12 @@ export default function SmallBox({ header, body, children, height, isMobile = fa
           </GradientText>
         </span>
       </div>
-      <div
-        className="text-center px-3 py-3 md:p-[8%]"
-      >
-        {children && childrenPosition === "above" && (
-          <div className="mt-1 mb-2">
-            {children}
-          </div>
-        )}
+      <div className="text-center px-3 py-3 md:p-[8%]">
+        {children && childrenPosition === "above" && <div className="mt-1 mb-2">{children}</div>}
         {body && (
-          <div className={children && childrenPosition === "below" ? "mt-2 md:mt-3" : "mt-2 md:mt-3"}>
+          <div
+            className={children && childrenPosition === "below" ? "mt-2 md:mt-3" : "mt-2 md:mt-3"}
+          >
             <span className="text-base md:text-xl leading-tight">
               <GradientText
                 gradient="linear-gradient(180deg, #7791E6 0%, #7472A0 100%)"
@@ -60,11 +63,7 @@ export default function SmallBox({ header, body, children, height, isMobile = fa
             </span>
           </div>
         )}
-        {children && childrenPosition === "below" && (
-          <div className="mt-4 md:mt-8">
-            {children}
-          </div>
-        )}
+        {children && childrenPosition === "below" && <div className="mt-4 md:mt-8">{children}</div>}
       </div>
     </div>
   );
