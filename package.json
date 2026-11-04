@@ -14,7 +14,7 @@
     "audit": "bun audit"
   },
   "dependencies": {
-    "@slack/web-api": "^8.2.0",
+    "@slack/web-api": "^8.3.0",
     "airtable": "^0.12.2",
     "embla-carousel-auto-scroll": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
